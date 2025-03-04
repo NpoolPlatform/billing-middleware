@@ -12,8 +12,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/NpoolPlatform/service-template/pkg/db/ent/detail"
-	"github.com/NpoolPlatform/service-template/pkg/db/ent/predicate"
+	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/detail"
+	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/predicate"
 )
 
 // DetailQuery is the builder for querying Detail entities.

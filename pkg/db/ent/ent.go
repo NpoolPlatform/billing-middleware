@@ -10,9 +10,14 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
-	"github.com/NpoolPlatform/service-template/pkg/db/ent/detail"
-	"github.com/NpoolPlatform/service-template/pkg/db/ent/ignoreid"
-	"github.com/NpoolPlatform/service-template/pkg/db/ent/pubsubmessage"
+	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/addon"
+	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/detail"
+	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/exchange"
+	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/ignoreid"
+	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/pubsubmessage"
+	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/subscription"
+	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/usercreditrecord"
+	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/usersubscription"
 )
 
 // ent aliases to avoid import conflicts in user's code.
@@ -33,9 +38,14 @@ type OrderFunc func(*sql.Selector)
 // columnChecker returns a function indicates if the column exists in the given column.
 func columnChecker(table string) func(string) error {
 	checks := map[string]func(string) bool{
-		detail.Table:        detail.ValidColumn,
-		ignoreid.Table:      ignoreid.ValidColumn,
-		pubsubmessage.Table: pubsubmessage.ValidColumn,
+		addon.Table:            addon.ValidColumn,
+		detail.Table:           detail.ValidColumn,
+		exchange.Table:         exchange.ValidColumn,
+		ignoreid.Table:         ignoreid.ValidColumn,
+		pubsubmessage.Table:    pubsubmessage.ValidColumn,
+		subscription.Table:     subscription.ValidColumn,
+		usercreditrecord.Table: usercreditrecord.ValidColumn,
+		usersubscription.Table: usersubscription.ValidColumn,
 	}
 	check, ok := checks[table]
 	if !ok {

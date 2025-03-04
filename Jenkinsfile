@@ -87,7 +87,7 @@ pipeline {
       steps {
         sh(returnStdout: false, script: '''
           devboxpod=`kubectl get pods -A | grep development-box | head -n1 | awk '{print $2}'`
-          servicename="service-template"
+          servicename="billing-middleware"
 
           kubectl exec --namespace kube-system $devboxpod -- make -C /tmp/$servicename after-test || true
           kubectl exec --namespace kube-system $devboxpod -- rm -rf /tmp/$servicename || true
@@ -252,13 +252,13 @@ pipeline {
             branch=`echo $BRANCH_NAME | awk -F '/' '{ print $2 }'`
           fi
           set +e
-          docker images | grep service-template | grep $branch
+          docker images | grep billing-middleware | grep $branch
           rc=$?
           set -e
           if [ 0 -eq $rc ]; then
             DOCKER_REGISTRY=$DOCKER_REGISTRY make release-docker-images
           fi
-          images=`docker images | grep entropypool | grep service-template | grep none | awk '{ print $3 }'`
+          images=`docker images | grep entropypool | grep billing-middleware | grep none | awk '{ print $3 }'`
           for image in $images; do
             docker rmi $image -f
           done
@@ -280,7 +280,7 @@ pipeline {
           if [ 0 -eq $rc -a x"$revlist" != x ]; then
             tag=`git tag --sort=-v:refname | grep [1\\|3\\|5\\|7\\|9]$ | head -n1`
             set +e
-            docker images | grep service-template | grep $tag
+            docker images | grep billing-middleware | grep $tag
             rc=$?
             set -e
             if [ 0 -eq $rc ]; then
@@ -305,7 +305,7 @@ pipeline {
           if [ 0 -eq $rc -a x"$taglist" != x ]; then
             tag=`git tag --sort=-v:refname | grep [0\\|2\\|4\\|6\\|8]$ | head -n1`
             set +e
-            docker images | grep service-template | grep $tag
+            docker images | grep billing-middleware | grep $tag
             rc=$?
             set -e
             if [ 0 -eq $rc ]; then
@@ -327,12 +327,12 @@ pipeline {
           if [ "x$BRANCH_NAME" != "xmaster" ]; then
             branch=`echo $BRANCH_NAME | awk -F '/' '{ print $2 }'`
           fi
-          sed -i "s/service-template:latest/service-template:$branch/g" cmd/service-template/k8s/02-service-template.yaml
-          sed -i "s/uhub.service.ucloud.cn/$DOCKER_REGISTRY/g" cmd/service-template/k8s/02-service-template.yaml
+          sed -i "s/billing-middleware:latest/billing-middleware:$branch/g" cmd/billing-middleware/k8s/02-billing-middleware.yaml
+          sed -i "s/uhub.service.ucloud.cn/$DOCKER_REGISTRY/g" cmd/billing-middleware/k8s/02-billing-middleware.yaml
           if [ "x$REPLICAS_COUNT" == "x" ];then
             REPLICAS_COUNT=2
           fi
-          sed -i "s/replicas: 2/replicas: $REPLICAS_COUNT/g" cmd/service-template/k8s/02-service-template.yaml
+          sed -i "s/replicas: 2/replicas: $REPLICAS_COUNT/g" cmd/billing-middleware/k8s/02-billing-middleware.yaml
           make deploy-to-k8s-cluster
         '''.stripIndent())
       }
@@ -356,13 +356,13 @@ pipeline {
 
           git reset --hard
           git checkout $tag
-          sed -i "s/service-template:latest/service-template:$tag/g" cmd/service-template/k8s/02-service-template.yaml
-          sed -i "s/uhub.service.ucloud.cn/$DOCKER_REGISTRY/g" cmd/service-template/k8s/02-service-template.yaml
+          sed -i "s/billing-middleware:latest/billing-middleware:$tag/g" cmd/billing-middleware/k8s/02-billing-middleware.yaml
+          sed -i "s/uhub.service.ucloud.cn/$DOCKER_REGISTRY/g" cmd/billing-middleware/k8s/02-billing-middleware.yaml
           if [ "x$REPLICAS_COUNT" == "x" ];then
             REPLICAS_COUNT=2
           fi
-          sed -i "s/replicas: 2/replicas: $REPLICAS_COUNT/g" cmd/service-template/k8s/02-service-template.yaml
-          sed -i "s/imagePullPolicy: Always/imagePullPolicy: IfNotPresent/g" cmd/service-template/k8s/02-service-template.yaml
+          sed -i "s/replicas: 2/replicas: $REPLICAS_COUNT/g" cmd/billing-middleware/k8s/02-billing-middleware.yaml
+          sed -i "s/imagePullPolicy: Always/imagePullPolicy: IfNotPresent/g" cmd/billing-middleware/k8s/02-billing-middleware.yaml
           make deploy-to-k8s-cluster
         '''.stripIndent())
       }
@@ -385,13 +385,13 @@ pipeline {
           tag=`git tag --sort=-v:refname | grep [0\\|2\\|4\\|6\\|8]$ | head -n1`
           git reset --hard
           git checkout $tag
-          sed -i "s/service-template:latest/service-template:$tag/g" cmd/service-template/k8s/02-service-template.yaml
-          sed -i "s/uhub.service.ucloud.cn/$DOCKER_REGISTRY/g" cmd/service-template/k8s/02-service-template.yaml
+          sed -i "s/billing-middleware:latest/billing-middleware:$tag/g" cmd/billing-middleware/k8s/02-billing-middleware.yaml
+          sed -i "s/uhub.service.ucloud.cn/$DOCKER_REGISTRY/g" cmd/billing-middleware/k8s/02-billing-middleware.yaml
           if [ "x$REPLICAS_COUNT" == "x" ];then
             REPLICAS_COUNT=2
           fi
-          sed -i "s/replicas: 2/replicas: $REPLICAS_COUNT/g" cmd/service-template/k8s/02-service-template.yaml
-          sed -i "s/imagePullPolicy: Always/imagePullPolicy: IfNotPresent/g" cmd/service-template/k8s/02-service-template.yaml
+          sed -i "s/replicas: 2/replicas: $REPLICAS_COUNT/g" cmd/billing-middleware/k8s/02-billing-middleware.yaml
+          sed -i "s/imagePullPolicy: Always/imagePullPolicy: IfNotPresent/g" cmd/billing-middleware/k8s/02-billing-middleware.yaml
           make deploy-to-k8s-cluster
         '''.stripIndent())
       }

@@ -6,14 +6,14 @@ import (
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 
-	"github.com/NpoolPlatform/service-template/pkg/db/ent"
+	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent"
 
 	"entgo.io/ent/dialect"
 	entsql "entgo.io/ent/dialect/sql"
 	"github.com/NpoolPlatform/go-service-framework/pkg/mysql"
 
 	// ent policy runtime
-	_ "github.com/NpoolPlatform/service-template/pkg/db/ent/runtime"
+	_ "github.com/NpoolPlatform/billing-middleware/pkg/db/ent/runtime"
 )
 
 func client() (*ent.Client, error) {
@@ -58,7 +58,6 @@ func WithTx(ctx context.Context, fn func(ctx context.Context, tx *ent.Tx) error)
 			}
 		}
 	}()
-
 	if err := fn(ctx, tx); err != nil {
 		return err
 	}

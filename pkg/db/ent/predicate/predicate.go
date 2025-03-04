@@ -6,11 +6,26 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
+// Addon is the predicate function for addon builders.
+type Addon func(*sql.Selector)
+
 // Detail is the predicate function for detail builders.
 type Detail func(*sql.Selector)
+
+// Exchange is the predicate function for exchange builders.
+type Exchange func(*sql.Selector)
 
 // IgnoreID is the predicate function for ignoreid builders.
 type IgnoreID func(*sql.Selector)
 
 // PubsubMessage is the predicate function for pubsubmessage builders.
 type PubsubMessage func(*sql.Selector)
+
+// Subscription is the predicate function for subscription builders.
+type Subscription func(*sql.Selector)
+
+// UserCreditRecord is the predicate function for usercreditrecord builders.
+type UserCreditRecord func(*sql.Selector)
+
+// UserSubscription is the predicate function for usersubscription builders.
+type UserSubscription func(*sql.Selector)

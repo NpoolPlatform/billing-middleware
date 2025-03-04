@@ -4,7 +4,7 @@ package detail
 
 import (
 	"entgo.io/ent/dialect/sql"
-	"github.com/NpoolPlatform/service-template/pkg/db/ent/predicate"
+	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/predicate"
 	"github.com/google/uuid"
 )
 

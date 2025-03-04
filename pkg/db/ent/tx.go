@@ -14,12 +14,22 @@ import (
 // Tx is a transactional client that is created by calling Client.Tx().
 type Tx struct {
 	config
+	// Addon is the client for interacting with the Addon builders.
+	Addon *AddonClient
 	// Detail is the client for interacting with the Detail builders.
 	Detail *DetailClient
+	// Exchange is the client for interacting with the Exchange builders.
+	Exchange *ExchangeClient
 	// IgnoreID is the client for interacting with the IgnoreID builders.
 	IgnoreID *IgnoreIDClient
 	// PubsubMessage is the client for interacting with the PubsubMessage builders.
 	PubsubMessage *PubsubMessageClient
+	// Subscription is the client for interacting with the Subscription builders.
+	Subscription *SubscriptionClient
+	// UserCreditRecord is the client for interacting with the UserCreditRecord builders.
+	UserCreditRecord *UserCreditRecordClient
+	// UserSubscription is the client for interacting with the UserSubscription builders.
+	UserSubscription *UserSubscriptionClient
 
 	// lazily loaded.
 	client     *Client
@@ -155,9 +165,14 @@ func (tx *Tx) Client() *Client {
 }
 
 func (tx *Tx) init() {
+	tx.Addon = NewAddonClient(tx.config)
 	tx.Detail = NewDetailClient(tx.config)
+	tx.Exchange = NewExchangeClient(tx.config)
 	tx.IgnoreID = NewIgnoreIDClient(tx.config)
 	tx.PubsubMessage = NewPubsubMessageClient(tx.config)
+	tx.Subscription = NewSubscriptionClient(tx.config)
+	tx.UserCreditRecord = NewUserCreditRecordClient(tx.config)
+	tx.UserSubscription = NewUserSubscriptionClient(tx.config)
 }
 
 // txDriver wraps the given dialect.Tx with a nop dialect.Driver implementation.
@@ -167,7 +182,7 @@ func (tx *Tx) init() {
 // of them in order to commit or rollback the transaction.
 //
 // If a closed transaction is embedded in one of the generated entities, and the entity
-// applies a query, for example: Detail.QueryXXX(), the query will be executed
+// applies a query, for example: Addon.QueryXXX(), the query will be executed
 // through the driver which created this transaction.
 //
 // Note that txDriver is not goroutine safe.
