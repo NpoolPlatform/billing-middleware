@@ -31,7 +31,7 @@ type UserCreditRecord struct {
 	// OperationType holds the value of the "operation_type" field.
 	OperationType string `json:"operation_type,omitempty"`
 	// CreditsChange holds the value of the "credits_change" field.
-	CreditsChange uint32 `json:"credits_change,omitempty"`
+	CreditsChange int32 `json:"credits_change,omitempty"`
 	// Extra holds the value of the "extra" field.
 	Extra string `json:"extra,omitempty"`
 }
@@ -114,7 +114,7 @@ func (ucr *UserCreditRecord) assignValues(columns []string, values []interface{}
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field credits_change", values[i])
 			} else if value.Valid {
-				ucr.CreditsChange = uint32(value.Int64)
+				ucr.CreditsChange = int32(value.Int64)
 			}
 		case usercreditrecord.FieldExtra:
 			if value, ok := values[i].(*sql.NullString); !ok {

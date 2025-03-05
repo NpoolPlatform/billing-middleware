@@ -382,7 +382,7 @@ func init() {
 	// usercreditrecordDescCreditsChange is the schema descriptor for credits_change field.
 	usercreditrecordDescCreditsChange := usercreditrecordFields[3].Descriptor()
 	// usercreditrecord.DefaultCreditsChange holds the default value on creation for the credits_change field.
-	usercreditrecord.DefaultCreditsChange = usercreditrecordDescCreditsChange.Default.(uint32)
+	usercreditrecord.DefaultCreditsChange = usercreditrecordDescCreditsChange.Default.(int32)
 	// usercreditrecordDescExtra is the schema descriptor for extra field.
 	usercreditrecordDescExtra := usercreditrecordFields[4].Descriptor()
 	// usercreditrecord.DefaultExtra holds the default value on creation for the extra field.

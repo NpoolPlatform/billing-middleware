@@ -159,23 +159,23 @@ func (ucru *UserCreditRecordUpdate) ClearOperationType() *UserCreditRecordUpdate
 }
 
 // SetCreditsChange sets the "credits_change" field.
-func (ucru *UserCreditRecordUpdate) SetCreditsChange(u uint32) *UserCreditRecordUpdate {
+func (ucru *UserCreditRecordUpdate) SetCreditsChange(i int32) *UserCreditRecordUpdate {
 	ucru.mutation.ResetCreditsChange()
-	ucru.mutation.SetCreditsChange(u)
+	ucru.mutation.SetCreditsChange(i)
 	return ucru
 }
 
 // SetNillableCreditsChange sets the "credits_change" field if the given value is not nil.
-func (ucru *UserCreditRecordUpdate) SetNillableCreditsChange(u *uint32) *UserCreditRecordUpdate {
-	if u != nil {
-		ucru.SetCreditsChange(*u)
+func (ucru *UserCreditRecordUpdate) SetNillableCreditsChange(i *int32) *UserCreditRecordUpdate {
+	if i != nil {
+		ucru.SetCreditsChange(*i)
 	}
 	return ucru
 }
 
-// AddCreditsChange adds u to the "credits_change" field.
-func (ucru *UserCreditRecordUpdate) AddCreditsChange(u int32) *UserCreditRecordUpdate {
-	ucru.mutation.AddCreditsChange(u)
+// AddCreditsChange adds i to the "credits_change" field.
+func (ucru *UserCreditRecordUpdate) AddCreditsChange(i int32) *UserCreditRecordUpdate {
+	ucru.mutation.AddCreditsChange(i)
 	return ucru
 }
 
@@ -393,21 +393,21 @@ func (ucru *UserCreditRecordUpdate) sqlSave(ctx context.Context) (n int, err err
 	}
 	if value, ok := ucru.mutation.CreditsChange(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
+			Type:   field.TypeInt32,
 			Value:  value,
 			Column: usercreditrecord.FieldCreditsChange,
 		})
 	}
 	if value, ok := ucru.mutation.AddedCreditsChange(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
+			Type:   field.TypeInt32,
 			Value:  value,
 			Column: usercreditrecord.FieldCreditsChange,
 		})
 	}
 	if ucru.mutation.CreditsChangeCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
+			Type:   field.TypeInt32,
 			Column: usercreditrecord.FieldCreditsChange,
 		})
 	}
@@ -575,23 +575,23 @@ func (ucruo *UserCreditRecordUpdateOne) ClearOperationType() *UserCreditRecordUp
 }
 
 // SetCreditsChange sets the "credits_change" field.
-func (ucruo *UserCreditRecordUpdateOne) SetCreditsChange(u uint32) *UserCreditRecordUpdateOne {
+func (ucruo *UserCreditRecordUpdateOne) SetCreditsChange(i int32) *UserCreditRecordUpdateOne {
 	ucruo.mutation.ResetCreditsChange()
-	ucruo.mutation.SetCreditsChange(u)
+	ucruo.mutation.SetCreditsChange(i)
 	return ucruo
 }
 
 // SetNillableCreditsChange sets the "credits_change" field if the given value is not nil.
-func (ucruo *UserCreditRecordUpdateOne) SetNillableCreditsChange(u *uint32) *UserCreditRecordUpdateOne {
-	if u != nil {
-		ucruo.SetCreditsChange(*u)
+func (ucruo *UserCreditRecordUpdateOne) SetNillableCreditsChange(i *int32) *UserCreditRecordUpdateOne {
+	if i != nil {
+		ucruo.SetCreditsChange(*i)
 	}
 	return ucruo
 }
 
-// AddCreditsChange adds u to the "credits_change" field.
-func (ucruo *UserCreditRecordUpdateOne) AddCreditsChange(u int32) *UserCreditRecordUpdateOne {
-	ucruo.mutation.AddCreditsChange(u)
+// AddCreditsChange adds i to the "credits_change" field.
+func (ucruo *UserCreditRecordUpdateOne) AddCreditsChange(i int32) *UserCreditRecordUpdateOne {
+	ucruo.mutation.AddCreditsChange(i)
 	return ucruo
 }
 
@@ -839,21 +839,21 @@ func (ucruo *UserCreditRecordUpdateOne) sqlSave(ctx context.Context) (_node *Use
 	}
 	if value, ok := ucruo.mutation.CreditsChange(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
+			Type:   field.TypeInt32,
 			Value:  value,
 			Column: usercreditrecord.FieldCreditsChange,
 		})
 	}
 	if value, ok := ucruo.mutation.AddedCreditsChange(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
+			Type:   field.TypeInt32,
 			Value:  value,
 			Column: usercreditrecord.FieldCreditsChange,
 		})
 	}
 	if ucruo.mutation.CreditsChangeCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
+			Type:   field.TypeInt32,
 			Column: usercreditrecord.FieldCreditsChange,
 		})
 	}

@@ -129,7 +129,7 @@ func OperationType(v string) predicate.UserCreditRecord {
 }
 
 // CreditsChange applies equality check predicate on the "credits_change" field. It's identical to CreditsChangeEQ.
-func CreditsChange(v uint32) predicate.UserCreditRecord {
+func CreditsChange(v int32) predicate.UserCreditRecord {
 	return predicate.UserCreditRecord(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldCreditsChange), v))
 	})
@@ -668,21 +668,21 @@ func OperationTypeContainsFold(v string) predicate.UserCreditRecord {
 }
 
 // CreditsChangeEQ applies the EQ predicate on the "credits_change" field.
-func CreditsChangeEQ(v uint32) predicate.UserCreditRecord {
+func CreditsChangeEQ(v int32) predicate.UserCreditRecord {
 	return predicate.UserCreditRecord(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldCreditsChange), v))
 	})
 }
 
 // CreditsChangeNEQ applies the NEQ predicate on the "credits_change" field.
-func CreditsChangeNEQ(v uint32) predicate.UserCreditRecord {
+func CreditsChangeNEQ(v int32) predicate.UserCreditRecord {
 	return predicate.UserCreditRecord(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldCreditsChange), v))
 	})
 }
 
 // CreditsChangeIn applies the In predicate on the "credits_change" field.
-func CreditsChangeIn(vs ...uint32) predicate.UserCreditRecord {
+func CreditsChangeIn(vs ...int32) predicate.UserCreditRecord {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -693,7 +693,7 @@ func CreditsChangeIn(vs ...uint32) predicate.UserCreditRecord {
 }
 
 // CreditsChangeNotIn applies the NotIn predicate on the "credits_change" field.
-func CreditsChangeNotIn(vs ...uint32) predicate.UserCreditRecord {
+func CreditsChangeNotIn(vs ...int32) predicate.UserCreditRecord {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -704,28 +704,28 @@ func CreditsChangeNotIn(vs ...uint32) predicate.UserCreditRecord {
 }
 
 // CreditsChangeGT applies the GT predicate on the "credits_change" field.
-func CreditsChangeGT(v uint32) predicate.UserCreditRecord {
+func CreditsChangeGT(v int32) predicate.UserCreditRecord {
 	return predicate.UserCreditRecord(func(s *sql.Selector) {
 		s.Where(sql.GT(s.C(FieldCreditsChange), v))
 	})
 }
 
 // CreditsChangeGTE applies the GTE predicate on the "credits_change" field.
-func CreditsChangeGTE(v uint32) predicate.UserCreditRecord {
+func CreditsChangeGTE(v int32) predicate.UserCreditRecord {
 	return predicate.UserCreditRecord(func(s *sql.Selector) {
 		s.Where(sql.GTE(s.C(FieldCreditsChange), v))
 	})
 }
 
 // CreditsChangeLT applies the LT predicate on the "credits_change" field.
-func CreditsChangeLT(v uint32) predicate.UserCreditRecord {
+func CreditsChangeLT(v int32) predicate.UserCreditRecord {
 	return predicate.UserCreditRecord(func(s *sql.Selector) {
 		s.Where(sql.LT(s.C(FieldCreditsChange), v))
 	})
 }
 
 // CreditsChangeLTE applies the LTE predicate on the "credits_change" field.
-func CreditsChangeLTE(v uint32) predicate.UserCreditRecord {
+func CreditsChangeLTE(v int32) predicate.UserCreditRecord {
 	return predicate.UserCreditRecord(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldCreditsChange), v))
 	})

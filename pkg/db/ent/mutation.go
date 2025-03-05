@@ -5698,7 +5698,7 @@ type UserCreditRecordMutation struct {
 	app_id            *uuid.UUID
 	user_id           *uuid.UUID
 	operation_type    *string
-	credits_change    *uint32
+	credits_change    *int32
 	addcredits_change *int32
 	extra             *string
 	clearedFields     map[string]struct{}
@@ -6163,13 +6163,13 @@ func (m *UserCreditRecordMutation) ResetOperationType() {
 }
 
 // SetCreditsChange sets the "credits_change" field.
-func (m *UserCreditRecordMutation) SetCreditsChange(u uint32) {
-	m.credits_change = &u
+func (m *UserCreditRecordMutation) SetCreditsChange(i int32) {
+	m.credits_change = &i
 	m.addcredits_change = nil
 }
 
 // CreditsChange returns the value of the "credits_change" field in the mutation.
-func (m *UserCreditRecordMutation) CreditsChange() (r uint32, exists bool) {
+func (m *UserCreditRecordMutation) CreditsChange() (r int32, exists bool) {
 	v := m.credits_change
 	if v == nil {
 		return
@@ -6180,7 +6180,7 @@ func (m *UserCreditRecordMutation) CreditsChange() (r uint32, exists bool) {
 // OldCreditsChange returns the old "credits_change" field's value of the UserCreditRecord entity.
 // If the UserCreditRecord object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserCreditRecordMutation) OldCreditsChange(ctx context.Context) (v uint32, err error) {
+func (m *UserCreditRecordMutation) OldCreditsChange(ctx context.Context) (v int32, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldCreditsChange is only allowed on UpdateOne operations")
 	}
@@ -6194,12 +6194,12 @@ func (m *UserCreditRecordMutation) OldCreditsChange(ctx context.Context) (v uint
 	return oldValue.CreditsChange, nil
 }
 
-// AddCreditsChange adds u to the "credits_change" field.
-func (m *UserCreditRecordMutation) AddCreditsChange(u int32) {
+// AddCreditsChange adds i to the "credits_change" field.
+func (m *UserCreditRecordMutation) AddCreditsChange(i int32) {
 	if m.addcredits_change != nil {
-		*m.addcredits_change += u
+		*m.addcredits_change += i
 	} else {
-		m.addcredits_change = &u
+		m.addcredits_change = &i
 	}
 }
 
@@ -6440,7 +6440,7 @@ func (m *UserCreditRecordMutation) SetField(name string, value ent.Value) error 
 		m.SetOperationType(v)
 		return nil
 	case usercreditrecord.FieldCreditsChange:
-		v, ok := value.(uint32)
+		v, ok := value.(int32)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}

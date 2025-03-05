@@ -180,7 +180,7 @@ var (
 		{Name: "app_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "user_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "operation_type", Type: field.TypeString, Nullable: true, Default: "DefaultOperationType"},
-		{Name: "credits_change", Type: field.TypeUint32, Nullable: true, Default: 0},
+		{Name: "credits_change", Type: field.TypeInt32, Nullable: true, Default: 0},
 		{Name: "extra", Type: field.TypeString, Nullable: true, Default: ""},
 	}
 	// UserCreditRecordsTable holds the schema information for the "user_credit_records" table.

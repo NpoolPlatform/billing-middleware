@@ -41,7 +41,7 @@ func (UserCreditRecord) Fields() []ent.Field {
 			Optional().
 			Default(types.OperationType_DefaultOperationType.String()),
 		field.
-			Uint32("credits_change").
+			Int32("credits_change").
 			Optional().
 			Default(0),
 		field.

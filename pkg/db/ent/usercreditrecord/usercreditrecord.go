@@ -84,7 +84,7 @@ var (
 	// DefaultOperationType holds the default value on creation for the "operation_type" field.
 	DefaultOperationType string
 	// DefaultCreditsChange holds the default value on creation for the "credits_change" field.
-	DefaultCreditsChange uint32
+	DefaultCreditsChange int32
 	// DefaultExtra holds the default value on creation for the "extra" field.
 	DefaultExtra string
 )

@@ -121,15 +121,15 @@ func (ucrc *UserCreditRecordCreate) SetNillableOperationType(s *string) *UserCre
 }
 
 // SetCreditsChange sets the "credits_change" field.
-func (ucrc *UserCreditRecordCreate) SetCreditsChange(u uint32) *UserCreditRecordCreate {
-	ucrc.mutation.SetCreditsChange(u)
+func (ucrc *UserCreditRecordCreate) SetCreditsChange(i int32) *UserCreditRecordCreate {
+	ucrc.mutation.SetCreditsChange(i)
 	return ucrc
 }
 
 // SetNillableCreditsChange sets the "credits_change" field if the given value is not nil.
-func (ucrc *UserCreditRecordCreate) SetNillableCreditsChange(u *uint32) *UserCreditRecordCreate {
-	if u != nil {
-		ucrc.SetCreditsChange(*u)
+func (ucrc *UserCreditRecordCreate) SetNillableCreditsChange(i *int32) *UserCreditRecordCreate {
+	if i != nil {
+		ucrc.SetCreditsChange(*i)
 	}
 	return ucrc
 }
@@ -396,7 +396,7 @@ func (ucrc *UserCreditRecordCreate) createSpec() (*UserCreditRecord, *sqlgraph.C
 	}
 	if value, ok := ucrc.mutation.CreditsChange(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
+			Type:   field.TypeInt32,
 			Value:  value,
 			Column: usercreditrecord.FieldCreditsChange,
 		})
@@ -585,7 +585,7 @@ func (u *UserCreditRecordUpsert) ClearOperationType() *UserCreditRecordUpsert {
 }
 
 // SetCreditsChange sets the "credits_change" field.
-func (u *UserCreditRecordUpsert) SetCreditsChange(v uint32) *UserCreditRecordUpsert {
+func (u *UserCreditRecordUpsert) SetCreditsChange(v int32) *UserCreditRecordUpsert {
 	u.Set(usercreditrecord.FieldCreditsChange, v)
 	return u
 }
@@ -597,7 +597,7 @@ func (u *UserCreditRecordUpsert) UpdateCreditsChange() *UserCreditRecordUpsert {
 }
 
 // AddCreditsChange adds v to the "credits_change" field.
-func (u *UserCreditRecordUpsert) AddCreditsChange(v uint32) *UserCreditRecordUpsert {
+func (u *UserCreditRecordUpsert) AddCreditsChange(v int32) *UserCreditRecordUpsert {
 	u.Add(usercreditrecord.FieldCreditsChange, v)
 	return u
 }
@@ -817,14 +817,14 @@ func (u *UserCreditRecordUpsertOne) ClearOperationType() *UserCreditRecordUpsert
 }
 
 // SetCreditsChange sets the "credits_change" field.
-func (u *UserCreditRecordUpsertOne) SetCreditsChange(v uint32) *UserCreditRecordUpsertOne {
+func (u *UserCreditRecordUpsertOne) SetCreditsChange(v int32) *UserCreditRecordUpsertOne {
 	return u.Update(func(s *UserCreditRecordUpsert) {
 		s.SetCreditsChange(v)
 	})
 }
 
 // AddCreditsChange adds v to the "credits_change" field.
-func (u *UserCreditRecordUpsertOne) AddCreditsChange(v uint32) *UserCreditRecordUpsertOne {
+func (u *UserCreditRecordUpsertOne) AddCreditsChange(v int32) *UserCreditRecordUpsertOne {
 	return u.Update(func(s *UserCreditRecordUpsert) {
 		s.AddCreditsChange(v)
 	})
@@ -1221,14 +1221,14 @@ func (u *UserCreditRecordUpsertBulk) ClearOperationType() *UserCreditRecordUpser
 }
 
 // SetCreditsChange sets the "credits_change" field.
-func (u *UserCreditRecordUpsertBulk) SetCreditsChange(v uint32) *UserCreditRecordUpsertBulk {
+func (u *UserCreditRecordUpsertBulk) SetCreditsChange(v int32) *UserCreditRecordUpsertBulk {
 	return u.Update(func(s *UserCreditRecordUpsert) {
 		s.SetCreditsChange(v)
 	})
 }
 
 // AddCreditsChange adds v to the "credits_change" field.
-func (u *UserCreditRecordUpsertBulk) AddCreditsChange(v uint32) *UserCreditRecordUpsertBulk {
+func (u *UserCreditRecordUpsertBulk) AddCreditsChange(v int32) *UserCreditRecordUpsertBulk {
 	return u.Update(func(s *UserCreditRecordUpsert) {
 		s.AddCreditsChange(v)
 	})

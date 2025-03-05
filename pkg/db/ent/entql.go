@@ -167,7 +167,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			usercreditrecord.FieldAppID:         {Type: field.TypeUUID, Column: usercreditrecord.FieldAppID},
 			usercreditrecord.FieldUserID:        {Type: field.TypeUUID, Column: usercreditrecord.FieldUserID},
 			usercreditrecord.FieldOperationType: {Type: field.TypeString, Column: usercreditrecord.FieldOperationType},
-			usercreditrecord.FieldCreditsChange: {Type: field.TypeUint32, Column: usercreditrecord.FieldCreditsChange},
+			usercreditrecord.FieldCreditsChange: {Type: field.TypeInt32, Column: usercreditrecord.FieldCreditsChange},
 			usercreditrecord.FieldExtra:         {Type: field.TypeString, Column: usercreditrecord.FieldExtra},
 		},
 	}
@@ -771,8 +771,8 @@ func (f *UserCreditRecordFilter) WhereOperationType(p entql.StringP) {
 	f.Where(p.Field(usercreditrecord.FieldOperationType))
 }
 
-// WhereCreditsChange applies the entql uint32 predicate on the credits_change field.
-func (f *UserCreditRecordFilter) WhereCreditsChange(p entql.Uint32P) {
+// WhereCreditsChange applies the entql int32 predicate on the credits_change field.
+func (f *UserCreditRecordFilter) WhereCreditsChange(p entql.Int32P) {
 	f.Where(p.Field(usercreditrecord.FieldCreditsChange))
 }
 
