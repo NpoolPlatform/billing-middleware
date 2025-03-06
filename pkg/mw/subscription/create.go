@@ -34,7 +34,7 @@ func (h *createHandler) constructSQL() {
 	_sql += comma + "credit"
 	_sql += comma + "sort_order"
 	_sql += comma + "package_type"
-	if h.QpsLimit != nil {
+	if h.QPSLimit != nil {
 		_sql += comma + "qps_limit"
 	}
 	if h.Description != nil {
@@ -58,8 +58,8 @@ func (h *createHandler) constructSQL() {
 	_sql += fmt.Sprintf("%v'%v' as credit", comma, *h.Credit)
 	_sql += fmt.Sprintf("%v'%v' as sort_order", comma, *h.SortOrder)
 	_sql += fmt.Sprintf("%v'%v' as package_type", comma, *h.PackageType)
-	if h.QpsLimit != nil {
-		_sql += fmt.Sprintf("%v'%v' as qps_limit", comma, *h.QpsLimit)
+	if h.QPSLimit != nil {
+		_sql += fmt.Sprintf("%v'%v' as qps_limit", comma, *h.QPSLimit)
 	}
 	if h.Description != nil {
 		_sql += fmt.Sprintf("%v'%v' as description", comma, *h.Description)

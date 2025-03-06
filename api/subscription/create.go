@@ -32,7 +32,7 @@ func (s *Server) CreateSubscription(ctx context.Context, in *npool.CreateSubscri
 		subscription1.WithPackageType(req.PackageType, true),
 		subscription1.WithCredit(req.Credit, true),
 		subscription1.WithResetType(req.ResetType, true),
-		subscription1.WithQpsLimit(req.QpsLimit, true),
+		subscription1.WithQPSLimit(req.QPSLimit, true),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

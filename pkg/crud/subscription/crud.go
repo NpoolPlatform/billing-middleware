@@ -22,7 +22,7 @@ type Req struct {
 	PackageType *types.PackageType
 	Credit      *uint32
 	ResetType   *types.ResetType
-	QpsLimit    *uint32
+	QPSLimit    *uint32
 	DeletedAt   *uint32
 }
 
@@ -54,8 +54,8 @@ func CreateSet(c *ent.SubscriptionCreate, req *Req) *ent.SubscriptionCreate {
 	if req.ResetType != nil {
 		c.SetResetType(req.ResetType.String())
 	}
-	if req.QpsLimit != nil {
-		c.SetQPSLimit(*req.QpsLimit)
+	if req.QPSLimit != nil {
+		c.SetQPSLimit(*req.QPSLimit)
 	}
 	return c
 }
@@ -82,8 +82,8 @@ func UpdateSet(u *ent.SubscriptionUpdateOne, req *Req) *ent.SubscriptionUpdateOn
 	if req.ResetType != nil {
 		u.SetResetType(req.ResetType.String())
 	}
-	if req.QpsLimit != nil {
-		u.SetQPSLimit(*req.QpsLimit)
+	if req.QPSLimit != nil {
+		u.SetQPSLimit(*req.QPSLimit)
 	}
 	if req.DeletedAt != nil {
 		u.SetDeletedAt(*req.DeletedAt)

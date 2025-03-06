@@ -100,7 +100,7 @@ func WithPackageID(id *string, must bool) func(context.Context, *Handler) error 
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return wlog.Errorf("invalid packageid")
+				return wlog.Errorf("invalid package id")
 			}
 			return nil
 		}
@@ -204,6 +204,7 @@ func WithAddonCredit(u *uint32, must bool) func(context.Context, *Handler) error
 	}
 }
 
+//nolint:gocyclo
 func (h *Handler) withSubscriptionConds(conds *npool.Conds) error {
 	if conds.ID != nil {
 		h.SubscriptionConds.ID = &cruder.Cond{

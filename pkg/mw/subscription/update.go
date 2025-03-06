@@ -49,8 +49,8 @@ func (h *updateHandler) constructSQL() error {
 		_sql += fmt.Sprintf("%vreset_type = '%v', ", set, *h.ResetType)
 		set = ""
 	}
-	if h.QpsLimit != nil {
-		_sql += fmt.Sprintf("%vqps_limit = '%v', ", set, *h.QpsLimit)
+	if h.QPSLimit != nil {
+		_sql += fmt.Sprintf("%vqps_limit = '%v', ", set, *h.QPSLimit)
 		set = ""
 	}
 	if set != "" {

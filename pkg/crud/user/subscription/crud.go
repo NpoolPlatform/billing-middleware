@@ -180,7 +180,7 @@ func SetQueryConds(q *ent.UserSubscriptionQuery, conds *Conds) (*ent.UserSubscri
 	if conds.PackageID != nil {
 		id, ok := conds.PackageID.Val.(uuid.UUID)
 		if !ok {
-			return nil, wlog.Errorf("invalid packageid")
+			return nil, wlog.Errorf("invalid package id")
 		}
 		switch conds.PackageID.Op {
 		case cruder.EQ:

@@ -31,7 +31,7 @@ func (s *Server) UpdateSubscription(ctx context.Context, in *npool.UpdateSubscri
 		subscription1.WithSortOrder(req.SortOrder, false),
 		subscription1.WithCredit(req.Credit, false),
 		subscription1.WithResetType(req.ResetType, false),
-		subscription1.WithQpsLimit(req.QpsLimit, false),
+		subscription1.WithQPSLimit(req.QPSLimit, false),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

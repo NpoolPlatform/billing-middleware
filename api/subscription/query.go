@@ -1,3 +1,4 @@
+//nolint:dupl
 package subscription
 
 import (
@@ -72,7 +73,13 @@ func (s *Server) GetSubscriptions(ctx context.Context, in *npool.GetSubscription
 	}, nil
 }
 
-func (s *Server) GetSubscriptionsCount(ctx context.Context, in *npool.GetSubscriptionsCountRequest) (*npool.GetSubscriptionsCountResponse, error) {
+func (s *Server) GetSubscriptionsCount(
+	ctx context.Context,
+	in *npool.GetSubscriptionsCountRequest,
+) (
+	*npool.GetSubscriptionsCountResponse,
+	error,
+) {
 	handler, err := subscription1.NewHandler(
 		ctx,
 		subscription1.WithConds(in.GetConds()),

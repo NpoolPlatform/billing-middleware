@@ -195,7 +195,7 @@ func WithResetType(t *types.ResetType, must bool) func(context.Context, *Handler
 	}
 }
 
-func WithQpsLimit(u *uint32, must bool) func(context.Context, *Handler) error {
+func WithQPSLimit(u *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if u == nil {
 			if must {
@@ -203,7 +203,7 @@ func WithQpsLimit(u *uint32, must bool) func(context.Context, *Handler) error {
 			}
 			return nil
 		}
-		h.QpsLimit = u
+		h.QPSLimit = u
 		return nil
 	}
 }

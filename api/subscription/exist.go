@@ -1,3 +1,4 @@
+//nolint:dupl
 package subscription
 
 import (
@@ -12,7 +13,13 @@ import (
 	npool "github.com/NpoolPlatform/message/npool/billing/mw/v1/subscription"
 )
 
-func (s *Server) ExistSubscriptionConds(ctx context.Context, in *npool.ExistSubscriptionCondsRequest) (*npool.ExistSubscriptionCondsResponse, error) {
+func (s *Server) ExistSubscriptionConds(
+	ctx context.Context,
+	in *npool.ExistSubscriptionCondsRequest,
+) (
+	*npool.ExistSubscriptionCondsResponse,
+	error,
+) {
 	handler, err := subscription1.NewHandler(
 		ctx,
 		subscription1.WithConds(in.GetConds()),
