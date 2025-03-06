@@ -58,7 +58,7 @@ func (h *createHandler) constructSQL() {
 	_sql += fmt.Sprintf("%v'%v' as end_at", comma, *h.EndAt)
 	_sql += fmt.Sprintf("%v'%v' as usage_state", comma, *h.UsageState)
 	_sql += fmt.Sprintf("%v'%v' as subscription_credit", comma, *h.SubscriptionCredit)
-	_sql += fmt.Sprintf("%v'%v' as addon_credit", comma, *h.AddonCredit)
+	_sql += fmt.Sprintf("%v'%v' as addon_credit", comma, *h.SubscriptionCredit)
 
 	_sql += fmt.Sprintf("%v%v as created_at", comma, now)
 	_sql += fmt.Sprintf("%v%v as updated_at", comma, now)
@@ -72,19 +72,19 @@ func (h *createHandler) constructSQL() {
 	h.sql = _sql
 }
 
-func (h *createHandler) createAddon(ctx context.Context, tx *ent.Tx) error {
+func (h *createHandler) createSubscription(ctx context.Context, tx *ent.Tx) error {
 	rc, err := tx.ExecContext(ctx, h.sql)
 	if err != nil {
 		return wlog.WrapError(err)
 	}
 	n, err := rc.RowsAffected()
 	if err != nil || n != 1 {
-		return wlog.Errorf("fail create addon: %v", err)
+		return wlog.Errorf("fail create subscription: %v", err)
 	}
 	return nil
 }
 
-func (h *Handler) CreateAddon(ctx context.Context) error {
+func (h *Handler) CreateSubscription(ctx context.Context) error {
 	handler := &createHandler{
 		Handler: h,
 	}
@@ -93,6 +93,6 @@ func (h *Handler) CreateAddon(ctx context.Context) error {
 	}
 	handler.constructSQL()
 	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
-		return handler.createAddon(_ctx, tx)
+		return handler.createSubscription(_ctx, tx)
 	})
 }

@@ -47,7 +47,7 @@ func (h *updateHandler) updateExchange(ctx context.Context, tx *ent.Tx) error {
 		return wlog.WrapError(err)
 	}
 	if n, err := rc.RowsAffected(); err != nil || n != 1 {
-		return wlog.Errorf("fail update addon: %v", err)
+		return wlog.Errorf("fail update exchange: %v", err)
 	}
 	return nil
 }
@@ -58,7 +58,7 @@ func (h *Handler) UpdateExchange(ctx context.Context) error {
 		return wlog.WrapError(err)
 	}
 	if info == nil {
-		return wlog.Errorf("invalid addon")
+		return wlog.Errorf("invalid exchange")
 	}
 
 	handler := &updateHandler{

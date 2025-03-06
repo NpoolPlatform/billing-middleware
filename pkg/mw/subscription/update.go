@@ -71,7 +71,7 @@ func (h *updateHandler) updateSubscription(ctx context.Context, tx *ent.Tx) erro
 		return wlog.WrapError(err)
 	}
 	if n, err := rc.RowsAffected(); err != nil || n != 1 {
-		return wlog.Errorf("fail update addon: %v", err)
+		return wlog.Errorf("fail update subscription: %v", err)
 	}
 	return nil
 }
@@ -82,7 +82,7 @@ func (h *Handler) UpdateSubscription(ctx context.Context) error {
 		return wlog.WrapError(err)
 	}
 	if info == nil {
-		return wlog.Errorf("invalid addon")
+		return wlog.Errorf("invalid subscription")
 	}
 
 	handler := &updateHandler{
