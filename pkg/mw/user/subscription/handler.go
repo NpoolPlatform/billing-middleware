@@ -277,7 +277,7 @@ func (h *Handler) withSubscriptionConds(conds *npool.Conds) error {
 	if conds.UsageState != nil {
 		h.SubscriptionConds.UsageState = &cruder.Cond{
 			Op:  conds.GetUsageState().GetOp(),
-			Val: conds.GetUsageState().GetValue(),
+			Val: types.UsageState(conds.GetUsageState().GetValue()),
 		}
 	}
 	if conds.IDs != nil {

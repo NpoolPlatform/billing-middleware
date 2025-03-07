@@ -33,7 +33,7 @@ var ret = npool.Subscription{
 	UserID:             uuid.NewString(),
 	PackageID:          uuid.NewString(),
 	StartAt:            uint32(10),
-	EndAt:              uint32(10),
+	EndAt:              uint32(20),
 	OrderID:            uuid.NewString(),
 	UsageState:         types.UsageState_Usful,
 	UsageStateStr:      types.UsageState_Usful.String(),
@@ -74,7 +74,12 @@ func createSubscription(t *testing.T) {
 }
 
 func updateSubscription(t *testing.T) {
-	ret.SubscriptionCredit = uint32(10)
+	ret.StartAt = uint32(20)
+	ret.EndAt = uint32(30)
+	ret.UsageState = types.UsageState_Expire
+	ret.UsageStateStr = types.UsageState_Expire.String()
+	ret.SubscriptionCredit = uint32(20)
+	ret.AddonCredit = uint32(30)
 	handler, err := NewHandler(
 		context.Background(),
 		WithID(&ret.ID, true),
@@ -120,6 +125,8 @@ func getSubscriptions(t *testing.T) {
 		StartAt:    &basetypes.Uint32Val{Op: cruder.EQ, Value: ret.StartAt},
 		EndAt:      &basetypes.Uint32Val{Op: cruder.EQ, Value: ret.EndAt},
 		UsageState: &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(ret.UsageState)},
+		IDs:        &basetypes.Uint32SliceVal{Op: cruder.IN, Value: []uint32{ret.ID}},
+		EntIDs:     &basetypes.StringSliceVal{Op: cruder.IN, Value: []string{ret.EntID}},
 	}
 
 	handler, err := NewHandler(

@@ -37,8 +37,8 @@ func (h *updateHandler) constructSQL() error {
 		_sql += fmt.Sprintf("%vsubscription_credit = %v, ", set, *h.SubscriptionCredit)
 		set = ""
 	}
-	if h.SubscriptionCredit != nil {
-		_sql += fmt.Sprintf("%vaddon_credit = %v, ", set, *h.SubscriptionCredit)
+	if h.AddonCredit != nil {
+		_sql += fmt.Sprintf("%vaddon_credit = %v, ", set, *h.AddonCredit)
 		set = ""
 	}
 	if set != "" {

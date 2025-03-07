@@ -34,7 +34,7 @@ func (h *createHandler) constructSQL() {
 	_sql += comma + "order_id"
 	_sql += comma + "start_at"
 	_sql += comma + "end_at"
-	_sql += comma + "end_at"
+	_sql += comma + "usage_state"
 	_sql += comma + "subscription_credit"
 	_sql += comma + "addon_credit"
 
@@ -54,11 +54,11 @@ func (h *createHandler) constructSQL() {
 	_sql += fmt.Sprintf("%v'%v' as user_id", comma, *h.UserID)
 	_sql += fmt.Sprintf("%v'%v' as package_id", comma, *h.PackageID)
 	_sql += fmt.Sprintf("%v'%v' as order_id", comma, *h.OrderID)
-	_sql += fmt.Sprintf("%v'%v' as start_at", comma, *h.StartAt)
-	_sql += fmt.Sprintf("%v'%v' as end_at", comma, *h.EndAt)
+	_sql += fmt.Sprintf("%v%v as start_at", comma, *h.StartAt)
+	_sql += fmt.Sprintf("%v%v as end_at", comma, *h.EndAt)
 	_sql += fmt.Sprintf("%v'%v' as usage_state", comma, *h.UsageState)
-	_sql += fmt.Sprintf("%v'%v' as subscription_credit", comma, *h.SubscriptionCredit)
-	_sql += fmt.Sprintf("%v'%v' as addon_credit", comma, *h.SubscriptionCredit)
+	_sql += fmt.Sprintf("%v%v as subscription_credit", comma, *h.SubscriptionCredit)
+	_sql += fmt.Sprintf("%v%v as addon_credit", comma, *h.SubscriptionCredit)
 
 	_sql += fmt.Sprintf("%v%v as created_at", comma, now)
 	_sql += fmt.Sprintf("%v%v as updated_at", comma, now)
