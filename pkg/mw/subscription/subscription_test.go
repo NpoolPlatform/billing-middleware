@@ -129,6 +129,8 @@ func getSubscriptions(t *testing.T) {
 		SortOrder:   &basetypes.Uint32Val{Op: cruder.EQ, Value: ret.SortOrder},
 		PackageType: &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(ret.PackageType)},
 		ResetType:   &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(ret.ResetType)},
+		IDs:         &basetypes.Uint32SliceVal{Op: cruder.IN, Value: []uint32{ret.ID}},
+		EntIDs:      &basetypes.StringSliceVal{Op: cruder.IN, Value: []string{ret.EntID}},
 	}
 
 	handler, err := NewHandler(
