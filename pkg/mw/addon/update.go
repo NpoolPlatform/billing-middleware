@@ -49,17 +49,6 @@ func (h *updateHandler) constructSQL() error {
 	_sql += "where "
 	_sql += fmt.Sprintf("id = %v ", *h.ID)
 
-	if h.Credit != nil {
-		_sql += "and not exists ("
-		_sql += "select 1 from (select * from addons) as ad "
-		_sql += fmt.Sprintf(
-			"where ad.credit = '%v' and ad.id != %v and deleted_at = 0",
-			*h.Credit,
-			*h.ID,
-		)
-		_sql += " limit 1)"
-	}
-
 	h.sql = _sql
 	return nil
 }
