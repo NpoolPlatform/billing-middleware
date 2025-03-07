@@ -6,6 +6,6 @@ COPY billing-middleware /app
 
 ENTRYPOINT ["/app/billing-middleware"]
 
-EXPOSE 50330 50331 50332 50333
+EXPOSE 50890 50891 50892 50893
 
 CMD ["run"]
