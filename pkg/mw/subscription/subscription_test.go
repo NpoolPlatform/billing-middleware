@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
+	"github.com/shopspring/decimal"
 
 	npool "github.com/NpoolPlatform/message/npool/billing/mw/v1/subscription"
 	"github.com/google/uuid"
@@ -31,7 +32,7 @@ var ret = npool.Subscription{
 	EntID:          uuid.NewString(),
 	AppID:          uuid.NewString(),
 	PackageName:    uuid.NewString(),
-	Price:          "10",
+	Price:          decimal.NewFromInt(10).String(),
 	Description:    uuid.NewString(),
 	SortOrder:      uint32(1),
 	PackageType:    types.PackageType_Normal,
@@ -75,7 +76,14 @@ func createSubscription(t *testing.T) {
 }
 
 func updateSubscription(t *testing.T) {
+	ret.PackageName = uuid.NewString()
+	ret.Price = decimal.NewFromInt(10).String()
+	ret.Description = uuid.NewString()
+	ret.SortOrder = uint32(2)
 	ret.Credit = uint32(10)
+	ret.ResetType = types.ResetType_Quarterly
+	ret.ResetTypeStr = types.ResetType_Quarterly.String()
+	ret.QPSLimit = uint32(5)
 	handler, err := NewHandler(
 		context.Background(),
 		WithID(&ret.ID, true),
@@ -83,7 +91,6 @@ func updateSubscription(t *testing.T) {
 		WithPrice(&ret.Price, true),
 		WithDescription(&ret.Description, true),
 		WithSortOrder(&ret.SortOrder, true),
-		WithPackageType(&ret.PackageType, true),
 		WithCredit(&ret.Credit, true),
 		WithResetType(&ret.ResetType, true),
 		WithQPSLimit(&ret.QPSLimit, true),

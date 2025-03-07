@@ -21,8 +21,8 @@ func (h *updateHandler) constructSQL() error {
 	now := uint32(time.Now().Unix())
 
 	_sql := "update subscriptions "
-	if h.Price != nil {
-		_sql += fmt.Sprintf("%vpackage_name = '%v', ", set, *h.Price)
+	if h.PackageName != nil {
+		_sql += fmt.Sprintf("%vpackage_name = '%v', ", set, *h.PackageName)
 		set = ""
 	}
 	if h.Price != nil {

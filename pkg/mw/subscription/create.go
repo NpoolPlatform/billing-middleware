@@ -34,6 +34,7 @@ func (h *createHandler) constructSQL() {
 	_sql += comma + "credit"
 	_sql += comma + "sort_order"
 	_sql += comma + "package_type"
+	_sql += comma + "reset_type"
 	if h.QPSLimit != nil {
 		_sql += comma + "qps_limit"
 	}
@@ -58,6 +59,7 @@ func (h *createHandler) constructSQL() {
 	_sql += fmt.Sprintf("%v'%v' as credit", comma, *h.Credit)
 	_sql += fmt.Sprintf("%v'%v' as sort_order", comma, *h.SortOrder)
 	_sql += fmt.Sprintf("%v'%v' as package_type", comma, *h.PackageType)
+	_sql += fmt.Sprintf("%v'%v' as reset_type", comma, *h.ResetType)
 	if h.QPSLimit != nil {
 		_sql += fmt.Sprintf("%v'%v' as qps_limit", comma, *h.QPSLimit)
 	}
@@ -69,7 +71,7 @@ func (h *createHandler) constructSQL() {
 	_sql += fmt.Sprintf("%v0 as deleted_at", comma)
 	_sql += ") as tmp "
 	_sql += "where not exists ("
-	_sql += "select 1 from subscriptions as ad "
+	_sql += "select 1 from subscriptions as ss "
 	_sql += fmt.Sprintf("where ss.package_name = '%v' and deleted_at = 0", *h.PackageName)
 	_sql += " limit 1)"
 

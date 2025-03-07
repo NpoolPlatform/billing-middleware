@@ -6,7 +6,9 @@ import (
 	"github.com/NpoolPlatform/billing-middleware/pkg/db"
 	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent"
 	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
+	types "github.com/NpoolPlatform/message/npool/basetypes/billing/v1"
 	npool "github.com/NpoolPlatform/message/npool/billing/mw/v1/subscription"
+	"github.com/shopspring/decimal"
 )
 
 type queryHandler struct {
@@ -18,6 +20,15 @@ type queryHandler struct {
 
 func (h *queryHandler) scan(ctx context.Context) error {
 	return h.stmSelect.Scan(ctx, &h.infos)
+}
+
+func (h *queryHandler) formalize() {
+	for _, info := range h.infos {
+		amount, _ := decimal.NewFromString(info.Price)
+		info.Price = amount.String()
+		info.PackageType = types.PackageType(types.PackageType_value[info.PackageTypeStr])
+		info.ResetType = types.ResetType(types.ResetType_value[info.ResetTypeStr])
+	}
 }
 
 func (h *Handler) GetSubscription(ctx context.Context) (*npool.Subscription, error) {
@@ -42,6 +53,7 @@ func (h *Handler) GetSubscription(ctx context.Context) (*npool.Subscription, err
 	if len(handler.infos) > 1 {
 		return nil, wlog.Errorf("too many records")
 	}
+	handler.formalize()
 	return handler.infos[0], nil
 }
 
@@ -65,6 +77,7 @@ func (h *Handler) GetSubscriptions(ctx context.Context) ([]*npool.Subscription, 
 	if err != nil {
 		return nil, wlog.WrapError(err)
 	}
+	handler.formalize()
 	return handler.infos, nil
 }
 

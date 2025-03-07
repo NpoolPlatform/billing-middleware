@@ -250,13 +250,13 @@ func (h *Handler) withSubscriptionConds(conds *npool.Conds) error {
 	if conds.PackageType != nil {
 		h.SubscriptionConds.PackageType = &cruder.Cond{
 			Op:  conds.GetPackageType().GetOp(),
-			Val: conds.GetPackageType().GetValue(),
+			Val: types.PackageType(conds.GetPackageType().GetValue()),
 		}
 	}
 	if conds.ResetType != nil {
 		h.SubscriptionConds.ResetType = &cruder.Cond{
 			Op:  conds.GetResetType().GetOp(),
-			Val: conds.GetResetType().GetValue(),
+			Val: types.ResetType(conds.GetResetType().GetValue()),
 		}
 	}
 	if conds.IDs != nil {

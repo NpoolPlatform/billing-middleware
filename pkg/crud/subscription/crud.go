@@ -182,9 +182,9 @@ func SetQueryConds(q *ent.SubscriptionQuery, conds *Conds) (*ent.SubscriptionQue
 		}
 	}
 	if conds.SortOrder != nil {
-		sortorder, ok := conds.PackageName.Val.(uint32)
+		sortorder, ok := conds.SortOrder.Val.(uint32)
 		if !ok {
-			return nil, wlog.Errorf("invalid packagename")
+			return nil, wlog.Errorf("invalid sortorder")
 		}
 		switch conds.SortOrder.Op {
 		case cruder.EQ:
