@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
+	"github.com/shopspring/decimal"
 
 	npool "github.com/NpoolPlatform/message/npool/billing/mw/v1/addon"
 	"github.com/google/uuid"
@@ -29,9 +30,9 @@ func init() {
 var ret = npool.Addon{
 	EntID:       uuid.NewString(),
 	AppID:       uuid.NewString(),
-	Price:       uuid.NewString(),
-	Credit:      uint32(10),
-	SortOrder:   uint32(0),
+	Price:       decimal.NewFromInt(22).String(),
+	Credit:      uint32(16),
+	SortOrder:   uint32(1),
 	Enabled:     true,
 	Description: uuid.NewString(),
 }
@@ -66,7 +67,11 @@ func createAddon(t *testing.T) {
 }
 
 func updateAddon(t *testing.T) {
-	ret.Credit = uint32(10)
+	ret.Price = decimal.NewFromInt(15).String()
+	ret.Credit = uint32(25)
+	ret.SortOrder = uint32(2)
+	ret.Enabled = false
+	ret.Description = uuid.NewString()
 	handler, err := NewHandler(
 		context.Background(),
 		WithID(&ret.ID, true),

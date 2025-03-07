@@ -7,6 +7,7 @@ import (
 	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent"
 	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	npool "github.com/NpoolPlatform/message/npool/billing/mw/v1/addon"
+	"github.com/shopspring/decimal"
 )
 
 type queryHandler struct {
@@ -18,6 +19,13 @@ type queryHandler struct {
 
 func (h *queryHandler) scan(ctx context.Context) error {
 	return h.stmSelect.Scan(ctx, &h.infos)
+}
+
+func (h *queryHandler) formalize() {
+	for _, info := range h.infos {
+		amount, _ := decimal.NewFromString(info.Price)
+		info.Price = amount.String()
+	}
 }
 
 func (h *Handler) GetAddon(ctx context.Context) (*npool.Addon, error) {
@@ -42,6 +50,7 @@ func (h *Handler) GetAddon(ctx context.Context) (*npool.Addon, error) {
 	if len(handler.infos) > 1 {
 		return nil, wlog.Errorf("too many records")
 	}
+	handler.formalize()
 	return handler.infos[0], nil
 }
 
@@ -65,6 +74,7 @@ func (h *Handler) GetAddons(ctx context.Context) ([]*npool.Addon, error) {
 	if err != nil {
 		return nil, wlog.WrapError(err)
 	}
+	handler.formalize()
 	return handler.infos, nil
 }
 
