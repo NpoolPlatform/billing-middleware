@@ -237,7 +237,7 @@ pipeline {
           fi
         '''.stripIndent())
         sh 'make verify-build'
-        sh 'DOCKER_REGISTRY=$DOCKER_REGISTRY make generate-docker-images'
+        sh 'DEVELOPMENT=other DOCKER_REGISTRY=$DOCKER_REGISTRY make generate-docker-images'
       }
     }
 
