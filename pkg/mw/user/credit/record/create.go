@@ -22,7 +22,7 @@ func (h *createHandler) constructSQL() {
 	now := uint32(time.Now().Unix())
 	comma := ""
 
-	_sql := "insert into credit_records ("
+	_sql := "insert into user_credit_records ("
 	if h.EntID != nil {
 		_sql += "ent_id"
 		comma = ", "

@@ -184,7 +184,7 @@ func (h *Handler) withRecordConds(conds *npool.Conds) error {
 	if conds.OperationType != nil {
 		h.RecordConds.OperationType = &cruder.Cond{
 			Op:  conds.GetOperationType().GetOp(),
-			Val: conds.GetOperationType().GetValue(),
+			Val: types.OperationType(conds.GetOperationType().GetValue()),
 		}
 	}
 	if conds.IDs != nil {

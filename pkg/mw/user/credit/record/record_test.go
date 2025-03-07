@@ -85,6 +85,8 @@ func getRecords(t *testing.T) {
 		AppID:         &basetypes.StringVal{Op: cruder.EQ, Value: ret.AppID},
 		UserID:        &basetypes.StringVal{Op: cruder.EQ, Value: ret.UserID},
 		OperationType: &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(ret.OperationType)},
+		IDs:           &basetypes.Uint32SliceVal{Op: cruder.IN, Value: []uint32{ret.ID}},
+		EntIDs:        &basetypes.StringSliceVal{Op: cruder.IN, Value: []string{ret.EntID}},
 	}
 
 	handler, err := NewHandler(
