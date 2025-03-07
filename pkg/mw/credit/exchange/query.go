@@ -6,6 +6,7 @@ import (
 	"github.com/NpoolPlatform/billing-middleware/pkg/db"
 	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent"
 	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
+	types "github.com/NpoolPlatform/message/npool/basetypes/billing/v1"
 	npool "github.com/NpoolPlatform/message/npool/billing/mw/v1/credit/exchange"
 )
 
@@ -18,6 +19,12 @@ type queryHandler struct {
 
 func (h *queryHandler) scan(ctx context.Context) error {
 	return h.stmSelect.Scan(ctx, &h.infos)
+}
+
+func (h *queryHandler) formalize() {
+	for _, info := range h.infos {
+		info.UsageType = types.UsageType(types.UsageType_value[info.UsageTypeStr])
+	}
 }
 
 func (h *Handler) GetExchange(ctx context.Context) (*npool.Exchange, error) {
@@ -42,6 +49,7 @@ func (h *Handler) GetExchange(ctx context.Context) (*npool.Exchange, error) {
 	if len(handler.infos) > 1 {
 		return nil, wlog.Errorf("too many records")
 	}
+	handler.formalize()
 	return handler.infos[0], nil
 }
 
@@ -65,6 +73,7 @@ func (h *Handler) GetExchanges(ctx context.Context) ([]*npool.Exchange, error) {
 	if err != nil {
 		return nil, wlog.WrapError(err)
 	}
+	handler.formalize()
 	return handler.infos, nil
 }
 

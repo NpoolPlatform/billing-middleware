@@ -64,11 +64,11 @@ func createExchange(t *testing.T) {
 }
 
 func updateExchange(t *testing.T) {
-	ret.Credit = uint32(10)
+	ret.Credit = uint32(20)
+	ret.ExchangeThreshold = uint32(15)
 	handler, err := NewHandler(
 		context.Background(),
 		WithID(&ret.ID, true),
-		WithUsageType(&ret.UsageType, true),
 		WithCredit(&ret.Credit, true),
 		WithExchangeThreshold(&ret.ExchangeThreshold, true),
 	)
@@ -103,6 +103,8 @@ func getExchanges(t *testing.T) {
 		EntID:     &basetypes.StringVal{Op: cruder.EQ, Value: ret.EntID},
 		AppID:     &basetypes.StringVal{Op: cruder.EQ, Value: ret.AppID},
 		UsageType: &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(ret.UsageType)},
+		IDs:       &basetypes.Uint32SliceVal{Op: cruder.IN, Value: []uint32{ret.ID}},
+		EntIDs:    &basetypes.StringSliceVal{Op: cruder.IN, Value: []string{ret.EntID}},
 	}
 
 	handler, err := NewHandler(

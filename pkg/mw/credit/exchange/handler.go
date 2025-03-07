@@ -160,7 +160,7 @@ func (h *Handler) withExchangeConds(conds *npool.Conds) error {
 	if conds.UsageType != nil {
 		h.ExchangeConds.UsageType = &cruder.Cond{
 			Op:  conds.GetUsageType().GetOp(),
-			Val: conds.GetUsageType().GetValue(),
+			Val: types.UsageType(conds.GetUsageType().GetValue()),
 		}
 	}
 

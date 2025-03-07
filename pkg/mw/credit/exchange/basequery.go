@@ -51,7 +51,6 @@ func (h *baseQueryHandler) queryJoinMyself(s *sql.Selector) {
 		AppendSelect(
 			t1.C(entexchange.FieldEntID),
 			t1.C(entexchange.FieldAppID),
-			t1.C(entexchange.FieldAppID),
 			t1.C(entexchange.FieldUsageType),
 			t1.C(entexchange.FieldCredit),
 			t1.C(entexchange.FieldExchangeThreshold),
