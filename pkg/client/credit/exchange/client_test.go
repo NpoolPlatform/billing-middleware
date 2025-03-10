@@ -39,7 +39,6 @@ var ret = &npool.Exchange{
 	ExchangeThreshold: uint32(1),
 }
 
-//nolint:unparam
 func setup(t *testing.T) func(*testing.T) {
 	return func(*testing.T) {}
 }

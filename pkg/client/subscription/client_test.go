@@ -46,7 +46,6 @@ var ret = &npool.Subscription{
 	QPSLimit:       uint32(1),
 }
 
-//nolint:unparam
 func setup(t *testing.T) func(*testing.T) {
 	return func(*testing.T) {}
 }

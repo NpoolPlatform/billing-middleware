@@ -40,7 +40,6 @@ var ret = &npool.Addon{
 	Description: uuid.NewString(),
 }
 
-//nolint:unparam
 func setup(t *testing.T) func(*testing.T) {
 	return func(*testing.T) {}
 }

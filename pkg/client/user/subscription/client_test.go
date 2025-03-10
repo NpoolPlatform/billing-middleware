@@ -44,7 +44,6 @@ var ret = &npool.Subscription{
 	AddonCredit:        uint32(10),
 }
 
-//nolint:unparam
 func setup(t *testing.T) func(*testing.T) {
 	return func(*testing.T) {}
 }

@@ -67,7 +67,7 @@ func GetRecords(ctx context.Context, conds *npool.Conds, offset, limit int32) (i
 	return _infos.([]*npool.Record), nil
 }
 
-func GetRecordsCount(ctx context.Context, conds *npool.Conds, offset, limit int32) (total uint32, err error) {
+func GetRecordsCount(ctx context.Context, conds *npool.Conds) (total uint32, err error) {
 	_, err = withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.GetRecordsCount(ctx, &npool.GetRecordsCountRequest{
 			Conds: conds,
