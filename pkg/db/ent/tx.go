@@ -28,6 +28,8 @@ type Tx struct {
 	UserCreditRecord *UserCreditRecordClient
 	// UserSubscription is the client for interacting with the UserSubscription builders.
 	UserSubscription *UserSubscriptionClient
+	// UserSubscriptionChange is the client for interacting with the UserSubscriptionChange builders.
+	UserSubscriptionChange *UserSubscriptionChangeClient
 
 	// lazily loaded.
 	client     *Client
@@ -170,6 +172,7 @@ func (tx *Tx) init() {
 	tx.Subscription = NewSubscriptionClient(tx.config)
 	tx.UserCreditRecord = NewUserCreditRecordClient(tx.config)
 	tx.UserSubscription = NewUserSubscriptionClient(tx.config)
+	tx.UserSubscriptionChange = NewUserSubscriptionChangeClient(tx.config)
 }
 
 // txDriver wraps the given dialect.Tx with a nop dialect.Driver implementation.

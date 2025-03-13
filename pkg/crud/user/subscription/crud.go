@@ -18,7 +18,6 @@ type Req struct {
 	PackageID          *uuid.UUID
 	StartAt            *uint32
 	EndAt              *uint32
-	OrderID            *uuid.UUID
 	UsageState         *types.UsageState
 	SubscriptionCredit *uint32
 	AddonCredit        *uint32
@@ -44,9 +43,6 @@ func CreateSet(c *ent.UserSubscriptionCreate, req *Req) *ent.UserSubscriptionCre
 	if req.EndAt != nil {
 		c.SetEndAt(*req.EndAt)
 	}
-	if req.OrderID != nil {
-		c.SetOrderID(*req.OrderID)
-	}
 	if req.UsageState != nil {
 		c.SetUsageState(req.UsageState.String())
 	}
@@ -66,9 +62,6 @@ func UpdateSet(u *ent.UserSubscriptionUpdateOne, req *Req) *ent.UserSubscription
 	}
 	if req.EndAt != nil {
 		u.SetEndAt(*req.EndAt)
-	}
-	if req.OrderID != nil {
-		u.SetOrderID(*req.OrderID)
 	}
 	if req.UsageState != nil {
 		u.SetUsageState(req.UsageState.String())
@@ -93,7 +86,6 @@ type Conds struct {
 	AppID      *cruder.Cond
 	UserID     *cruder.Cond
 	PackageID  *cruder.Cond
-	OrderID    *cruder.Cond
 	StartAt    *cruder.Cond
 	EndAt      *cruder.Cond
 	UsageState *cruder.Cond
@@ -185,18 +177,6 @@ func SetQueryConds(q *ent.UserSubscriptionQuery, conds *Conds) (*ent.UserSubscri
 		switch conds.PackageID.Op {
 		case cruder.EQ:
 			q.Where(entusersubscription.PackageID(id))
-		default:
-			return nil, wlog.Errorf("invalid subscription field")
-		}
-	}
-	if conds.OrderID != nil {
-		id, ok := conds.OrderID.Val.(uuid.UUID)
-		if !ok {
-			return nil, wlog.Errorf("invalid orderid")
-		}
-		switch conds.OrderID.Op {
-		case cruder.EQ:
-			q.Where(entusersubscription.OrderID(id))
 		default:
 			return nil, wlog.Errorf("invalid subscription field")
 		}

@@ -16,6 +16,7 @@ import (
 	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/subscription"
 	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/usercreditrecord"
 	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/usersubscription"
+	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/usersubscriptionchange"
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
 
@@ -31,13 +32,14 @@ const (
 	OpUpdateOne = ent.OpUpdateOne
 
 	// Node types.
-	TypeAddon            = "Addon"
-	TypeExchange         = "Exchange"
-	TypeIgnoreID         = "IgnoreID"
-	TypePubsubMessage    = "PubsubMessage"
-	TypeSubscription     = "Subscription"
-	TypeUserCreditRecord = "UserCreditRecord"
-	TypeUserSubscription = "UserSubscription"
+	TypeAddon                  = "Addon"
+	TypeExchange               = "Exchange"
+	TypeIgnoreID               = "IgnoreID"
+	TypePubsubMessage          = "PubsubMessage"
+	TypeSubscription           = "Subscription"
+	TypeUserCreditRecord       = "UserCreditRecord"
+	TypeUserSubscription       = "UserSubscription"
+	TypeUserSubscriptionChange = "UserSubscriptionChange"
 )
 
 // AddonMutation represents an operation that mutates the Addon nodes in the graph.
@@ -6095,7 +6097,6 @@ type UserSubscriptionMutation struct {
 	app_id                 *uuid.UUID
 	user_id                *uuid.UUID
 	package_id             *uuid.UUID
-	order_id               *uuid.UUID
 	start_at               *uint32
 	addstart_at            *int32
 	end_at                 *uint32
@@ -6566,55 +6567,6 @@ func (m *UserSubscriptionMutation) ResetPackageID() {
 	delete(m.clearedFields, usersubscription.FieldPackageID)
 }
 
-// SetOrderID sets the "order_id" field.
-func (m *UserSubscriptionMutation) SetOrderID(u uuid.UUID) {
-	m.order_id = &u
-}
-
-// OrderID returns the value of the "order_id" field in the mutation.
-func (m *UserSubscriptionMutation) OrderID() (r uuid.UUID, exists bool) {
-	v := m.order_id
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldOrderID returns the old "order_id" field's value of the UserSubscription entity.
-// If the UserSubscription object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserSubscriptionMutation) OldOrderID(ctx context.Context) (v uuid.UUID, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldOrderID is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldOrderID requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldOrderID: %w", err)
-	}
-	return oldValue.OrderID, nil
-}
-
-// ClearOrderID clears the value of the "order_id" field.
-func (m *UserSubscriptionMutation) ClearOrderID() {
-	m.order_id = nil
-	m.clearedFields[usersubscription.FieldOrderID] = struct{}{}
-}
-
-// OrderIDCleared returns if the "order_id" field was cleared in this mutation.
-func (m *UserSubscriptionMutation) OrderIDCleared() bool {
-	_, ok := m.clearedFields[usersubscription.FieldOrderID]
-	return ok
-}
-
-// ResetOrderID resets all changes to the "order_id" field.
-func (m *UserSubscriptionMutation) ResetOrderID() {
-	m.order_id = nil
-	delete(m.clearedFields, usersubscription.FieldOrderID)
-}
-
 // SetStartAt sets the "start_at" field.
 func (m *UserSubscriptionMutation) SetStartAt(u uint32) {
 	m.start_at = &u
@@ -6963,7 +6915,7 @@ func (m *UserSubscriptionMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserSubscriptionMutation) Fields() []string {
-	fields := make([]string, 0, 13)
+	fields := make([]string, 0, 12)
 	if m.created_at != nil {
 		fields = append(fields, usersubscription.FieldCreatedAt)
 	}
@@ -6984,9 +6936,6 @@ func (m *UserSubscriptionMutation) Fields() []string {
 	}
 	if m.package_id != nil {
 		fields = append(fields, usersubscription.FieldPackageID)
-	}
-	if m.order_id != nil {
-		fields = append(fields, usersubscription.FieldOrderID)
 	}
 	if m.start_at != nil {
 		fields = append(fields, usersubscription.FieldStartAt)
@@ -7025,8 +6974,6 @@ func (m *UserSubscriptionMutation) Field(name string) (ent.Value, bool) {
 		return m.UserID()
 	case usersubscription.FieldPackageID:
 		return m.PackageID()
-	case usersubscription.FieldOrderID:
-		return m.OrderID()
 	case usersubscription.FieldStartAt:
 		return m.StartAt()
 	case usersubscription.FieldEndAt:
@@ -7060,8 +7007,6 @@ func (m *UserSubscriptionMutation) OldField(ctx context.Context, name string) (e
 		return m.OldUserID(ctx)
 	case usersubscription.FieldPackageID:
 		return m.OldPackageID(ctx)
-	case usersubscription.FieldOrderID:
-		return m.OldOrderID(ctx)
 	case usersubscription.FieldStartAt:
 		return m.OldStartAt(ctx)
 	case usersubscription.FieldEndAt:
@@ -7129,13 +7074,6 @@ func (m *UserSubscriptionMutation) SetField(name string, value ent.Value) error 
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetPackageID(v)
-		return nil
-	case usersubscription.FieldOrderID:
-		v, ok := value.(uuid.UUID)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetOrderID(v)
 		return nil
 	case usersubscription.FieldStartAt:
 		v, ok := value.(uint32)
@@ -7298,9 +7236,6 @@ func (m *UserSubscriptionMutation) ClearedFields() []string {
 	if m.FieldCleared(usersubscription.FieldPackageID) {
 		fields = append(fields, usersubscription.FieldPackageID)
 	}
-	if m.FieldCleared(usersubscription.FieldOrderID) {
-		fields = append(fields, usersubscription.FieldOrderID)
-	}
 	if m.FieldCleared(usersubscription.FieldStartAt) {
 		fields = append(fields, usersubscription.FieldStartAt)
 	}
@@ -7338,9 +7273,6 @@ func (m *UserSubscriptionMutation) ClearField(name string) error {
 		return nil
 	case usersubscription.FieldPackageID:
 		m.ClearPackageID()
-		return nil
-	case usersubscription.FieldOrderID:
-		m.ClearOrderID()
 		return nil
 	case usersubscription.FieldStartAt:
 		m.ClearStartAt()
@@ -7385,9 +7317,6 @@ func (m *UserSubscriptionMutation) ResetField(name string) error {
 		return nil
 	case usersubscription.FieldPackageID:
 		m.ResetPackageID()
-		return nil
-	case usersubscription.FieldOrderID:
-		m.ResetOrderID()
 		return nil
 	case usersubscription.FieldStartAt:
 		m.ResetStartAt()
@@ -7454,4 +7383,953 @@ func (m *UserSubscriptionMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *UserSubscriptionMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown UserSubscription edge %s", name)
+}
+
+// UserSubscriptionChangeMutation represents an operation that mutates the UserSubscriptionChange nodes in the graph.
+type UserSubscriptionChangeMutation struct {
+	config
+	op                   Op
+	typ                  string
+	id                   *uint32
+	created_at           *uint32
+	addcreated_at        *int32
+	updated_at           *uint32
+	addupdated_at        *int32
+	deleted_at           *uint32
+	adddeleted_at        *int32
+	ent_id               *uuid.UUID
+	app_id               *uuid.UUID
+	user_id              *uuid.UUID
+	user_subscription_id *uuid.UUID
+	old_package_id       *uuid.UUID
+	new_package_id       *uuid.UUID
+	clearedFields        map[string]struct{}
+	done                 bool
+	oldValue             func(context.Context) (*UserSubscriptionChange, error)
+	predicates           []predicate.UserSubscriptionChange
+}
+
+var _ ent.Mutation = (*UserSubscriptionChangeMutation)(nil)
+
+// usersubscriptionchangeOption allows management of the mutation configuration using functional options.
+type usersubscriptionchangeOption func(*UserSubscriptionChangeMutation)
+
+// newUserSubscriptionChangeMutation creates new mutation for the UserSubscriptionChange entity.
+func newUserSubscriptionChangeMutation(c config, op Op, opts ...usersubscriptionchangeOption) *UserSubscriptionChangeMutation {
+	m := &UserSubscriptionChangeMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeUserSubscriptionChange,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withUserSubscriptionChangeID sets the ID field of the mutation.
+func withUserSubscriptionChangeID(id uint32) usersubscriptionchangeOption {
+	return func(m *UserSubscriptionChangeMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *UserSubscriptionChange
+		)
+		m.oldValue = func(ctx context.Context) (*UserSubscriptionChange, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().UserSubscriptionChange.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withUserSubscriptionChange sets the old UserSubscriptionChange of the mutation.
+func withUserSubscriptionChange(node *UserSubscriptionChange) usersubscriptionchangeOption {
+	return func(m *UserSubscriptionChangeMutation) {
+		m.oldValue = func(context.Context) (*UserSubscriptionChange, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m UserSubscriptionChangeMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m UserSubscriptionChangeMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of UserSubscriptionChange entities.
+func (m *UserSubscriptionChangeMutation) SetID(id uint32) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *UserSubscriptionChangeMutation) ID() (id uint32, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *UserSubscriptionChangeMutation) IDs(ctx context.Context) ([]uint32, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uint32{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().UserSubscriptionChange.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *UserSubscriptionChangeMutation) SetCreatedAt(u uint32) {
+	m.created_at = &u
+	m.addcreated_at = nil
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *UserSubscriptionChangeMutation) CreatedAt() (r uint32, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the UserSubscriptionChange entity.
+// If the UserSubscriptionChange object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserSubscriptionChangeMutation) OldCreatedAt(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// AddCreatedAt adds u to the "created_at" field.
+func (m *UserSubscriptionChangeMutation) AddCreatedAt(u int32) {
+	if m.addcreated_at != nil {
+		*m.addcreated_at += u
+	} else {
+		m.addcreated_at = &u
+	}
+}
+
+// AddedCreatedAt returns the value that was added to the "created_at" field in this mutation.
+func (m *UserSubscriptionChangeMutation) AddedCreatedAt() (r int32, exists bool) {
+	v := m.addcreated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *UserSubscriptionChangeMutation) ResetCreatedAt() {
+	m.created_at = nil
+	m.addcreated_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *UserSubscriptionChangeMutation) SetUpdatedAt(u uint32) {
+	m.updated_at = &u
+	m.addupdated_at = nil
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *UserSubscriptionChangeMutation) UpdatedAt() (r uint32, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the UserSubscriptionChange entity.
+// If the UserSubscriptionChange object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserSubscriptionChangeMutation) OldUpdatedAt(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// AddUpdatedAt adds u to the "updated_at" field.
+func (m *UserSubscriptionChangeMutation) AddUpdatedAt(u int32) {
+	if m.addupdated_at != nil {
+		*m.addupdated_at += u
+	} else {
+		m.addupdated_at = &u
+	}
+}
+
+// AddedUpdatedAt returns the value that was added to the "updated_at" field in this mutation.
+func (m *UserSubscriptionChangeMutation) AddedUpdatedAt() (r int32, exists bool) {
+	v := m.addupdated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *UserSubscriptionChangeMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	m.addupdated_at = nil
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *UserSubscriptionChangeMutation) SetDeletedAt(u uint32) {
+	m.deleted_at = &u
+	m.adddeleted_at = nil
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *UserSubscriptionChangeMutation) DeletedAt() (r uint32, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the UserSubscriptionChange entity.
+// If the UserSubscriptionChange object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserSubscriptionChangeMutation) OldDeletedAt(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// AddDeletedAt adds u to the "deleted_at" field.
+func (m *UserSubscriptionChangeMutation) AddDeletedAt(u int32) {
+	if m.adddeleted_at != nil {
+		*m.adddeleted_at += u
+	} else {
+		m.adddeleted_at = &u
+	}
+}
+
+// AddedDeletedAt returns the value that was added to the "deleted_at" field in this mutation.
+func (m *UserSubscriptionChangeMutation) AddedDeletedAt() (r int32, exists bool) {
+	v := m.adddeleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *UserSubscriptionChangeMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	m.adddeleted_at = nil
+}
+
+// SetEntID sets the "ent_id" field.
+func (m *UserSubscriptionChangeMutation) SetEntID(u uuid.UUID) {
+	m.ent_id = &u
+}
+
+// EntID returns the value of the "ent_id" field in the mutation.
+func (m *UserSubscriptionChangeMutation) EntID() (r uuid.UUID, exists bool) {
+	v := m.ent_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEntID returns the old "ent_id" field's value of the UserSubscriptionChange entity.
+// If the UserSubscriptionChange object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserSubscriptionChangeMutation) OldEntID(ctx context.Context) (v uuid.UUID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldEntID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldEntID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEntID: %w", err)
+	}
+	return oldValue.EntID, nil
+}
+
+// ResetEntID resets all changes to the "ent_id" field.
+func (m *UserSubscriptionChangeMutation) ResetEntID() {
+	m.ent_id = nil
+}
+
+// SetAppID sets the "app_id" field.
+func (m *UserSubscriptionChangeMutation) SetAppID(u uuid.UUID) {
+	m.app_id = &u
+}
+
+// AppID returns the value of the "app_id" field in the mutation.
+func (m *UserSubscriptionChangeMutation) AppID() (r uuid.UUID, exists bool) {
+	v := m.app_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAppID returns the old "app_id" field's value of the UserSubscriptionChange entity.
+// If the UserSubscriptionChange object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserSubscriptionChangeMutation) OldAppID(ctx context.Context) (v uuid.UUID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAppID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAppID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAppID: %w", err)
+	}
+	return oldValue.AppID, nil
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (m *UserSubscriptionChangeMutation) ClearAppID() {
+	m.app_id = nil
+	m.clearedFields[usersubscriptionchange.FieldAppID] = struct{}{}
+}
+
+// AppIDCleared returns if the "app_id" field was cleared in this mutation.
+func (m *UserSubscriptionChangeMutation) AppIDCleared() bool {
+	_, ok := m.clearedFields[usersubscriptionchange.FieldAppID]
+	return ok
+}
+
+// ResetAppID resets all changes to the "app_id" field.
+func (m *UserSubscriptionChangeMutation) ResetAppID() {
+	m.app_id = nil
+	delete(m.clearedFields, usersubscriptionchange.FieldAppID)
+}
+
+// SetUserID sets the "user_id" field.
+func (m *UserSubscriptionChangeMutation) SetUserID(u uuid.UUID) {
+	m.user_id = &u
+}
+
+// UserID returns the value of the "user_id" field in the mutation.
+func (m *UserSubscriptionChangeMutation) UserID() (r uuid.UUID, exists bool) {
+	v := m.user_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUserID returns the old "user_id" field's value of the UserSubscriptionChange entity.
+// If the UserSubscriptionChange object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserSubscriptionChangeMutation) OldUserID(ctx context.Context) (v uuid.UUID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUserID: %w", err)
+	}
+	return oldValue.UserID, nil
+}
+
+// ClearUserID clears the value of the "user_id" field.
+func (m *UserSubscriptionChangeMutation) ClearUserID() {
+	m.user_id = nil
+	m.clearedFields[usersubscriptionchange.FieldUserID] = struct{}{}
+}
+
+// UserIDCleared returns if the "user_id" field was cleared in this mutation.
+func (m *UserSubscriptionChangeMutation) UserIDCleared() bool {
+	_, ok := m.clearedFields[usersubscriptionchange.FieldUserID]
+	return ok
+}
+
+// ResetUserID resets all changes to the "user_id" field.
+func (m *UserSubscriptionChangeMutation) ResetUserID() {
+	m.user_id = nil
+	delete(m.clearedFields, usersubscriptionchange.FieldUserID)
+}
+
+// SetUserSubscriptionID sets the "user_subscription_id" field.
+func (m *UserSubscriptionChangeMutation) SetUserSubscriptionID(u uuid.UUID) {
+	m.user_subscription_id = &u
+}
+
+// UserSubscriptionID returns the value of the "user_subscription_id" field in the mutation.
+func (m *UserSubscriptionChangeMutation) UserSubscriptionID() (r uuid.UUID, exists bool) {
+	v := m.user_subscription_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUserSubscriptionID returns the old "user_subscription_id" field's value of the UserSubscriptionChange entity.
+// If the UserSubscriptionChange object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserSubscriptionChangeMutation) OldUserSubscriptionID(ctx context.Context) (v uuid.UUID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUserSubscriptionID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUserSubscriptionID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUserSubscriptionID: %w", err)
+	}
+	return oldValue.UserSubscriptionID, nil
+}
+
+// ClearUserSubscriptionID clears the value of the "user_subscription_id" field.
+func (m *UserSubscriptionChangeMutation) ClearUserSubscriptionID() {
+	m.user_subscription_id = nil
+	m.clearedFields[usersubscriptionchange.FieldUserSubscriptionID] = struct{}{}
+}
+
+// UserSubscriptionIDCleared returns if the "user_subscription_id" field was cleared in this mutation.
+func (m *UserSubscriptionChangeMutation) UserSubscriptionIDCleared() bool {
+	_, ok := m.clearedFields[usersubscriptionchange.FieldUserSubscriptionID]
+	return ok
+}
+
+// ResetUserSubscriptionID resets all changes to the "user_subscription_id" field.
+func (m *UserSubscriptionChangeMutation) ResetUserSubscriptionID() {
+	m.user_subscription_id = nil
+	delete(m.clearedFields, usersubscriptionchange.FieldUserSubscriptionID)
+}
+
+// SetOldPackageID sets the "old_package_id" field.
+func (m *UserSubscriptionChangeMutation) SetOldPackageID(u uuid.UUID) {
+	m.old_package_id = &u
+}
+
+// OldPackageID returns the value of the "old_package_id" field in the mutation.
+func (m *UserSubscriptionChangeMutation) OldPackageID() (r uuid.UUID, exists bool) {
+	v := m.old_package_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOldPackageID returns the old "old_package_id" field's value of the UserSubscriptionChange entity.
+// If the UserSubscriptionChange object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserSubscriptionChangeMutation) OldOldPackageID(ctx context.Context) (v uuid.UUID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOldPackageID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOldPackageID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOldPackageID: %w", err)
+	}
+	return oldValue.OldPackageID, nil
+}
+
+// ClearOldPackageID clears the value of the "old_package_id" field.
+func (m *UserSubscriptionChangeMutation) ClearOldPackageID() {
+	m.old_package_id = nil
+	m.clearedFields[usersubscriptionchange.FieldOldPackageID] = struct{}{}
+}
+
+// OldPackageIDCleared returns if the "old_package_id" field was cleared in this mutation.
+func (m *UserSubscriptionChangeMutation) OldPackageIDCleared() bool {
+	_, ok := m.clearedFields[usersubscriptionchange.FieldOldPackageID]
+	return ok
+}
+
+// ResetOldPackageID resets all changes to the "old_package_id" field.
+func (m *UserSubscriptionChangeMutation) ResetOldPackageID() {
+	m.old_package_id = nil
+	delete(m.clearedFields, usersubscriptionchange.FieldOldPackageID)
+}
+
+// SetNewPackageID sets the "new_package_id" field.
+func (m *UserSubscriptionChangeMutation) SetNewPackageID(u uuid.UUID) {
+	m.new_package_id = &u
+}
+
+// NewPackageID returns the value of the "new_package_id" field in the mutation.
+func (m *UserSubscriptionChangeMutation) NewPackageID() (r uuid.UUID, exists bool) {
+	v := m.new_package_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldNewPackageID returns the old "new_package_id" field's value of the UserSubscriptionChange entity.
+// If the UserSubscriptionChange object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserSubscriptionChangeMutation) OldNewPackageID(ctx context.Context) (v uuid.UUID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldNewPackageID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldNewPackageID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldNewPackageID: %w", err)
+	}
+	return oldValue.NewPackageID, nil
+}
+
+// ClearNewPackageID clears the value of the "new_package_id" field.
+func (m *UserSubscriptionChangeMutation) ClearNewPackageID() {
+	m.new_package_id = nil
+	m.clearedFields[usersubscriptionchange.FieldNewPackageID] = struct{}{}
+}
+
+// NewPackageIDCleared returns if the "new_package_id" field was cleared in this mutation.
+func (m *UserSubscriptionChangeMutation) NewPackageIDCleared() bool {
+	_, ok := m.clearedFields[usersubscriptionchange.FieldNewPackageID]
+	return ok
+}
+
+// ResetNewPackageID resets all changes to the "new_package_id" field.
+func (m *UserSubscriptionChangeMutation) ResetNewPackageID() {
+	m.new_package_id = nil
+	delete(m.clearedFields, usersubscriptionchange.FieldNewPackageID)
+}
+
+// Where appends a list predicates to the UserSubscriptionChangeMutation builder.
+func (m *UserSubscriptionChangeMutation) Where(ps ...predicate.UserSubscriptionChange) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// Op returns the operation name.
+func (m *UserSubscriptionChangeMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (UserSubscriptionChange).
+func (m *UserSubscriptionChangeMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *UserSubscriptionChangeMutation) Fields() []string {
+	fields := make([]string, 0, 9)
+	if m.created_at != nil {
+		fields = append(fields, usersubscriptionchange.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, usersubscriptionchange.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, usersubscriptionchange.FieldDeletedAt)
+	}
+	if m.ent_id != nil {
+		fields = append(fields, usersubscriptionchange.FieldEntID)
+	}
+	if m.app_id != nil {
+		fields = append(fields, usersubscriptionchange.FieldAppID)
+	}
+	if m.user_id != nil {
+		fields = append(fields, usersubscriptionchange.FieldUserID)
+	}
+	if m.user_subscription_id != nil {
+		fields = append(fields, usersubscriptionchange.FieldUserSubscriptionID)
+	}
+	if m.old_package_id != nil {
+		fields = append(fields, usersubscriptionchange.FieldOldPackageID)
+	}
+	if m.new_package_id != nil {
+		fields = append(fields, usersubscriptionchange.FieldNewPackageID)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *UserSubscriptionChangeMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case usersubscriptionchange.FieldCreatedAt:
+		return m.CreatedAt()
+	case usersubscriptionchange.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case usersubscriptionchange.FieldDeletedAt:
+		return m.DeletedAt()
+	case usersubscriptionchange.FieldEntID:
+		return m.EntID()
+	case usersubscriptionchange.FieldAppID:
+		return m.AppID()
+	case usersubscriptionchange.FieldUserID:
+		return m.UserID()
+	case usersubscriptionchange.FieldUserSubscriptionID:
+		return m.UserSubscriptionID()
+	case usersubscriptionchange.FieldOldPackageID:
+		return m.OldPackageID()
+	case usersubscriptionchange.FieldNewPackageID:
+		return m.NewPackageID()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *UserSubscriptionChangeMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case usersubscriptionchange.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case usersubscriptionchange.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case usersubscriptionchange.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case usersubscriptionchange.FieldEntID:
+		return m.OldEntID(ctx)
+	case usersubscriptionchange.FieldAppID:
+		return m.OldAppID(ctx)
+	case usersubscriptionchange.FieldUserID:
+		return m.OldUserID(ctx)
+	case usersubscriptionchange.FieldUserSubscriptionID:
+		return m.OldUserSubscriptionID(ctx)
+	case usersubscriptionchange.FieldOldPackageID:
+		return m.OldOldPackageID(ctx)
+	case usersubscriptionchange.FieldNewPackageID:
+		return m.OldNewPackageID(ctx)
+	}
+	return nil, fmt.Errorf("unknown UserSubscriptionChange field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *UserSubscriptionChangeMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case usersubscriptionchange.FieldCreatedAt:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case usersubscriptionchange.FieldUpdatedAt:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case usersubscriptionchange.FieldDeletedAt:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case usersubscriptionchange.FieldEntID:
+		v, ok := value.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEntID(v)
+		return nil
+	case usersubscriptionchange.FieldAppID:
+		v, ok := value.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAppID(v)
+		return nil
+	case usersubscriptionchange.FieldUserID:
+		v, ok := value.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUserID(v)
+		return nil
+	case usersubscriptionchange.FieldUserSubscriptionID:
+		v, ok := value.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUserSubscriptionID(v)
+		return nil
+	case usersubscriptionchange.FieldOldPackageID:
+		v, ok := value.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOldPackageID(v)
+		return nil
+	case usersubscriptionchange.FieldNewPackageID:
+		v, ok := value.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetNewPackageID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown UserSubscriptionChange field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *UserSubscriptionChangeMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_at != nil {
+		fields = append(fields, usersubscriptionchange.FieldCreatedAt)
+	}
+	if m.addupdated_at != nil {
+		fields = append(fields, usersubscriptionchange.FieldUpdatedAt)
+	}
+	if m.adddeleted_at != nil {
+		fields = append(fields, usersubscriptionchange.FieldDeletedAt)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *UserSubscriptionChangeMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case usersubscriptionchange.FieldCreatedAt:
+		return m.AddedCreatedAt()
+	case usersubscriptionchange.FieldUpdatedAt:
+		return m.AddedUpdatedAt()
+	case usersubscriptionchange.FieldDeletedAt:
+		return m.AddedDeletedAt()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *UserSubscriptionChangeMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case usersubscriptionchange.FieldCreatedAt:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedAt(v)
+		return nil
+	case usersubscriptionchange.FieldUpdatedAt:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedAt(v)
+		return nil
+	case usersubscriptionchange.FieldDeletedAt:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDeletedAt(v)
+		return nil
+	}
+	return fmt.Errorf("unknown UserSubscriptionChange numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *UserSubscriptionChangeMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(usersubscriptionchange.FieldAppID) {
+		fields = append(fields, usersubscriptionchange.FieldAppID)
+	}
+	if m.FieldCleared(usersubscriptionchange.FieldUserID) {
+		fields = append(fields, usersubscriptionchange.FieldUserID)
+	}
+	if m.FieldCleared(usersubscriptionchange.FieldUserSubscriptionID) {
+		fields = append(fields, usersubscriptionchange.FieldUserSubscriptionID)
+	}
+	if m.FieldCleared(usersubscriptionchange.FieldOldPackageID) {
+		fields = append(fields, usersubscriptionchange.FieldOldPackageID)
+	}
+	if m.FieldCleared(usersubscriptionchange.FieldNewPackageID) {
+		fields = append(fields, usersubscriptionchange.FieldNewPackageID)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *UserSubscriptionChangeMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *UserSubscriptionChangeMutation) ClearField(name string) error {
+	switch name {
+	case usersubscriptionchange.FieldAppID:
+		m.ClearAppID()
+		return nil
+	case usersubscriptionchange.FieldUserID:
+		m.ClearUserID()
+		return nil
+	case usersubscriptionchange.FieldUserSubscriptionID:
+		m.ClearUserSubscriptionID()
+		return nil
+	case usersubscriptionchange.FieldOldPackageID:
+		m.ClearOldPackageID()
+		return nil
+	case usersubscriptionchange.FieldNewPackageID:
+		m.ClearNewPackageID()
+		return nil
+	}
+	return fmt.Errorf("unknown UserSubscriptionChange nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *UserSubscriptionChangeMutation) ResetField(name string) error {
+	switch name {
+	case usersubscriptionchange.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case usersubscriptionchange.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case usersubscriptionchange.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case usersubscriptionchange.FieldEntID:
+		m.ResetEntID()
+		return nil
+	case usersubscriptionchange.FieldAppID:
+		m.ResetAppID()
+		return nil
+	case usersubscriptionchange.FieldUserID:
+		m.ResetUserID()
+		return nil
+	case usersubscriptionchange.FieldUserSubscriptionID:
+		m.ResetUserSubscriptionID()
+		return nil
+	case usersubscriptionchange.FieldOldPackageID:
+		m.ResetOldPackageID()
+		return nil
+	case usersubscriptionchange.FieldNewPackageID:
+		m.ResetNewPackageID()
+		return nil
+	}
+	return fmt.Errorf("unknown UserSubscriptionChange field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *UserSubscriptionChangeMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *UserSubscriptionChangeMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *UserSubscriptionChangeMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *UserSubscriptionChangeMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *UserSubscriptionChangeMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *UserSubscriptionChangeMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *UserSubscriptionChangeMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown UserSubscriptionChange unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *UserSubscriptionChangeMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown UserSubscriptionChange edge %s", name)
 }

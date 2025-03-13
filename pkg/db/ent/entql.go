@@ -10,6 +10,7 @@ import (
 	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/subscription"
 	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/usercreditrecord"
 	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/usersubscription"
+	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/usersubscriptionchange"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -19,7 +20,7 @@ import (
 
 // schemaGraph holds a representation of ent/schema at runtime.
 var schemaGraph = func() *sqlgraph.Schema {
-	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 7)}
+	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 8)}
 	graph.Nodes[0] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   addon.Table,
@@ -171,12 +172,33 @@ var schemaGraph = func() *sqlgraph.Schema {
 			usersubscription.FieldAppID:              {Type: field.TypeUUID, Column: usersubscription.FieldAppID},
 			usersubscription.FieldUserID:             {Type: field.TypeUUID, Column: usersubscription.FieldUserID},
 			usersubscription.FieldPackageID:          {Type: field.TypeUUID, Column: usersubscription.FieldPackageID},
-			usersubscription.FieldOrderID:            {Type: field.TypeUUID, Column: usersubscription.FieldOrderID},
 			usersubscription.FieldStartAt:            {Type: field.TypeUint32, Column: usersubscription.FieldStartAt},
 			usersubscription.FieldEndAt:              {Type: field.TypeUint32, Column: usersubscription.FieldEndAt},
 			usersubscription.FieldUsageState:         {Type: field.TypeString, Column: usersubscription.FieldUsageState},
 			usersubscription.FieldSubscriptionCredit: {Type: field.TypeUint32, Column: usersubscription.FieldSubscriptionCredit},
 			usersubscription.FieldAddonCredit:        {Type: field.TypeUint32, Column: usersubscription.FieldAddonCredit},
+		},
+	}
+	graph.Nodes[7] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   usersubscriptionchange.Table,
+			Columns: usersubscriptionchange.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeUint32,
+				Column: usersubscriptionchange.FieldID,
+			},
+		},
+		Type: "UserSubscriptionChange",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			usersubscriptionchange.FieldCreatedAt:          {Type: field.TypeUint32, Column: usersubscriptionchange.FieldCreatedAt},
+			usersubscriptionchange.FieldUpdatedAt:          {Type: field.TypeUint32, Column: usersubscriptionchange.FieldUpdatedAt},
+			usersubscriptionchange.FieldDeletedAt:          {Type: field.TypeUint32, Column: usersubscriptionchange.FieldDeletedAt},
+			usersubscriptionchange.FieldEntID:              {Type: field.TypeUUID, Column: usersubscriptionchange.FieldEntID},
+			usersubscriptionchange.FieldAppID:              {Type: field.TypeUUID, Column: usersubscriptionchange.FieldAppID},
+			usersubscriptionchange.FieldUserID:             {Type: field.TypeUUID, Column: usersubscriptionchange.FieldUserID},
+			usersubscriptionchange.FieldUserSubscriptionID: {Type: field.TypeUUID, Column: usersubscriptionchange.FieldUserSubscriptionID},
+			usersubscriptionchange.FieldOldPackageID:       {Type: field.TypeUUID, Column: usersubscriptionchange.FieldOldPackageID},
+			usersubscriptionchange.FieldNewPackageID:       {Type: field.TypeUUID, Column: usersubscriptionchange.FieldNewPackageID},
 		},
 	}
 	return graph
@@ -778,11 +800,6 @@ func (f *UserSubscriptionFilter) WherePackageID(p entql.ValueP) {
 	f.Where(p.Field(usersubscription.FieldPackageID))
 }
 
-// WhereOrderID applies the entql [16]byte predicate on the order_id field.
-func (f *UserSubscriptionFilter) WhereOrderID(p entql.ValueP) {
-	f.Where(p.Field(usersubscription.FieldOrderID))
-}
-
 // WhereStartAt applies the entql uint32 predicate on the start_at field.
 func (f *UserSubscriptionFilter) WhereStartAt(p entql.Uint32P) {
 	f.Where(p.Field(usersubscription.FieldStartAt))
@@ -806,4 +823,89 @@ func (f *UserSubscriptionFilter) WhereSubscriptionCredit(p entql.Uint32P) {
 // WhereAddonCredit applies the entql uint32 predicate on the addon_credit field.
 func (f *UserSubscriptionFilter) WhereAddonCredit(p entql.Uint32P) {
 	f.Where(p.Field(usersubscription.FieldAddonCredit))
+}
+
+// addPredicate implements the predicateAdder interface.
+func (uscq *UserSubscriptionChangeQuery) addPredicate(pred func(s *sql.Selector)) {
+	uscq.predicates = append(uscq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the UserSubscriptionChangeQuery builder.
+func (uscq *UserSubscriptionChangeQuery) Filter() *UserSubscriptionChangeFilter {
+	return &UserSubscriptionChangeFilter{config: uscq.config, predicateAdder: uscq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *UserSubscriptionChangeMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the UserSubscriptionChangeMutation builder.
+func (m *UserSubscriptionChangeMutation) Filter() *UserSubscriptionChangeFilter {
+	return &UserSubscriptionChangeFilter{config: m.config, predicateAdder: m}
+}
+
+// UserSubscriptionChangeFilter provides a generic filtering capability at runtime for UserSubscriptionChangeQuery.
+type UserSubscriptionChangeFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *UserSubscriptionChangeFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[7].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql uint32 predicate on the id field.
+func (f *UserSubscriptionChangeFilter) WhereID(p entql.Uint32P) {
+	f.Where(p.Field(usersubscriptionchange.FieldID))
+}
+
+// WhereCreatedAt applies the entql uint32 predicate on the created_at field.
+func (f *UserSubscriptionChangeFilter) WhereCreatedAt(p entql.Uint32P) {
+	f.Where(p.Field(usersubscriptionchange.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql uint32 predicate on the updated_at field.
+func (f *UserSubscriptionChangeFilter) WhereUpdatedAt(p entql.Uint32P) {
+	f.Where(p.Field(usersubscriptionchange.FieldUpdatedAt))
+}
+
+// WhereDeletedAt applies the entql uint32 predicate on the deleted_at field.
+func (f *UserSubscriptionChangeFilter) WhereDeletedAt(p entql.Uint32P) {
+	f.Where(p.Field(usersubscriptionchange.FieldDeletedAt))
+}
+
+// WhereEntID applies the entql [16]byte predicate on the ent_id field.
+func (f *UserSubscriptionChangeFilter) WhereEntID(p entql.ValueP) {
+	f.Where(p.Field(usersubscriptionchange.FieldEntID))
+}
+
+// WhereAppID applies the entql [16]byte predicate on the app_id field.
+func (f *UserSubscriptionChangeFilter) WhereAppID(p entql.ValueP) {
+	f.Where(p.Field(usersubscriptionchange.FieldAppID))
+}
+
+// WhereUserID applies the entql [16]byte predicate on the user_id field.
+func (f *UserSubscriptionChangeFilter) WhereUserID(p entql.ValueP) {
+	f.Where(p.Field(usersubscriptionchange.FieldUserID))
+}
+
+// WhereUserSubscriptionID applies the entql [16]byte predicate on the user_subscription_id field.
+func (f *UserSubscriptionChangeFilter) WhereUserSubscriptionID(p entql.ValueP) {
+	f.Where(p.Field(usersubscriptionchange.FieldUserSubscriptionID))
+}
+
+// WhereOldPackageID applies the entql [16]byte predicate on the old_package_id field.
+func (f *UserSubscriptionChangeFilter) WhereOldPackageID(p entql.ValueP) {
+	f.Where(p.Field(usersubscriptionchange.FieldOldPackageID))
+}
+
+// WhereNewPackageID applies the entql [16]byte predicate on the new_package_id field.
+func (f *UserSubscriptionChangeFilter) WhereNewPackageID(p entql.ValueP) {
+	f.Where(p.Field(usersubscriptionchange.FieldNewPackageID))
 }

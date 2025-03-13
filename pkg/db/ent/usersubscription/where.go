@@ -128,13 +128,6 @@ func PackageID(v uuid.UUID) predicate.UserSubscription {
 	})
 }
 
-// OrderID applies equality check predicate on the "order_id" field. It's identical to OrderIDEQ.
-func OrderID(v uuid.UUID) predicate.UserSubscription {
-	return predicate.UserSubscription(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldOrderID), v))
-	})
-}
-
 // StartAt applies equality check predicate on the "start_at" field. It's identical to StartAtEQ.
 func StartAt(v uint32) predicate.UserSubscription {
 	return predicate.UserSubscription(func(s *sql.Selector) {
@@ -657,84 +650,6 @@ func PackageIDIsNil() predicate.UserSubscription {
 func PackageIDNotNil() predicate.UserSubscription {
 	return predicate.UserSubscription(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldPackageID)))
-	})
-}
-
-// OrderIDEQ applies the EQ predicate on the "order_id" field.
-func OrderIDEQ(v uuid.UUID) predicate.UserSubscription {
-	return predicate.UserSubscription(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldOrderID), v))
-	})
-}
-
-// OrderIDNEQ applies the NEQ predicate on the "order_id" field.
-func OrderIDNEQ(v uuid.UUID) predicate.UserSubscription {
-	return predicate.UserSubscription(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldOrderID), v))
-	})
-}
-
-// OrderIDIn applies the In predicate on the "order_id" field.
-func OrderIDIn(vs ...uuid.UUID) predicate.UserSubscription {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.UserSubscription(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldOrderID), v...))
-	})
-}
-
-// OrderIDNotIn applies the NotIn predicate on the "order_id" field.
-func OrderIDNotIn(vs ...uuid.UUID) predicate.UserSubscription {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.UserSubscription(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldOrderID), v...))
-	})
-}
-
-// OrderIDGT applies the GT predicate on the "order_id" field.
-func OrderIDGT(v uuid.UUID) predicate.UserSubscription {
-	return predicate.UserSubscription(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldOrderID), v))
-	})
-}
-
-// OrderIDGTE applies the GTE predicate on the "order_id" field.
-func OrderIDGTE(v uuid.UUID) predicate.UserSubscription {
-	return predicate.UserSubscription(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldOrderID), v))
-	})
-}
-
-// OrderIDLT applies the LT predicate on the "order_id" field.
-func OrderIDLT(v uuid.UUID) predicate.UserSubscription {
-	return predicate.UserSubscription(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldOrderID), v))
-	})
-}
-
-// OrderIDLTE applies the LTE predicate on the "order_id" field.
-func OrderIDLTE(v uuid.UUID) predicate.UserSubscription {
-	return predicate.UserSubscription(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldOrderID), v))
-	})
-}
-
-// OrderIDIsNil applies the IsNil predicate on the "order_id" field.
-func OrderIDIsNil() predicate.UserSubscription {
-	return predicate.UserSubscription(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldOrderID)))
-	})
-}
-
-// OrderIDNotNil applies the NotNil predicate on the "order_id" field.
-func OrderIDNotNil() predicate.UserSubscription {
-	return predicate.UserSubscription(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldOrderID)))
 	})
 }
 

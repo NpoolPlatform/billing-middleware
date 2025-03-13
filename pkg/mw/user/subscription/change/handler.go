@@ -1,14 +1,13 @@
-package subscription
+package change
 
 import (
 	"context"
 
 	constant "github.com/NpoolPlatform/billing-middleware/pkg/const"
-	subscriptioncrud "github.com/NpoolPlatform/billing-middleware/pkg/crud/user/subscription"
+	subscriptioncrud "github.com/NpoolPlatform/billing-middleware/pkg/crud/user/subscription/change"
 	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
-	types "github.com/NpoolPlatform/message/npool/basetypes/billing/v1"
-	npool "github.com/NpoolPlatform/message/npool/billing/mw/v1/user/subscription"
+	npool "github.com/NpoolPlatform/message/npool/billing/mw/v1/user/subscription/change"
 
 	"github.com/google/uuid"
 )
@@ -96,7 +95,7 @@ func WithUserID(id *string, must bool) func(context.Context, *Handler) error {
 	}
 }
 
-func WithPackageID(id *string, must bool) func(context.Context, *Handler) error {
+func WithUserSubscriptionID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
@@ -108,81 +107,41 @@ func WithPackageID(id *string, must bool) func(context.Context, *Handler) error 
 		if err != nil {
 			return wlog.WrapError(err)
 		}
-		h.PackageID = &_id
+		h.UserSubscriptionID = &_id
 		return nil
 	}
 }
 
-func WithStartAt(u *uint32, must bool) func(context.Context, *Handler) error {
+func WithOldPackageID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
-		if u == nil {
+		if id == nil {
 			if must {
-				return wlog.Errorf("invalid StartAt")
+				return wlog.Errorf("invalid old package id")
 			}
 			return nil
 		}
-		h.StartAt = u
+		_id, err := uuid.Parse(*id)
+		if err != nil {
+			return wlog.WrapError(err)
+		}
+		h.OldPackageID = &_id
 		return nil
 	}
 }
 
-func WithEndAt(u *uint32, must bool) func(context.Context, *Handler) error {
+func WithNewPackageID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
-		if u == nil {
+		if id == nil {
 			if must {
-				return wlog.Errorf("invalid EndAt")
+				return wlog.Errorf("invalid new package id")
 			}
 			return nil
 		}
-		h.EndAt = u
-		return nil
-	}
-}
-
-func WithUsageState(t *types.UsageState, must bool) func(context.Context, *Handler) error {
-	return func(ctx context.Context, h *Handler) error {
-		if t == nil {
-			if must {
-				return wlog.Errorf("invalid usagestate")
-			}
-			return nil
+		_id, err := uuid.Parse(*id)
+		if err != nil {
+			return wlog.WrapError(err)
 		}
-
-		switch *t {
-		case types.UsageState_Usful:
-		case types.UsageState_Expire:
-		case types.UsageState_Disable:
-		default:
-			return wlog.Errorf("invalid usagestate")
-		}
-
-		h.UsageState = t
-		return nil
-	}
-}
-
-func WithSubscriptionCredit(u *uint32, must bool) func(context.Context, *Handler) error {
-	return func(ctx context.Context, h *Handler) error {
-		if u == nil {
-			if must {
-				return wlog.Errorf("invalid subscriptioncredit")
-			}
-			return nil
-		}
-		h.SubscriptionCredit = u
-		return nil
-	}
-}
-
-func WithAddonCredit(u *uint32, must bool) func(context.Context, *Handler) error {
-	return func(ctx context.Context, h *Handler) error {
-		if u == nil {
-			if must {
-				return wlog.Errorf("invalid addoncredit")
-			}
-			return nil
-		}
-		h.AddonCredit = u
+		h.NewPackageID = &_id
 		return nil
 	}
 }
@@ -225,32 +184,34 @@ func (h *Handler) withSubscriptionConds(conds *npool.Conds) error {
 			Val: id,
 		}
 	}
-	if conds.PackageID != nil {
-		id, err := uuid.Parse(conds.GetPackageID().GetValue())
+	if conds.UserSubscriptionID != nil {
+		id, err := uuid.Parse(conds.GetUserSubscriptionID().GetValue())
 		if err != nil {
 			return wlog.WrapError(err)
 		}
-		h.SubscriptionConds.PackageID = &cruder.Cond{
-			Op:  conds.GetPackageID().GetOp(),
+		h.SubscriptionConds.UserSubscriptionID = &cruder.Cond{
+			Op:  conds.GetUserSubscriptionID().GetOp(),
 			Val: id,
 		}
 	}
-	if conds.StartAt != nil {
-		h.SubscriptionConds.StartAt = &cruder.Cond{
-			Op:  conds.GetStartAt().GetOp(),
-			Val: conds.GetStartAt().GetValue(),
+	if conds.OldPackageID != nil {
+		id, err := uuid.Parse(conds.GetOldPackageID().GetValue())
+		if err != nil {
+			return wlog.WrapError(err)
+		}
+		h.SubscriptionConds.OldPackageID = &cruder.Cond{
+			Op:  conds.GetOldPackageID().GetOp(),
+			Val: id,
 		}
 	}
-	if conds.EndAt != nil {
-		h.SubscriptionConds.EndAt = &cruder.Cond{
-			Op:  conds.GetEndAt().GetOp(),
-			Val: conds.GetEndAt().GetValue(),
+	if conds.NewPackageID != nil {
+		id, err := uuid.Parse(conds.GetNewPackageID().GetValue())
+		if err != nil {
+			return wlog.WrapError(err)
 		}
-	}
-	if conds.UsageState != nil {
-		h.SubscriptionConds.UsageState = &cruder.Cond{
-			Op:  conds.GetUsageState().GetOp(),
-			Val: types.UsageState(conds.GetUsageState().GetValue()),
+		h.SubscriptionConds.NewPackageID = &cruder.Cond{
+			Op:  conds.GetNewPackageID().GetOp(),
+			Val: id,
 		}
 	}
 	if conds.IDs != nil {

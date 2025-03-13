@@ -55,7 +55,6 @@ func (h *baseQueryHandler) queryJoinMyself(s *sql.Selector) {
 			t1.C(entsubscription.FieldPackageID),
 			t1.C(entsubscription.FieldStartAt),
 			t1.C(entsubscription.FieldEndAt),
-			t1.C(entsubscription.FieldOrderID),
 			t1.C(entsubscription.FieldUsageState),
 			t1.C(entsubscription.FieldSubscriptionCredit),
 			t1.C(entsubscription.FieldAddonCredit),

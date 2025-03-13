@@ -30,8 +30,6 @@ type UserSubscription struct {
 	UserID uuid.UUID `json:"user_id,omitempty"`
 	// PackageID holds the value of the "package_id" field.
 	PackageID uuid.UUID `json:"package_id,omitempty"`
-	// OrderID holds the value of the "order_id" field.
-	OrderID uuid.UUID `json:"order_id,omitempty"`
 	// StartAt holds the value of the "start_at" field.
 	StartAt uint32 `json:"start_at,omitempty"`
 	// EndAt holds the value of the "end_at" field.
@@ -53,7 +51,7 @@ func (*UserSubscription) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(sql.NullInt64)
 		case usersubscription.FieldUsageState:
 			values[i] = new(sql.NullString)
-		case usersubscription.FieldEntID, usersubscription.FieldAppID, usersubscription.FieldUserID, usersubscription.FieldPackageID, usersubscription.FieldOrderID:
+		case usersubscription.FieldEntID, usersubscription.FieldAppID, usersubscription.FieldUserID, usersubscription.FieldPackageID:
 			values[i] = new(uuid.UUID)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type UserSubscription", columns[i])
@@ -117,12 +115,6 @@ func (us *UserSubscription) assignValues(columns []string, values []interface{})
 				return fmt.Errorf("unexpected type %T for field package_id", values[i])
 			} else if value != nil {
 				us.PackageID = *value
-			}
-		case usersubscription.FieldOrderID:
-			if value, ok := values[i].(*uuid.UUID); !ok {
-				return fmt.Errorf("unexpected type %T for field order_id", values[i])
-			} else if value != nil {
-				us.OrderID = *value
 			}
 		case usersubscription.FieldStartAt:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -202,9 +194,6 @@ func (us *UserSubscription) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("package_id=")
 	builder.WriteString(fmt.Sprintf("%v", us.PackageID))
-	builder.WriteString(", ")
-	builder.WriteString("order_id=")
-	builder.WriteString(fmt.Sprintf("%v", us.OrderID))
 	builder.WriteString(", ")
 	builder.WriteString("start_at=")
 	builder.WriteString(fmt.Sprintf("%v", us.StartAt))

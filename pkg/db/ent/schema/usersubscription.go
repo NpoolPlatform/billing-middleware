@@ -43,12 +43,6 @@ func (UserSubscription) Fields() []ent.Field {
 				return uuid.UUID{}
 			}),
 		field.
-			UUID("order_id", uuid.UUID{}).
-			Optional().
-			Default(func() uuid.UUID {
-				return uuid.UUID{}
-			}),
-		field.
 			Uint32("start_at").
 			Optional().
 			Default(0),

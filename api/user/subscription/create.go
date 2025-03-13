@@ -29,7 +29,6 @@ func (s *Server) CreateSubscription(ctx context.Context, in *npool.CreateSubscri
 		subscription1.WithPackageID(req.PackageID, true),
 		subscription1.WithStartAt(req.StartAt, true),
 		subscription1.WithEndAt(req.EndAt, true),
-		subscription1.WithOrderID(req.OrderID, true),
 		subscription1.WithUsageState(req.UsageState, true),
 		subscription1.WithSubscriptionCredit(req.SubscriptionCredit, true),
 		subscription1.WithAddonCredit(req.AddonCredit, true),

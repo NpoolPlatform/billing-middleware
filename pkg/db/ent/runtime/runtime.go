@@ -13,6 +13,7 @@ import (
 	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/subscription"
 	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/usercreditrecord"
 	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/usersubscription"
+	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/usersubscriptionchange"
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
 
@@ -398,30 +399,80 @@ func init() {
 	usersubscriptionDescPackageID := usersubscriptionFields[2].Descriptor()
 	// usersubscription.DefaultPackageID holds the default value on creation for the package_id field.
 	usersubscription.DefaultPackageID = usersubscriptionDescPackageID.Default.(func() uuid.UUID)
-	// usersubscriptionDescOrderID is the schema descriptor for order_id field.
-	usersubscriptionDescOrderID := usersubscriptionFields[3].Descriptor()
-	// usersubscription.DefaultOrderID holds the default value on creation for the order_id field.
-	usersubscription.DefaultOrderID = usersubscriptionDescOrderID.Default.(func() uuid.UUID)
 	// usersubscriptionDescStartAt is the schema descriptor for start_at field.
-	usersubscriptionDescStartAt := usersubscriptionFields[4].Descriptor()
+	usersubscriptionDescStartAt := usersubscriptionFields[3].Descriptor()
 	// usersubscription.DefaultStartAt holds the default value on creation for the start_at field.
 	usersubscription.DefaultStartAt = usersubscriptionDescStartAt.Default.(uint32)
 	// usersubscriptionDescEndAt is the schema descriptor for end_at field.
-	usersubscriptionDescEndAt := usersubscriptionFields[5].Descriptor()
+	usersubscriptionDescEndAt := usersubscriptionFields[4].Descriptor()
 	// usersubscription.DefaultEndAt holds the default value on creation for the end_at field.
 	usersubscription.DefaultEndAt = usersubscriptionDescEndAt.Default.(uint32)
 	// usersubscriptionDescUsageState is the schema descriptor for usage_state field.
-	usersubscriptionDescUsageState := usersubscriptionFields[6].Descriptor()
+	usersubscriptionDescUsageState := usersubscriptionFields[5].Descriptor()
 	// usersubscription.DefaultUsageState holds the default value on creation for the usage_state field.
 	usersubscription.DefaultUsageState = usersubscriptionDescUsageState.Default.(string)
 	// usersubscriptionDescSubscriptionCredit is the schema descriptor for subscription_credit field.
-	usersubscriptionDescSubscriptionCredit := usersubscriptionFields[7].Descriptor()
+	usersubscriptionDescSubscriptionCredit := usersubscriptionFields[6].Descriptor()
 	// usersubscription.DefaultSubscriptionCredit holds the default value on creation for the subscription_credit field.
 	usersubscription.DefaultSubscriptionCredit = usersubscriptionDescSubscriptionCredit.Default.(uint32)
 	// usersubscriptionDescAddonCredit is the schema descriptor for addon_credit field.
-	usersubscriptionDescAddonCredit := usersubscriptionFields[8].Descriptor()
+	usersubscriptionDescAddonCredit := usersubscriptionFields[7].Descriptor()
 	// usersubscription.DefaultAddonCredit holds the default value on creation for the addon_credit field.
 	usersubscription.DefaultAddonCredit = usersubscriptionDescAddonCredit.Default.(uint32)
+	usersubscriptionchangeMixin := schema.UserSubscriptionChange{}.Mixin()
+	usersubscriptionchange.Policy = privacy.NewPolicies(usersubscriptionchangeMixin[0], schema.UserSubscriptionChange{})
+	usersubscriptionchange.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := usersubscriptionchange.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	usersubscriptionchangeMixinFields0 := usersubscriptionchangeMixin[0].Fields()
+	_ = usersubscriptionchangeMixinFields0
+	usersubscriptionchangeMixinFields1 := usersubscriptionchangeMixin[1].Fields()
+	_ = usersubscriptionchangeMixinFields1
+	usersubscriptionchangeFields := schema.UserSubscriptionChange{}.Fields()
+	_ = usersubscriptionchangeFields
+	// usersubscriptionchangeDescCreatedAt is the schema descriptor for created_at field.
+	usersubscriptionchangeDescCreatedAt := usersubscriptionchangeMixinFields0[0].Descriptor()
+	// usersubscriptionchange.DefaultCreatedAt holds the default value on creation for the created_at field.
+	usersubscriptionchange.DefaultCreatedAt = usersubscriptionchangeDescCreatedAt.Default.(func() uint32)
+	// usersubscriptionchangeDescUpdatedAt is the schema descriptor for updated_at field.
+	usersubscriptionchangeDescUpdatedAt := usersubscriptionchangeMixinFields0[1].Descriptor()
+	// usersubscriptionchange.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	usersubscriptionchange.DefaultUpdatedAt = usersubscriptionchangeDescUpdatedAt.Default.(func() uint32)
+	// usersubscriptionchange.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	usersubscriptionchange.UpdateDefaultUpdatedAt = usersubscriptionchangeDescUpdatedAt.UpdateDefault.(func() uint32)
+	// usersubscriptionchangeDescDeletedAt is the schema descriptor for deleted_at field.
+	usersubscriptionchangeDescDeletedAt := usersubscriptionchangeMixinFields0[2].Descriptor()
+	// usersubscriptionchange.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	usersubscriptionchange.DefaultDeletedAt = usersubscriptionchangeDescDeletedAt.Default.(func() uint32)
+	// usersubscriptionchangeDescEntID is the schema descriptor for ent_id field.
+	usersubscriptionchangeDescEntID := usersubscriptionchangeMixinFields1[1].Descriptor()
+	// usersubscriptionchange.DefaultEntID holds the default value on creation for the ent_id field.
+	usersubscriptionchange.DefaultEntID = usersubscriptionchangeDescEntID.Default.(func() uuid.UUID)
+	// usersubscriptionchangeDescAppID is the schema descriptor for app_id field.
+	usersubscriptionchangeDescAppID := usersubscriptionchangeFields[0].Descriptor()
+	// usersubscriptionchange.DefaultAppID holds the default value on creation for the app_id field.
+	usersubscriptionchange.DefaultAppID = usersubscriptionchangeDescAppID.Default.(func() uuid.UUID)
+	// usersubscriptionchangeDescUserID is the schema descriptor for user_id field.
+	usersubscriptionchangeDescUserID := usersubscriptionchangeFields[1].Descriptor()
+	// usersubscriptionchange.DefaultUserID holds the default value on creation for the user_id field.
+	usersubscriptionchange.DefaultUserID = usersubscriptionchangeDescUserID.Default.(func() uuid.UUID)
+	// usersubscriptionchangeDescUserSubscriptionID is the schema descriptor for user_subscription_id field.
+	usersubscriptionchangeDescUserSubscriptionID := usersubscriptionchangeFields[2].Descriptor()
+	// usersubscriptionchange.DefaultUserSubscriptionID holds the default value on creation for the user_subscription_id field.
+	usersubscriptionchange.DefaultUserSubscriptionID = usersubscriptionchangeDescUserSubscriptionID.Default.(func() uuid.UUID)
+	// usersubscriptionchangeDescOldPackageID is the schema descriptor for old_package_id field.
+	usersubscriptionchangeDescOldPackageID := usersubscriptionchangeFields[3].Descriptor()
+	// usersubscriptionchange.DefaultOldPackageID holds the default value on creation for the old_package_id field.
+	usersubscriptionchange.DefaultOldPackageID = usersubscriptionchangeDescOldPackageID.Default.(func() uuid.UUID)
+	// usersubscriptionchangeDescNewPackageID is the schema descriptor for new_package_id field.
+	usersubscriptionchangeDescNewPackageID := usersubscriptionchangeFields[4].Descriptor()
+	// usersubscriptionchange.DefaultNewPackageID holds the default value on creation for the new_package_id field.
+	usersubscriptionchange.DefaultNewPackageID = usersubscriptionchangeDescNewPackageID.Default.(func() uuid.UUID)
 }
 
 const (

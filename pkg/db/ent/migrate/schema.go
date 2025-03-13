@@ -185,7 +185,6 @@ var (
 		{Name: "app_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "user_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "package_id", Type: field.TypeUUID, Nullable: true},
-		{Name: "order_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "end_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "usage_state", Type: field.TypeString, Nullable: true, Default: "DefaultUsageState"},
@@ -205,6 +204,32 @@ var (
 			},
 		},
 	}
+	// UserSubscriptionChangesColumns holds the columns for the "user_subscription_changes" table.
+	UserSubscriptionChangesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true},
+		{Name: "created_at", Type: field.TypeUint32},
+		{Name: "updated_at", Type: field.TypeUint32},
+		{Name: "deleted_at", Type: field.TypeUint32},
+		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
+		{Name: "app_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "user_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "user_subscription_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "old_package_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "new_package_id", Type: field.TypeUUID, Nullable: true},
+	}
+	// UserSubscriptionChangesTable holds the schema information for the "user_subscription_changes" table.
+	UserSubscriptionChangesTable = &schema.Table{
+		Name:       "user_subscription_changes",
+		Columns:    UserSubscriptionChangesColumns,
+		PrimaryKey: []*schema.Column{UserSubscriptionChangesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "usersubscriptionchange_ent_id",
+				Unique:  true,
+				Columns: []*schema.Column{UserSubscriptionChangesColumns[4]},
+			},
+		},
+	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		AddonsTable,
@@ -214,6 +239,7 @@ var (
 		SubscriptionsTable,
 		UserCreditRecordsTable,
 		UserSubscriptionsTable,
+		UserSubscriptionChangesTable,
 	}
 )
 

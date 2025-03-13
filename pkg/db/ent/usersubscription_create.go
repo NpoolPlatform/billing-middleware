@@ -120,20 +120,6 @@ func (usc *UserSubscriptionCreate) SetNillablePackageID(u *uuid.UUID) *UserSubsc
 	return usc
 }
 
-// SetOrderID sets the "order_id" field.
-func (usc *UserSubscriptionCreate) SetOrderID(u uuid.UUID) *UserSubscriptionCreate {
-	usc.mutation.SetOrderID(u)
-	return usc
-}
-
-// SetNillableOrderID sets the "order_id" field if the given value is not nil.
-func (usc *UserSubscriptionCreate) SetNillableOrderID(u *uuid.UUID) *UserSubscriptionCreate {
-	if u != nil {
-		usc.SetOrderID(*u)
-	}
-	return usc
-}
-
 // SetStartAt sets the "start_at" field.
 func (usc *UserSubscriptionCreate) SetStartAt(u uint32) *UserSubscriptionCreate {
 	usc.mutation.SetStartAt(u)
@@ -338,13 +324,6 @@ func (usc *UserSubscriptionCreate) defaults() error {
 		v := usersubscription.DefaultPackageID()
 		usc.mutation.SetPackageID(v)
 	}
-	if _, ok := usc.mutation.OrderID(); !ok {
-		if usersubscription.DefaultOrderID == nil {
-			return fmt.Errorf("ent: uninitialized usersubscription.DefaultOrderID (forgotten import ent/runtime?)")
-		}
-		v := usersubscription.DefaultOrderID()
-		usc.mutation.SetOrderID(v)
-	}
 	if _, ok := usc.mutation.StartAt(); !ok {
 		v := usersubscription.DefaultStartAt
 		usc.mutation.SetStartAt(v)
@@ -471,14 +450,6 @@ func (usc *UserSubscriptionCreate) createSpec() (*UserSubscription, *sqlgraph.Cr
 			Column: usersubscription.FieldPackageID,
 		})
 		_node.PackageID = value
-	}
-	if value, ok := usc.mutation.OrderID(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Value:  value,
-			Column: usersubscription.FieldOrderID,
-		})
-		_node.OrderID = value
 	}
 	if value, ok := usc.mutation.StartAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -691,24 +662,6 @@ func (u *UserSubscriptionUpsert) UpdatePackageID() *UserSubscriptionUpsert {
 // ClearPackageID clears the value of the "package_id" field.
 func (u *UserSubscriptionUpsert) ClearPackageID() *UserSubscriptionUpsert {
 	u.SetNull(usersubscription.FieldPackageID)
-	return u
-}
-
-// SetOrderID sets the "order_id" field.
-func (u *UserSubscriptionUpsert) SetOrderID(v uuid.UUID) *UserSubscriptionUpsert {
-	u.Set(usersubscription.FieldOrderID, v)
-	return u
-}
-
-// UpdateOrderID sets the "order_id" field to the value that was provided on create.
-func (u *UserSubscriptionUpsert) UpdateOrderID() *UserSubscriptionUpsert {
-	u.SetExcluded(usersubscription.FieldOrderID)
-	return u
-}
-
-// ClearOrderID clears the value of the "order_id" field.
-func (u *UserSubscriptionUpsert) ClearOrderID() *UserSubscriptionUpsert {
-	u.SetNull(usersubscription.FieldOrderID)
 	return u
 }
 
@@ -1013,27 +966,6 @@ func (u *UserSubscriptionUpsertOne) UpdatePackageID() *UserSubscriptionUpsertOne
 func (u *UserSubscriptionUpsertOne) ClearPackageID() *UserSubscriptionUpsertOne {
 	return u.Update(func(s *UserSubscriptionUpsert) {
 		s.ClearPackageID()
-	})
-}
-
-// SetOrderID sets the "order_id" field.
-func (u *UserSubscriptionUpsertOne) SetOrderID(v uuid.UUID) *UserSubscriptionUpsertOne {
-	return u.Update(func(s *UserSubscriptionUpsert) {
-		s.SetOrderID(v)
-	})
-}
-
-// UpdateOrderID sets the "order_id" field to the value that was provided on create.
-func (u *UserSubscriptionUpsertOne) UpdateOrderID() *UserSubscriptionUpsertOne {
-	return u.Update(func(s *UserSubscriptionUpsert) {
-		s.UpdateOrderID()
-	})
-}
-
-// ClearOrderID clears the value of the "order_id" field.
-func (u *UserSubscriptionUpsertOne) ClearOrderID() *UserSubscriptionUpsertOne {
-	return u.Update(func(s *UserSubscriptionUpsert) {
-		s.ClearOrderID()
 	})
 }
 
@@ -1522,27 +1454,6 @@ func (u *UserSubscriptionUpsertBulk) UpdatePackageID() *UserSubscriptionUpsertBu
 func (u *UserSubscriptionUpsertBulk) ClearPackageID() *UserSubscriptionUpsertBulk {
 	return u.Update(func(s *UserSubscriptionUpsert) {
 		s.ClearPackageID()
-	})
-}
-
-// SetOrderID sets the "order_id" field.
-func (u *UserSubscriptionUpsertBulk) SetOrderID(v uuid.UUID) *UserSubscriptionUpsertBulk {
-	return u.Update(func(s *UserSubscriptionUpsert) {
-		s.SetOrderID(v)
-	})
-}
-
-// UpdateOrderID sets the "order_id" field to the value that was provided on create.
-func (u *UserSubscriptionUpsertBulk) UpdateOrderID() *UserSubscriptionUpsertBulk {
-	return u.Update(func(s *UserSubscriptionUpsert) {
-		s.UpdateOrderID()
-	})
-}
-
-// ClearOrderID clears the value of the "order_id" field.
-func (u *UserSubscriptionUpsertBulk) ClearOrderID() *UserSubscriptionUpsertBulk {
-	return u.Update(func(s *UserSubscriptionUpsert) {
-		s.ClearOrderID()
 	})
 }
 

@@ -17,6 +17,7 @@ import (
 	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/subscription"
 	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/usercreditrecord"
 	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/usersubscription"
+	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/usersubscriptionchange"
 
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
@@ -41,6 +42,8 @@ type Client struct {
 	UserCreditRecord *UserCreditRecordClient
 	// UserSubscription is the client for interacting with the UserSubscription builders.
 	UserSubscription *UserSubscriptionClient
+	// UserSubscriptionChange is the client for interacting with the UserSubscriptionChange builders.
+	UserSubscriptionChange *UserSubscriptionChangeClient
 }
 
 // NewClient creates a new client configured with the given options.
@@ -61,6 +64,7 @@ func (c *Client) init() {
 	c.Subscription = NewSubscriptionClient(c.config)
 	c.UserCreditRecord = NewUserCreditRecordClient(c.config)
 	c.UserSubscription = NewUserSubscriptionClient(c.config)
+	c.UserSubscriptionChange = NewUserSubscriptionChangeClient(c.config)
 }
 
 // Open opens a database/sql.DB specified by the driver name and
@@ -92,15 +96,16 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	cfg := c.config
 	cfg.driver = tx
 	return &Tx{
-		ctx:              ctx,
-		config:           cfg,
-		Addon:            NewAddonClient(cfg),
-		Exchange:         NewExchangeClient(cfg),
-		IgnoreID:         NewIgnoreIDClient(cfg),
-		PubsubMessage:    NewPubsubMessageClient(cfg),
-		Subscription:     NewSubscriptionClient(cfg),
-		UserCreditRecord: NewUserCreditRecordClient(cfg),
-		UserSubscription: NewUserSubscriptionClient(cfg),
+		ctx:                    ctx,
+		config:                 cfg,
+		Addon:                  NewAddonClient(cfg),
+		Exchange:               NewExchangeClient(cfg),
+		IgnoreID:               NewIgnoreIDClient(cfg),
+		PubsubMessage:          NewPubsubMessageClient(cfg),
+		Subscription:           NewSubscriptionClient(cfg),
+		UserCreditRecord:       NewUserCreditRecordClient(cfg),
+		UserSubscription:       NewUserSubscriptionClient(cfg),
+		UserSubscriptionChange: NewUserSubscriptionChangeClient(cfg),
 	}, nil
 }
 
@@ -118,15 +123,16 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg := c.config
 	cfg.driver = &txDriver{tx: tx, drv: c.driver}
 	return &Tx{
-		ctx:              ctx,
-		config:           cfg,
-		Addon:            NewAddonClient(cfg),
-		Exchange:         NewExchangeClient(cfg),
-		IgnoreID:         NewIgnoreIDClient(cfg),
-		PubsubMessage:    NewPubsubMessageClient(cfg),
-		Subscription:     NewSubscriptionClient(cfg),
-		UserCreditRecord: NewUserCreditRecordClient(cfg),
-		UserSubscription: NewUserSubscriptionClient(cfg),
+		ctx:                    ctx,
+		config:                 cfg,
+		Addon:                  NewAddonClient(cfg),
+		Exchange:               NewExchangeClient(cfg),
+		IgnoreID:               NewIgnoreIDClient(cfg),
+		PubsubMessage:          NewPubsubMessageClient(cfg),
+		Subscription:           NewSubscriptionClient(cfg),
+		UserCreditRecord:       NewUserCreditRecordClient(cfg),
+		UserSubscription:       NewUserSubscriptionClient(cfg),
+		UserSubscriptionChange: NewUserSubscriptionChangeClient(cfg),
 	}, nil
 }
 
@@ -163,6 +169,7 @@ func (c *Client) Use(hooks ...Hook) {
 	c.Subscription.Use(hooks...)
 	c.UserCreditRecord.Use(hooks...)
 	c.UserSubscription.Use(hooks...)
+	c.UserSubscriptionChange.Use(hooks...)
 }
 
 // AddonClient is a client for the Addon schema.
@@ -800,4 +807,95 @@ func (c *UserSubscriptionClient) GetX(ctx context.Context, id uint32) *UserSubsc
 func (c *UserSubscriptionClient) Hooks() []Hook {
 	hooks := c.hooks.UserSubscription
 	return append(hooks[:len(hooks):len(hooks)], usersubscription.Hooks[:]...)
+}
+
+// UserSubscriptionChangeClient is a client for the UserSubscriptionChange schema.
+type UserSubscriptionChangeClient struct {
+	config
+}
+
+// NewUserSubscriptionChangeClient returns a client for the UserSubscriptionChange from the given config.
+func NewUserSubscriptionChangeClient(c config) *UserSubscriptionChangeClient {
+	return &UserSubscriptionChangeClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `usersubscriptionchange.Hooks(f(g(h())))`.
+func (c *UserSubscriptionChangeClient) Use(hooks ...Hook) {
+	c.hooks.UserSubscriptionChange = append(c.hooks.UserSubscriptionChange, hooks...)
+}
+
+// Create returns a builder for creating a UserSubscriptionChange entity.
+func (c *UserSubscriptionChangeClient) Create() *UserSubscriptionChangeCreate {
+	mutation := newUserSubscriptionChangeMutation(c.config, OpCreate)
+	return &UserSubscriptionChangeCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of UserSubscriptionChange entities.
+func (c *UserSubscriptionChangeClient) CreateBulk(builders ...*UserSubscriptionChangeCreate) *UserSubscriptionChangeCreateBulk {
+	return &UserSubscriptionChangeCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for UserSubscriptionChange.
+func (c *UserSubscriptionChangeClient) Update() *UserSubscriptionChangeUpdate {
+	mutation := newUserSubscriptionChangeMutation(c.config, OpUpdate)
+	return &UserSubscriptionChangeUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *UserSubscriptionChangeClient) UpdateOne(usc *UserSubscriptionChange) *UserSubscriptionChangeUpdateOne {
+	mutation := newUserSubscriptionChangeMutation(c.config, OpUpdateOne, withUserSubscriptionChange(usc))
+	return &UserSubscriptionChangeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *UserSubscriptionChangeClient) UpdateOneID(id uint32) *UserSubscriptionChangeUpdateOne {
+	mutation := newUserSubscriptionChangeMutation(c.config, OpUpdateOne, withUserSubscriptionChangeID(id))
+	return &UserSubscriptionChangeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for UserSubscriptionChange.
+func (c *UserSubscriptionChangeClient) Delete() *UserSubscriptionChangeDelete {
+	mutation := newUserSubscriptionChangeMutation(c.config, OpDelete)
+	return &UserSubscriptionChangeDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *UserSubscriptionChangeClient) DeleteOne(usc *UserSubscriptionChange) *UserSubscriptionChangeDeleteOne {
+	return c.DeleteOneID(usc.ID)
+}
+
+// DeleteOne returns a builder for deleting the given entity by its id.
+func (c *UserSubscriptionChangeClient) DeleteOneID(id uint32) *UserSubscriptionChangeDeleteOne {
+	builder := c.Delete().Where(usersubscriptionchange.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &UserSubscriptionChangeDeleteOne{builder}
+}
+
+// Query returns a query builder for UserSubscriptionChange.
+func (c *UserSubscriptionChangeClient) Query() *UserSubscriptionChangeQuery {
+	return &UserSubscriptionChangeQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a UserSubscriptionChange entity by its id.
+func (c *UserSubscriptionChangeClient) Get(ctx context.Context, id uint32) (*UserSubscriptionChange, error) {
+	return c.Query().Where(usersubscriptionchange.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *UserSubscriptionChangeClient) GetX(ctx context.Context, id uint32) *UserSubscriptionChange {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *UserSubscriptionChangeClient) Hooks() []Hook {
+	hooks := c.hooks.UserSubscriptionChange
+	return append(hooks[:len(hooks):len(hooks)], usersubscriptionchange.Hooks[:]...)
 }

@@ -1,4 +1,4 @@
-package subscription
+package change
 
 import (
 	"context"
@@ -30,13 +30,9 @@ func (h *createHandler) constructSQL() {
 	_sql += comma + "app_id"
 	comma = ", "
 	_sql += comma + "user_id"
-	_sql += comma + "package_id"
-	_sql += comma + "order_id"
-	_sql += comma + "start_at"
-	_sql += comma + "end_at"
-	_sql += comma + "usage_state"
-	_sql += comma + "subscription_credit"
-	_sql += comma + "addon_credit"
+	_sql += comma + "user_subscription_id"
+	_sql += comma + "old_package_id"
+	_sql += comma + "new_package_id"
 
 	_sql += comma + "created_at"
 	_sql += comma + "updated_at"
@@ -52,12 +48,9 @@ func (h *createHandler) constructSQL() {
 	_sql += fmt.Sprintf("%v'%v' as app_id", comma, *h.AppID)
 	comma = ", "
 	_sql += fmt.Sprintf("%v'%v' as user_id", comma, *h.UserID)
-	_sql += fmt.Sprintf("%v'%v' as package_id", comma, *h.PackageID)
-	_sql += fmt.Sprintf("%v%v as start_at", comma, *h.StartAt)
-	_sql += fmt.Sprintf("%v%v as end_at", comma, *h.EndAt)
-	_sql += fmt.Sprintf("%v'%v' as usage_state", comma, *h.UsageState)
-	_sql += fmt.Sprintf("%v%v as subscription_credit", comma, *h.SubscriptionCredit)
-	_sql += fmt.Sprintf("%v%v as addon_credit", comma, *h.SubscriptionCredit)
+	_sql += fmt.Sprintf("%v'%v' as user_subscription_id", comma, *h.UserSubscriptionID)
+	_sql += fmt.Sprintf("%v'%v' as old_package_id", comma, *h.OldPackageID)
+	_sql += fmt.Sprintf("%v'%v' as new_package_id", comma, *h.NewPackageID)
 
 	_sql += fmt.Sprintf("%v%v as created_at", comma, now)
 	_sql += fmt.Sprintf("%v%v as updated_at", comma, now)
@@ -71,7 +64,7 @@ func (h *createHandler) constructSQL() {
 	h.sql = _sql
 }
 
-func (h *createHandler) createSubscription(ctx context.Context, tx *ent.Tx) error {
+func (h *createHandler) createSubscriptionChange(ctx context.Context, tx *ent.Tx) error {
 	rc, err := tx.ExecContext(ctx, h.sql)
 	if err != nil {
 		return wlog.WrapError(err)
@@ -83,7 +76,7 @@ func (h *createHandler) createSubscription(ctx context.Context, tx *ent.Tx) erro
 	return nil
 }
 
-func (h *Handler) CreateSubscription(ctx context.Context) error {
+func (h *Handler) CreateSubscriptionChange(ctx context.Context) error {
 	handler := &createHandler{
 		Handler: h,
 	}
@@ -92,6 +85,6 @@ func (h *Handler) CreateSubscription(ctx context.Context) error {
 	}
 	handler.constructSQL()
 	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
-		return handler.createSubscription(_ctx, tx)
+		return handler.createSubscriptionChange(_ctx, tx)
 	})
 }

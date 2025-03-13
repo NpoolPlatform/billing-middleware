@@ -17,6 +17,7 @@ import (
 	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/subscription"
 	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/usercreditrecord"
 	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/usersubscription"
+	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/usersubscriptionchange"
 )
 
 // ent aliases to avoid import conflicts in user's code.
@@ -37,13 +38,14 @@ type OrderFunc func(*sql.Selector)
 // columnChecker returns a function indicates if the column exists in the given column.
 func columnChecker(table string) func(string) error {
 	checks := map[string]func(string) bool{
-		addon.Table:            addon.ValidColumn,
-		exchange.Table:         exchange.ValidColumn,
-		ignoreid.Table:         ignoreid.ValidColumn,
-		pubsubmessage.Table:    pubsubmessage.ValidColumn,
-		subscription.Table:     subscription.ValidColumn,
-		usercreditrecord.Table: usercreditrecord.ValidColumn,
-		usersubscription.Table: usersubscription.ValidColumn,
+		addon.Table:                  addon.ValidColumn,
+		exchange.Table:               exchange.ValidColumn,
+		ignoreid.Table:               ignoreid.ValidColumn,
+		pubsubmessage.Table:          pubsubmessage.ValidColumn,
+		subscription.Table:           subscription.ValidColumn,
+		usercreditrecord.Table:       usercreditrecord.ValidColumn,
+		usersubscription.Table:       usersubscription.ValidColumn,
+		usersubscriptionchange.Table: usersubscriptionchange.ValidColumn,
 	}
 	check, ok := checks[table]
 	if !ok {

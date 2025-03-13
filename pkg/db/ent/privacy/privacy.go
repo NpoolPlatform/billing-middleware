@@ -318,6 +318,30 @@ func (f UserSubscriptionMutationRuleFunc) EvalMutation(ctx context.Context, m en
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.UserSubscriptionMutation", m)
 }
 
+// The UserSubscriptionChangeQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type UserSubscriptionChangeQueryRuleFunc func(context.Context, *ent.UserSubscriptionChangeQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f UserSubscriptionChangeQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.UserSubscriptionChangeQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.UserSubscriptionChangeQuery", q)
+}
+
+// The UserSubscriptionChangeMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type UserSubscriptionChangeMutationRuleFunc func(context.Context, *ent.UserSubscriptionChangeMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f UserSubscriptionChangeMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.UserSubscriptionChangeMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.UserSubscriptionChangeMutation", m)
+}
+
 type (
 	// Filter is the interface that wraps the Where function
 	// for filtering nodes in queries and mutations.
@@ -367,6 +391,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.UserSubscriptionQuery:
 		return q.Filter(), nil
+	case *ent.UserSubscriptionChangeQuery:
+		return q.Filter(), nil
 	default:
 		return nil, Denyf("ent/privacy: unexpected query type %T for query filter", q)
 	}
@@ -387,6 +413,8 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.UserCreditRecordMutation:
 		return m.Filter(), nil
 	case *ent.UserSubscriptionMutation:
+		return m.Filter(), nil
+	case *ent.UserSubscriptionChangeMutation:
 		return m.Filter(), nil
 	default:
 		return nil, Denyf("ent/privacy: unexpected mutation type %T for mutation filter", m)

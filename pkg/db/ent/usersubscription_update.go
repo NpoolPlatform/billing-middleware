@@ -158,26 +158,6 @@ func (usu *UserSubscriptionUpdate) ClearPackageID() *UserSubscriptionUpdate {
 	return usu
 }
 
-// SetOrderID sets the "order_id" field.
-func (usu *UserSubscriptionUpdate) SetOrderID(u uuid.UUID) *UserSubscriptionUpdate {
-	usu.mutation.SetOrderID(u)
-	return usu
-}
-
-// SetNillableOrderID sets the "order_id" field if the given value is not nil.
-func (usu *UserSubscriptionUpdate) SetNillableOrderID(u *uuid.UUID) *UserSubscriptionUpdate {
-	if u != nil {
-		usu.SetOrderID(*u)
-	}
-	return usu
-}
-
-// ClearOrderID clears the value of the "order_id" field.
-func (usu *UserSubscriptionUpdate) ClearOrderID() *UserSubscriptionUpdate {
-	usu.mutation.ClearOrderID()
-	return usu
-}
-
 // SetStartAt sets the "start_at" field.
 func (usu *UserSubscriptionUpdate) SetStartAt(u uint32) *UserSubscriptionUpdate {
 	usu.mutation.ResetStartAt()
@@ -492,19 +472,6 @@ func (usu *UserSubscriptionUpdate) sqlSave(ctx context.Context) (n int, err erro
 			Column: usersubscription.FieldPackageID,
 		})
 	}
-	if value, ok := usu.mutation.OrderID(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Value:  value,
-			Column: usersubscription.FieldOrderID,
-		})
-	}
-	if usu.mutation.OrderIDCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Column: usersubscription.FieldOrderID,
-		})
-	}
 	if value, ok := usu.mutation.StartAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
@@ -745,26 +712,6 @@ func (usuo *UserSubscriptionUpdateOne) SetNillablePackageID(u *uuid.UUID) *UserS
 // ClearPackageID clears the value of the "package_id" field.
 func (usuo *UserSubscriptionUpdateOne) ClearPackageID() *UserSubscriptionUpdateOne {
 	usuo.mutation.ClearPackageID()
-	return usuo
-}
-
-// SetOrderID sets the "order_id" field.
-func (usuo *UserSubscriptionUpdateOne) SetOrderID(u uuid.UUID) *UserSubscriptionUpdateOne {
-	usuo.mutation.SetOrderID(u)
-	return usuo
-}
-
-// SetNillableOrderID sets the "order_id" field if the given value is not nil.
-func (usuo *UserSubscriptionUpdateOne) SetNillableOrderID(u *uuid.UUID) *UserSubscriptionUpdateOne {
-	if u != nil {
-		usuo.SetOrderID(*u)
-	}
-	return usuo
-}
-
-// ClearOrderID clears the value of the "order_id" field.
-func (usuo *UserSubscriptionUpdateOne) ClearOrderID() *UserSubscriptionUpdateOne {
-	usuo.mutation.ClearOrderID()
 	return usuo
 }
 
@@ -1110,19 +1057,6 @@ func (usuo *UserSubscriptionUpdateOne) sqlSave(ctx context.Context) (_node *User
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Column: usersubscription.FieldPackageID,
-		})
-	}
-	if value, ok := usuo.mutation.OrderID(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Value:  value,
-			Column: usersubscription.FieldOrderID,
-		})
-	}
-	if usuo.mutation.OrderIDCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Column: usersubscription.FieldOrderID,
 		})
 	}
 	if value, ok := usuo.mutation.StartAt(); ok {
