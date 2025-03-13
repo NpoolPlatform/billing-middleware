@@ -174,30 +174,6 @@ func (f AddonMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation)
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.AddonMutation", m)
 }
 
-// The DetailQueryRuleFunc type is an adapter to allow the use of ordinary
-// functions as a query rule.
-type DetailQueryRuleFunc func(context.Context, *ent.DetailQuery) error
-
-// EvalQuery return f(ctx, q).
-func (f DetailQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
-	if q, ok := q.(*ent.DetailQuery); ok {
-		return f(ctx, q)
-	}
-	return Denyf("ent/privacy: unexpected query type %T, expect *ent.DetailQuery", q)
-}
-
-// The DetailMutationRuleFunc type is an adapter to allow the use of ordinary
-// functions as a mutation rule.
-type DetailMutationRuleFunc func(context.Context, *ent.DetailMutation) error
-
-// EvalMutation calls f(ctx, m).
-func (f DetailMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
-	if m, ok := m.(*ent.DetailMutation); ok {
-		return f(ctx, m)
-	}
-	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.DetailMutation", m)
-}
-
 // The ExchangeQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type ExchangeQueryRuleFunc func(context.Context, *ent.ExchangeQuery) error
@@ -379,8 +355,6 @@ func queryFilter(q ent.Query) (Filter, error) {
 	switch q := q.(type) {
 	case *ent.AddonQuery:
 		return q.Filter(), nil
-	case *ent.DetailQuery:
-		return q.Filter(), nil
 	case *ent.ExchangeQuery:
 		return q.Filter(), nil
 	case *ent.IgnoreIDQuery:
@@ -401,8 +375,6 @@ func queryFilter(q ent.Query) (Filter, error) {
 func mutationFilter(m ent.Mutation) (Filter, error) {
 	switch m := m.(type) {
 	case *ent.AddonMutation:
-		return m.Filter(), nil
-	case *ent.DetailMutation:
 		return m.Filter(), nil
 	case *ent.ExchangeMutation:
 		return m.Filter(), nil

@@ -37,6 +37,7 @@ var ret = &npool.Exchange{
 	UsageTypeStr:      types.UsageType_TextToken.String(),
 	Credit:            uint32(1),
 	ExchangeThreshold: uint32(1),
+	Path:              uuid.NewString(),
 }
 
 func setup(t *testing.T) func(*testing.T) {
@@ -50,6 +51,7 @@ func createExchange(t *testing.T) {
 		UsageType:         &ret.UsageType,
 		Credit:            &ret.Credit,
 		ExchangeThreshold: &ret.ExchangeThreshold,
+		Path:              &ret.Path,
 	})
 	if assert.Nil(t, err) {
 		info, err := GetExchange(context.Background(), ret.EntID)
@@ -65,11 +67,13 @@ func createExchange(t *testing.T) {
 func updateExchange(t *testing.T) {
 	ret.Credit = uint32(20)
 	ret.ExchangeThreshold = uint32(15)
+	ret.Path = uuid.NewString()
 	err := UpdateExchange(context.Background(), &npool.ExchangeReq{
 		ID:                &ret.ID,
 		EntID:             &ret.EntID,
 		Credit:            &ret.Credit,
 		ExchangeThreshold: &ret.ExchangeThreshold,
+		Path:              &ret.Path,
 	})
 	if assert.Nil(t, err) {
 		info, err := GetExchange(context.Background(), ret.EntID)
@@ -95,6 +99,7 @@ func getExchanges(t *testing.T) {
 		UsageType: &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(ret.UsageType)},
 		IDs:       &basetypes.Uint32SliceVal{Op: cruder.IN, Value: []uint32{ret.ID}},
 		EntIDs:    &basetypes.StringSliceVal{Op: cruder.IN, Value: []string{ret.EntID}},
+		Path:      &basetypes.StringVal{Op: cruder.EQ, Value: ret.Path},
 	}
 	infos, err := GetExchanges(context.Background(), conds, 0, 2)
 	if !assert.Nil(t, err) {

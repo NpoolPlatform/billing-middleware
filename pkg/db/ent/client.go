@@ -11,7 +11,6 @@ import (
 	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/migrate"
 
 	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/addon"
-	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/detail"
 	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/exchange"
 	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/ignoreid"
 	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/pubsubmessage"
@@ -30,8 +29,6 @@ type Client struct {
 	Schema *migrate.Schema
 	// Addon is the client for interacting with the Addon builders.
 	Addon *AddonClient
-	// Detail is the client for interacting with the Detail builders.
-	Detail *DetailClient
 	// Exchange is the client for interacting with the Exchange builders.
 	Exchange *ExchangeClient
 	// IgnoreID is the client for interacting with the IgnoreID builders.
@@ -58,7 +55,6 @@ func NewClient(opts ...Option) *Client {
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.Addon = NewAddonClient(c.config)
-	c.Detail = NewDetailClient(c.config)
 	c.Exchange = NewExchangeClient(c.config)
 	c.IgnoreID = NewIgnoreIDClient(c.config)
 	c.PubsubMessage = NewPubsubMessageClient(c.config)
@@ -99,7 +95,6 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		ctx:              ctx,
 		config:           cfg,
 		Addon:            NewAddonClient(cfg),
-		Detail:           NewDetailClient(cfg),
 		Exchange:         NewExchangeClient(cfg),
 		IgnoreID:         NewIgnoreIDClient(cfg),
 		PubsubMessage:    NewPubsubMessageClient(cfg),
@@ -126,7 +121,6 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		ctx:              ctx,
 		config:           cfg,
 		Addon:            NewAddonClient(cfg),
-		Detail:           NewDetailClient(cfg),
 		Exchange:         NewExchangeClient(cfg),
 		IgnoreID:         NewIgnoreIDClient(cfg),
 		PubsubMessage:    NewPubsubMessageClient(cfg),
@@ -163,7 +157,6 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	c.Addon.Use(hooks...)
-	c.Detail.Use(hooks...)
 	c.Exchange.Use(hooks...)
 	c.IgnoreID.Use(hooks...)
 	c.PubsubMessage.Use(hooks...)
@@ -261,97 +254,6 @@ func (c *AddonClient) GetX(ctx context.Context, id uint32) *Addon {
 func (c *AddonClient) Hooks() []Hook {
 	hooks := c.hooks.Addon
 	return append(hooks[:len(hooks):len(hooks)], addon.Hooks[:]...)
-}
-
-// DetailClient is a client for the Detail schema.
-type DetailClient struct {
-	config
-}
-
-// NewDetailClient returns a client for the Detail from the given config.
-func NewDetailClient(c config) *DetailClient {
-	return &DetailClient{config: c}
-}
-
-// Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `detail.Hooks(f(g(h())))`.
-func (c *DetailClient) Use(hooks ...Hook) {
-	c.hooks.Detail = append(c.hooks.Detail, hooks...)
-}
-
-// Create returns a builder for creating a Detail entity.
-func (c *DetailClient) Create() *DetailCreate {
-	mutation := newDetailMutation(c.config, OpCreate)
-	return &DetailCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// CreateBulk returns a builder for creating a bulk of Detail entities.
-func (c *DetailClient) CreateBulk(builders ...*DetailCreate) *DetailCreateBulk {
-	return &DetailCreateBulk{config: c.config, builders: builders}
-}
-
-// Update returns an update builder for Detail.
-func (c *DetailClient) Update() *DetailUpdate {
-	mutation := newDetailMutation(c.config, OpUpdate)
-	return &DetailUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOne returns an update builder for the given entity.
-func (c *DetailClient) UpdateOne(d *Detail) *DetailUpdateOne {
-	mutation := newDetailMutation(c.config, OpUpdateOne, withDetail(d))
-	return &DetailUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOneID returns an update builder for the given id.
-func (c *DetailClient) UpdateOneID(id uint32) *DetailUpdateOne {
-	mutation := newDetailMutation(c.config, OpUpdateOne, withDetailID(id))
-	return &DetailUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// Delete returns a delete builder for Detail.
-func (c *DetailClient) Delete() *DetailDelete {
-	mutation := newDetailMutation(c.config, OpDelete)
-	return &DetailDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// DeleteOne returns a builder for deleting the given entity.
-func (c *DetailClient) DeleteOne(d *Detail) *DetailDeleteOne {
-	return c.DeleteOneID(d.ID)
-}
-
-// DeleteOne returns a builder for deleting the given entity by its id.
-func (c *DetailClient) DeleteOneID(id uint32) *DetailDeleteOne {
-	builder := c.Delete().Where(detail.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &DetailDeleteOne{builder}
-}
-
-// Query returns a query builder for Detail.
-func (c *DetailClient) Query() *DetailQuery {
-	return &DetailQuery{
-		config: c.config,
-	}
-}
-
-// Get returns a Detail entity by its id.
-func (c *DetailClient) Get(ctx context.Context, id uint32) (*Detail, error) {
-	return c.Query().Where(detail.ID(id)).Only(ctx)
-}
-
-// GetX is like Get, but panics if an error occurs.
-func (c *DetailClient) GetX(ctx context.Context, id uint32) *Detail {
-	obj, err := c.Get(ctx, id)
-	if err != nil {
-		panic(err)
-	}
-	return obj
-}
-
-// Hooks returns the client hooks.
-func (c *DetailClient) Hooks() []Hook {
-	hooks := c.hooks.Detail
-	return append(hooks[:len(hooks):len(hooks)], detail.Hooks[:]...)
 }
 
 // ExchangeClient is a client for the Exchange schema.

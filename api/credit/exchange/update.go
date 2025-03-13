@@ -25,8 +25,9 @@ func (s *Server) UpdateExchange(ctx context.Context, in *npool.UpdateExchangeReq
 		ctx,
 		exchange1.WithID(req.ID, false),
 		exchange1.WithEntID(req.EntID, false),
-		exchange1.WithCredit(req.Credit, true),
-		exchange1.WithExchangeThreshold(req.ExchangeThreshold, true),
+		exchange1.WithCredit(req.Credit, false),
+		exchange1.WithExchangeThreshold(req.ExchangeThreshold, false),
+		exchange1.WithPath(req.Path, false),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

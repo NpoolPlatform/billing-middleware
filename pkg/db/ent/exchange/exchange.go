@@ -28,6 +28,8 @@ const (
 	FieldCredit = "credit"
 	// FieldExchangeThreshold holds the string denoting the exchange_threshold field in the database.
 	FieldExchangeThreshold = "exchange_threshold"
+	// FieldPath holds the string denoting the path field in the database.
+	FieldPath = "path"
 	// Table holds the table name of the exchange in the database.
 	Table = "exchanges"
 )
@@ -43,6 +45,7 @@ var Columns = []string{
 	FieldUsageType,
 	FieldCredit,
 	FieldExchangeThreshold,
+	FieldPath,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -82,4 +85,6 @@ var (
 	DefaultCredit uint32
 	// DefaultExchangeThreshold holds the default value on creation for the "exchange_threshold" field.
 	DefaultExchangeThreshold uint32
+	// DefaultPath holds the default value on creation for the "path" field.
+	DefaultPath string
 )

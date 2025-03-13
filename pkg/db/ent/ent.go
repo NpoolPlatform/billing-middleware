@@ -11,7 +11,6 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/addon"
-	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/detail"
 	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/exchange"
 	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/ignoreid"
 	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/pubsubmessage"
@@ -39,7 +38,6 @@ type OrderFunc func(*sql.Selector)
 func columnChecker(table string) func(string) error {
 	checks := map[string]func(string) bool{
 		addon.Table:            addon.ValidColumn,
-		detail.Table:           detail.ValidColumn,
 		exchange.Table:         exchange.ValidColumn,
 		ignoreid.Table:         ignoreid.ValidColumn,
 		pubsubmessage.Table:    pubsubmessage.ValidColumn,

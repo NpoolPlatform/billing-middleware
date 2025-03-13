@@ -33,6 +33,7 @@ var ret = npool.Exchange{
 	UsageType:         types.UsageType_TextToken,
 	UsageTypeStr:      types.UsageType_TextToken.String(),
 	Credit:            uint32(1),
+	Path:              uuid.NewString(),
 	ExchangeThreshold: uint32(1),
 }
 
@@ -48,6 +49,7 @@ func createExchange(t *testing.T) {
 		WithUsageType(&ret.UsageType, true),
 		WithCredit(&ret.Credit, true),
 		WithExchangeThreshold(&ret.ExchangeThreshold, true),
+		WithPath(&ret.Path, true),
 	)
 	assert.Nil(t, err)
 
@@ -66,11 +68,13 @@ func createExchange(t *testing.T) {
 func updateExchange(t *testing.T) {
 	ret.Credit = uint32(20)
 	ret.ExchangeThreshold = uint32(15)
+	ret.Path = uuid.NewString()
 	handler, err := NewHandler(
 		context.Background(),
 		WithID(&ret.ID, true),
 		WithCredit(&ret.Credit, true),
 		WithExchangeThreshold(&ret.ExchangeThreshold, true),
+		WithPath(&ret.Path, true),
 	)
 	assert.Nil(t, err)
 
@@ -105,6 +109,7 @@ func getExchanges(t *testing.T) {
 		UsageType: &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(ret.UsageType)},
 		IDs:       &basetypes.Uint32SliceVal{Op: cruder.IN, Value: []uint32{ret.ID}},
 		EntIDs:    &basetypes.StringSliceVal{Op: cruder.IN, Value: []string{ret.EntID}},
+		Path:      &basetypes.StringVal{Op: cruder.EQ, Value: ret.Path},
 	}
 
 	handler, err := NewHandler(

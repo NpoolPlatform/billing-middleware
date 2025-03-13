@@ -32,6 +32,8 @@ type Exchange struct {
 	Credit uint32 `json:"credit,omitempty"`
 	// ExchangeThreshold holds the value of the "exchange_threshold" field.
 	ExchangeThreshold uint32 `json:"exchange_threshold,omitempty"`
+	// Path holds the value of the "path" field.
+	Path string `json:"path,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -41,7 +43,7 @@ func (*Exchange) scanValues(columns []string) ([]interface{}, error) {
 		switch columns[i] {
 		case exchange.FieldID, exchange.FieldCreatedAt, exchange.FieldUpdatedAt, exchange.FieldDeletedAt, exchange.FieldCredit, exchange.FieldExchangeThreshold:
 			values[i] = new(sql.NullInt64)
-		case exchange.FieldUsageType:
+		case exchange.FieldUsageType, exchange.FieldPath:
 			values[i] = new(sql.NullString)
 		case exchange.FieldEntID, exchange.FieldAppID:
 			values[i] = new(uuid.UUID)
@@ -114,6 +116,12 @@ func (e *Exchange) assignValues(columns []string, values []interface{}) error {
 			} else if value.Valid {
 				e.ExchangeThreshold = uint32(value.Int64)
 			}
+		case exchange.FieldPath:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field path", values[i])
+			} else if value.Valid {
+				e.Path = value.String
+			}
 		}
 	}
 	return nil
@@ -165,6 +173,9 @@ func (e *Exchange) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("exchange_threshold=")
 	builder.WriteString(fmt.Sprintf("%v", e.ExchangeThreshold))
+	builder.WriteString(", ")
+	builder.WriteString("path=")
+	builder.WriteString(e.Path)
 	builder.WriteByte(')')
 	return builder.String()
 }

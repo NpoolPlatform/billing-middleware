@@ -9,9 +9,6 @@ import (
 // Addon is the predicate function for addon builders.
 type Addon func(*sql.Selector)
 
-// Detail is the predicate function for detail builders.
-type Detail func(*sql.Selector)
-
 // Exchange is the predicate function for exchange builders.
 type Exchange func(*sql.Selector)
 

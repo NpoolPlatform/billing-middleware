@@ -42,6 +42,10 @@ func (Exchange) Fields() []ent.Field {
 			Uint32("exchange_threshold").
 			Optional().
 			Default(0),
+		field.
+			String("path").
+			Optional().
+			Default(""),
 	}
 }
 

@@ -35,28 +35,6 @@ var (
 			},
 		},
 	}
-	// DetailsColumns holds the columns for the "details" table.
-	DetailsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true},
-		{Name: "created_at", Type: field.TypeUint32},
-		{Name: "updated_at", Type: field.TypeUint32},
-		{Name: "deleted_at", Type: field.TypeUint32},
-		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
-		{Name: "sample_col", Type: field.TypeString, Nullable: true, Default: ""},
-	}
-	// DetailsTable holds the schema information for the "details" table.
-	DetailsTable = &schema.Table{
-		Name:       "details",
-		Columns:    DetailsColumns,
-		PrimaryKey: []*schema.Column{DetailsColumns[0]},
-		Indexes: []*schema.Index{
-			{
-				Name:    "detail_ent_id",
-				Unique:  true,
-				Columns: []*schema.Column{DetailsColumns[4]},
-			},
-		},
-	}
 	// ExchangesColumns holds the columns for the "exchanges" table.
 	ExchangesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true},
@@ -68,6 +46,7 @@ var (
 		{Name: "usage_type", Type: field.TypeString, Nullable: true, Default: "DefaultUsageType"},
 		{Name: "credit", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "exchange_threshold", Type: field.TypeUint32, Nullable: true, Default: 0},
+		{Name: "path", Type: field.TypeString, Nullable: true, Default: ""},
 	}
 	// ExchangesTable holds the schema information for the "exchanges" table.
 	ExchangesTable = &schema.Table{
@@ -229,7 +208,6 @@ var (
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		AddonsTable,
-		DetailsTable,
 		ExchangesTable,
 		IgnoreIdsTable,
 		PubsubMessagesTable,

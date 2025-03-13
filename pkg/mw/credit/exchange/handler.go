@@ -129,6 +129,19 @@ func WithExchangeThreshold(u *uint32, must bool) func(context.Context, *Handler)
 	}
 }
 
+func WithPath(s *string, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if s == nil {
+			if must {
+				return wlog.Errorf("invalid path")
+			}
+			return nil
+		}
+		h.Path = s
+		return nil
+	}
+}
+
 func (h *Handler) withExchangeConds(conds *npool.Conds) error {
 	if conds.ID != nil {
 		h.ExchangeConds.ID = &cruder.Cond{
@@ -154,6 +167,13 @@ func (h *Handler) withExchangeConds(conds *npool.Conds) error {
 		h.ExchangeConds.AppID = &cruder.Cond{
 			Op:  conds.GetAppID().GetOp(),
 			Val: id,
+		}
+	}
+
+	if conds.Path != nil {
+		h.ExchangeConds.Path = &cruder.Cond{
+			Op:  conds.GetPath().GetOp(),
+			Val: conds.GetPath().GetValue(),
 		}
 	}
 

@@ -16,8 +16,6 @@ type Tx struct {
 	config
 	// Addon is the client for interacting with the Addon builders.
 	Addon *AddonClient
-	// Detail is the client for interacting with the Detail builders.
-	Detail *DetailClient
 	// Exchange is the client for interacting with the Exchange builders.
 	Exchange *ExchangeClient
 	// IgnoreID is the client for interacting with the IgnoreID builders.
@@ -166,7 +164,6 @@ func (tx *Tx) Client() *Client {
 
 func (tx *Tx) init() {
 	tx.Addon = NewAddonClient(tx.config)
-	tx.Detail = NewDetailClient(tx.config)
 	tx.Exchange = NewExchangeClient(tx.config)
 	tx.IgnoreID = NewIgnoreIDClient(tx.config)
 	tx.PubsubMessage = NewPubsubMessageClient(tx.config)

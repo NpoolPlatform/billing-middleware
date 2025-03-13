@@ -32,6 +32,7 @@ func (h *createHandler) constructSQL() {
 	_sql += comma + "usage_type"
 	_sql += comma + "credit"
 	_sql += comma + "exchange_threshold"
+	_sql += comma + "path"
 	_sql += comma + "created_at"
 	_sql += comma + "updated_at"
 	_sql += comma + "deleted_at"
@@ -48,6 +49,7 @@ func (h *createHandler) constructSQL() {
 	_sql += fmt.Sprintf("%v'%v' as usage_type", comma, *h.UsageType)
 	_sql += fmt.Sprintf("%v'%v' as credit", comma, *h.Credit)
 	_sql += fmt.Sprintf("%v'%v' as exchange_threshold", comma, *h.ExchangeThreshold)
+	_sql += fmt.Sprintf("%v'%v' as path", comma, *h.Path)
 	_sql += fmt.Sprintf("%v%v as created_at", comma, now)
 	_sql += fmt.Sprintf("%v%v as updated_at", comma, now)
 	_sql += fmt.Sprintf("%v0 as deleted_at", comma)

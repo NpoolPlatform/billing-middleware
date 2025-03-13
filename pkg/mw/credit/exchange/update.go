@@ -29,6 +29,10 @@ func (h *updateHandler) constructSQL() error {
 		_sql += fmt.Sprintf("%vexchange_threshold = %v, ", set, *h.ExchangeThreshold)
 		set = ""
 	}
+	if h.Path != nil {
+		_sql += fmt.Sprintf("%vpath = '%v', ", set, *h.Path)
+		set = ""
+	}
 	if set != "" {
 		return wlog.WrapError(cruder.ErrUpdateNothing)
 	}

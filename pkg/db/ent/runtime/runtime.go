@@ -6,7 +6,6 @@ import (
 	"context"
 
 	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/addon"
-	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/detail"
 	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/exchange"
 	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/ignoreid"
 	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/pubsubmessage"
@@ -83,44 +82,6 @@ func init() {
 	addonDescDescription := addonFields[5].Descriptor()
 	// addon.DefaultDescription holds the default value on creation for the description field.
 	addon.DefaultDescription = addonDescDescription.Default.(string)
-	detailMixin := schema.Detail{}.Mixin()
-	detail.Policy = privacy.NewPolicies(detailMixin[0], schema.Detail{})
-	detail.Hooks[0] = func(next ent.Mutator) ent.Mutator {
-		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-			if err := detail.Policy.EvalMutation(ctx, m); err != nil {
-				return nil, err
-			}
-			return next.Mutate(ctx, m)
-		})
-	}
-	detailMixinFields0 := detailMixin[0].Fields()
-	_ = detailMixinFields0
-	detailMixinFields1 := detailMixin[1].Fields()
-	_ = detailMixinFields1
-	detailFields := schema.Detail{}.Fields()
-	_ = detailFields
-	// detailDescCreatedAt is the schema descriptor for created_at field.
-	detailDescCreatedAt := detailMixinFields0[0].Descriptor()
-	// detail.DefaultCreatedAt holds the default value on creation for the created_at field.
-	detail.DefaultCreatedAt = detailDescCreatedAt.Default.(func() uint32)
-	// detailDescUpdatedAt is the schema descriptor for updated_at field.
-	detailDescUpdatedAt := detailMixinFields0[1].Descriptor()
-	// detail.DefaultUpdatedAt holds the default value on creation for the updated_at field.
-	detail.DefaultUpdatedAt = detailDescUpdatedAt.Default.(func() uint32)
-	// detail.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
-	detail.UpdateDefaultUpdatedAt = detailDescUpdatedAt.UpdateDefault.(func() uint32)
-	// detailDescDeletedAt is the schema descriptor for deleted_at field.
-	detailDescDeletedAt := detailMixinFields0[2].Descriptor()
-	// detail.DefaultDeletedAt holds the default value on creation for the deleted_at field.
-	detail.DefaultDeletedAt = detailDescDeletedAt.Default.(func() uint32)
-	// detailDescEntID is the schema descriptor for ent_id field.
-	detailDescEntID := detailMixinFields1[1].Descriptor()
-	// detail.DefaultEntID holds the default value on creation for the ent_id field.
-	detail.DefaultEntID = detailDescEntID.Default.(func() uuid.UUID)
-	// detailDescSampleCol is the schema descriptor for sample_col field.
-	detailDescSampleCol := detailFields[0].Descriptor()
-	// detail.DefaultSampleCol holds the default value on creation for the sample_col field.
-	detail.DefaultSampleCol = detailDescSampleCol.Default.(string)
 	exchangeMixin := schema.Exchange{}.Mixin()
 	exchange.Policy = privacy.NewPolicies(exchangeMixin[0], schema.Exchange{})
 	exchange.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -171,6 +132,10 @@ func init() {
 	exchangeDescExchangeThreshold := exchangeFields[3].Descriptor()
 	// exchange.DefaultExchangeThreshold holds the default value on creation for the exchange_threshold field.
 	exchange.DefaultExchangeThreshold = exchangeDescExchangeThreshold.Default.(uint32)
+	// exchangeDescPath is the schema descriptor for path field.
+	exchangeDescPath := exchangeFields[4].Descriptor()
+	// exchange.DefaultPath holds the default value on creation for the path field.
+	exchange.DefaultPath = exchangeDescPath.Default.(string)
 	ignoreidMixin := schema.IgnoreID{}.Mixin()
 	ignoreid.Policy = privacy.NewPolicies(ignoreidMixin[0], schema.IgnoreID{})
 	ignoreid.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -460,5 +425,5 @@ func init() {
 }
 
 const (
-	Version = "v0.12.0" // Version of ent codegen.
+	Version = "v0.11.3" // Version of ent codegen.
 )

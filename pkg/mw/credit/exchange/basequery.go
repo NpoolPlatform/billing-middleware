@@ -54,6 +54,7 @@ func (h *baseQueryHandler) queryJoinMyself(s *sql.Selector) {
 			t1.C(entexchange.FieldUsageType),
 			t1.C(entexchange.FieldCredit),
 			t1.C(entexchange.FieldExchangeThreshold),
+			t1.C(entexchange.FieldPath),
 			t1.C(entexchange.FieldCreatedAt),
 			t1.C(entexchange.FieldUpdatedAt),
 		)

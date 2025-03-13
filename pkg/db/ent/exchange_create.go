@@ -134,6 +134,20 @@ func (ec *ExchangeCreate) SetNillableExchangeThreshold(u *uint32) *ExchangeCreat
 	return ec
 }
 
+// SetPath sets the "path" field.
+func (ec *ExchangeCreate) SetPath(s string) *ExchangeCreate {
+	ec.mutation.SetPath(s)
+	return ec
+}
+
+// SetNillablePath sets the "path" field if the given value is not nil.
+func (ec *ExchangeCreate) SetNillablePath(s *string) *ExchangeCreate {
+	if s != nil {
+		ec.SetPath(*s)
+	}
+	return ec
+}
+
 // SetID sets the "id" field.
 func (ec *ExchangeCreate) SetID(u uint32) *ExchangeCreate {
 	ec.mutation.SetID(u)
@@ -266,6 +280,10 @@ func (ec *ExchangeCreate) defaults() error {
 		v := exchange.DefaultExchangeThreshold
 		ec.mutation.SetExchangeThreshold(v)
 	}
+	if _, ok := ec.mutation.Path(); !ok {
+		v := exchange.DefaultPath
+		ec.mutation.SetPath(v)
+	}
 	return nil
 }
 
@@ -380,6 +398,14 @@ func (ec *ExchangeCreate) createSpec() (*Exchange, *sqlgraph.CreateSpec) {
 			Column: exchange.FieldExchangeThreshold,
 		})
 		_node.ExchangeThreshold = value
+	}
+	if value, ok := ec.mutation.Path(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: exchange.FieldPath,
+		})
+		_node.Path = value
 	}
 	return _node, _spec
 }
@@ -582,6 +608,24 @@ func (u *ExchangeUpsert) AddExchangeThreshold(v uint32) *ExchangeUpsert {
 // ClearExchangeThreshold clears the value of the "exchange_threshold" field.
 func (u *ExchangeUpsert) ClearExchangeThreshold() *ExchangeUpsert {
 	u.SetNull(exchange.FieldExchangeThreshold)
+	return u
+}
+
+// SetPath sets the "path" field.
+func (u *ExchangeUpsert) SetPath(v string) *ExchangeUpsert {
+	u.Set(exchange.FieldPath, v)
+	return u
+}
+
+// UpdatePath sets the "path" field to the value that was provided on create.
+func (u *ExchangeUpsert) UpdatePath() *ExchangeUpsert {
+	u.SetExcluded(exchange.FieldPath)
+	return u
+}
+
+// ClearPath clears the value of the "path" field.
+func (u *ExchangeUpsert) ClearPath() *ExchangeUpsert {
+	u.SetNull(exchange.FieldPath)
 	return u
 }
 
@@ -807,6 +851,27 @@ func (u *ExchangeUpsertOne) UpdateExchangeThreshold() *ExchangeUpsertOne {
 func (u *ExchangeUpsertOne) ClearExchangeThreshold() *ExchangeUpsertOne {
 	return u.Update(func(s *ExchangeUpsert) {
 		s.ClearExchangeThreshold()
+	})
+}
+
+// SetPath sets the "path" field.
+func (u *ExchangeUpsertOne) SetPath(v string) *ExchangeUpsertOne {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.SetPath(v)
+	})
+}
+
+// UpdatePath sets the "path" field to the value that was provided on create.
+func (u *ExchangeUpsertOne) UpdatePath() *ExchangeUpsertOne {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.UpdatePath()
+	})
+}
+
+// ClearPath clears the value of the "path" field.
+func (u *ExchangeUpsertOne) ClearPath() *ExchangeUpsertOne {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.ClearPath()
 	})
 }
 
@@ -1197,6 +1262,27 @@ func (u *ExchangeUpsertBulk) UpdateExchangeThreshold() *ExchangeUpsertBulk {
 func (u *ExchangeUpsertBulk) ClearExchangeThreshold() *ExchangeUpsertBulk {
 	return u.Update(func(s *ExchangeUpsert) {
 		s.ClearExchangeThreshold()
+	})
+}
+
+// SetPath sets the "path" field.
+func (u *ExchangeUpsertBulk) SetPath(v string) *ExchangeUpsertBulk {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.SetPath(v)
+	})
+}
+
+// UpdatePath sets the "path" field to the value that was provided on create.
+func (u *ExchangeUpsertBulk) UpdatePath() *ExchangeUpsertBulk {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.UpdatePath()
+	})
+}
+
+// ClearPath clears the value of the "path" field.
+func (u *ExchangeUpsertBulk) ClearPath() *ExchangeUpsertBulk {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.ClearPath()
 	})
 }
 

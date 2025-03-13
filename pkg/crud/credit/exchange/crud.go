@@ -17,6 +17,7 @@ type Req struct {
 	UsageType         *types.UsageType
 	Credit            *uint32
 	ExchangeThreshold *uint32
+	Path              *string
 	DeletedAt         *uint32
 }
 
@@ -36,6 +37,9 @@ func CreateSet(c *ent.ExchangeCreate, req *Req) *ent.ExchangeCreate {
 	if req.ExchangeThreshold != nil {
 		c.SetExchangeThreshold(*req.ExchangeThreshold)
 	}
+	if req.Path != nil {
+		c.SetPath(*req.Path)
+	}
 	return c
 }
 
@@ -48,6 +52,9 @@ func UpdateSet(u *ent.ExchangeUpdateOne, req *Req) *ent.ExchangeUpdateOne {
 	}
 	if req.ExchangeThreshold != nil {
 		u.SetExchangeThreshold(*req.ExchangeThreshold)
+	}
+	if req.Path != nil {
+		u.SetPath(*req.Path)
 	}
 	if req.DeletedAt != nil {
 		u.SetDeletedAt(*req.DeletedAt)
@@ -62,6 +69,7 @@ type Conds struct {
 	EntIDs    *cruder.Cond
 	AppID     *cruder.Cond
 	UsageType *cruder.Cond
+	Path      *cruder.Cond
 }
 
 //nolint:gocyclo,funlen
@@ -140,6 +148,18 @@ func SetQueryConds(q *ent.ExchangeQuery, conds *Conds) (*ent.ExchangeQuery, erro
 			q.Where(entcreditexchange.UsageType(e.String()))
 		case cruder.NEQ:
 			q.Where(entcreditexchange.UsageTypeNEQ(e.String()))
+		default:
+			return nil, wlog.Errorf("invalid subscription field")
+		}
+	}
+	if conds.Path != nil {
+		s, ok := conds.Path.Val.(string)
+		if !ok {
+			return nil, wlog.Errorf("invalid path")
+		}
+		switch conds.Path.Op {
+		case cruder.EQ:
+			q.Where(entcreditexchange.Path(s))
 		default:
 			return nil, wlog.Errorf("invalid subscription field")
 		}

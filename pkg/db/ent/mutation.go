@@ -9,7 +9,6 @@ import (
 	"sync"
 
 	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/addon"
-	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/detail"
 	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/exchange"
 	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/ignoreid"
 	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/predicate"
@@ -33,7 +32,6 @@ const (
 
 	// Node types.
 	TypeAddon            = "Addon"
-	TypeDetail           = "Detail"
 	TypeExchange         = "Exchange"
 	TypeIgnoreID         = "IgnoreID"
 	TypePubsubMessage    = "PubsubMessage"
@@ -1132,663 +1130,6 @@ func (m *AddonMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown Addon edge %s", name)
 }
 
-// DetailMutation represents an operation that mutates the Detail nodes in the graph.
-type DetailMutation struct {
-	config
-	op            Op
-	typ           string
-	id            *uint32
-	created_at    *uint32
-	addcreated_at *int32
-	updated_at    *uint32
-	addupdated_at *int32
-	deleted_at    *uint32
-	adddeleted_at *int32
-	ent_id        *uuid.UUID
-	sample_col    *string
-	clearedFields map[string]struct{}
-	done          bool
-	oldValue      func(context.Context) (*Detail, error)
-	predicates    []predicate.Detail
-}
-
-var _ ent.Mutation = (*DetailMutation)(nil)
-
-// detailOption allows management of the mutation configuration using functional options.
-type detailOption func(*DetailMutation)
-
-// newDetailMutation creates new mutation for the Detail entity.
-func newDetailMutation(c config, op Op, opts ...detailOption) *DetailMutation {
-	m := &DetailMutation{
-		config:        c,
-		op:            op,
-		typ:           TypeDetail,
-		clearedFields: make(map[string]struct{}),
-	}
-	for _, opt := range opts {
-		opt(m)
-	}
-	return m
-}
-
-// withDetailID sets the ID field of the mutation.
-func withDetailID(id uint32) detailOption {
-	return func(m *DetailMutation) {
-		var (
-			err   error
-			once  sync.Once
-			value *Detail
-		)
-		m.oldValue = func(ctx context.Context) (*Detail, error) {
-			once.Do(func() {
-				if m.done {
-					err = errors.New("querying old values post mutation is not allowed")
-				} else {
-					value, err = m.Client().Detail.Get(ctx, id)
-				}
-			})
-			return value, err
-		}
-		m.id = &id
-	}
-}
-
-// withDetail sets the old Detail of the mutation.
-func withDetail(node *Detail) detailOption {
-	return func(m *DetailMutation) {
-		m.oldValue = func(context.Context) (*Detail, error) {
-			return node, nil
-		}
-		m.id = &node.ID
-	}
-}
-
-// Client returns a new `ent.Client` from the mutation. If the mutation was
-// executed in a transaction (ent.Tx), a transactional client is returned.
-func (m DetailMutation) Client() *Client {
-	client := &Client{config: m.config}
-	client.init()
-	return client
-}
-
-// Tx returns an `ent.Tx` for mutations that were executed in transactions;
-// it returns an error otherwise.
-func (m DetailMutation) Tx() (*Tx, error) {
-	if _, ok := m.driver.(*txDriver); !ok {
-		return nil, errors.New("ent: mutation is not running in a transaction")
-	}
-	tx := &Tx{config: m.config}
-	tx.init()
-	return tx, nil
-}
-
-// SetID sets the value of the id field. Note that this
-// operation is only accepted on creation of Detail entities.
-func (m *DetailMutation) SetID(id uint32) {
-	m.id = &id
-}
-
-// ID returns the ID value in the mutation. Note that the ID is only available
-// if it was provided to the builder or after it was returned from the database.
-func (m *DetailMutation) ID() (id uint32, exists bool) {
-	if m.id == nil {
-		return
-	}
-	return *m.id, true
-}
-
-// IDs queries the database and returns the entity ids that match the mutation's predicate.
-// That means, if the mutation is applied within a transaction with an isolation level such
-// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
-// or updated by the mutation.
-func (m *DetailMutation) IDs(ctx context.Context) ([]uint32, error) {
-	switch {
-	case m.op.Is(OpUpdateOne | OpDeleteOne):
-		id, exists := m.ID()
-		if exists {
-			return []uint32{id}, nil
-		}
-		fallthrough
-	case m.op.Is(OpUpdate | OpDelete):
-		return m.Client().Detail.Query().Where(m.predicates...).IDs(ctx)
-	default:
-		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
-	}
-}
-
-// SetCreatedAt sets the "created_at" field.
-func (m *DetailMutation) SetCreatedAt(u uint32) {
-	m.created_at = &u
-	m.addcreated_at = nil
-}
-
-// CreatedAt returns the value of the "created_at" field in the mutation.
-func (m *DetailMutation) CreatedAt() (r uint32, exists bool) {
-	v := m.created_at
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldCreatedAt returns the old "created_at" field's value of the Detail entity.
-// If the Detail object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *DetailMutation) OldCreatedAt(ctx context.Context) (v uint32, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
-	}
-	return oldValue.CreatedAt, nil
-}
-
-// AddCreatedAt adds u to the "created_at" field.
-func (m *DetailMutation) AddCreatedAt(u int32) {
-	if m.addcreated_at != nil {
-		*m.addcreated_at += u
-	} else {
-		m.addcreated_at = &u
-	}
-}
-
-// AddedCreatedAt returns the value that was added to the "created_at" field in this mutation.
-func (m *DetailMutation) AddedCreatedAt() (r int32, exists bool) {
-	v := m.addcreated_at
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ResetCreatedAt resets all changes to the "created_at" field.
-func (m *DetailMutation) ResetCreatedAt() {
-	m.created_at = nil
-	m.addcreated_at = nil
-}
-
-// SetUpdatedAt sets the "updated_at" field.
-func (m *DetailMutation) SetUpdatedAt(u uint32) {
-	m.updated_at = &u
-	m.addupdated_at = nil
-}
-
-// UpdatedAt returns the value of the "updated_at" field in the mutation.
-func (m *DetailMutation) UpdatedAt() (r uint32, exists bool) {
-	v := m.updated_at
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldUpdatedAt returns the old "updated_at" field's value of the Detail entity.
-// If the Detail object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *DetailMutation) OldUpdatedAt(ctx context.Context) (v uint32, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
-	}
-	return oldValue.UpdatedAt, nil
-}
-
-// AddUpdatedAt adds u to the "updated_at" field.
-func (m *DetailMutation) AddUpdatedAt(u int32) {
-	if m.addupdated_at != nil {
-		*m.addupdated_at += u
-	} else {
-		m.addupdated_at = &u
-	}
-}
-
-// AddedUpdatedAt returns the value that was added to the "updated_at" field in this mutation.
-func (m *DetailMutation) AddedUpdatedAt() (r int32, exists bool) {
-	v := m.addupdated_at
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ResetUpdatedAt resets all changes to the "updated_at" field.
-func (m *DetailMutation) ResetUpdatedAt() {
-	m.updated_at = nil
-	m.addupdated_at = nil
-}
-
-// SetDeletedAt sets the "deleted_at" field.
-func (m *DetailMutation) SetDeletedAt(u uint32) {
-	m.deleted_at = &u
-	m.adddeleted_at = nil
-}
-
-// DeletedAt returns the value of the "deleted_at" field in the mutation.
-func (m *DetailMutation) DeletedAt() (r uint32, exists bool) {
-	v := m.deleted_at
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldDeletedAt returns the old "deleted_at" field's value of the Detail entity.
-// If the Detail object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *DetailMutation) OldDeletedAt(ctx context.Context) (v uint32, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
-	}
-	return oldValue.DeletedAt, nil
-}
-
-// AddDeletedAt adds u to the "deleted_at" field.
-func (m *DetailMutation) AddDeletedAt(u int32) {
-	if m.adddeleted_at != nil {
-		*m.adddeleted_at += u
-	} else {
-		m.adddeleted_at = &u
-	}
-}
-
-// AddedDeletedAt returns the value that was added to the "deleted_at" field in this mutation.
-func (m *DetailMutation) AddedDeletedAt() (r int32, exists bool) {
-	v := m.adddeleted_at
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ResetDeletedAt resets all changes to the "deleted_at" field.
-func (m *DetailMutation) ResetDeletedAt() {
-	m.deleted_at = nil
-	m.adddeleted_at = nil
-}
-
-// SetEntID sets the "ent_id" field.
-func (m *DetailMutation) SetEntID(u uuid.UUID) {
-	m.ent_id = &u
-}
-
-// EntID returns the value of the "ent_id" field in the mutation.
-func (m *DetailMutation) EntID() (r uuid.UUID, exists bool) {
-	v := m.ent_id
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldEntID returns the old "ent_id" field's value of the Detail entity.
-// If the Detail object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *DetailMutation) OldEntID(ctx context.Context) (v uuid.UUID, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldEntID is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldEntID requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldEntID: %w", err)
-	}
-	return oldValue.EntID, nil
-}
-
-// ResetEntID resets all changes to the "ent_id" field.
-func (m *DetailMutation) ResetEntID() {
-	m.ent_id = nil
-}
-
-// SetSampleCol sets the "sample_col" field.
-func (m *DetailMutation) SetSampleCol(s string) {
-	m.sample_col = &s
-}
-
-// SampleCol returns the value of the "sample_col" field in the mutation.
-func (m *DetailMutation) SampleCol() (r string, exists bool) {
-	v := m.sample_col
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldSampleCol returns the old "sample_col" field's value of the Detail entity.
-// If the Detail object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *DetailMutation) OldSampleCol(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldSampleCol is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldSampleCol requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldSampleCol: %w", err)
-	}
-	return oldValue.SampleCol, nil
-}
-
-// ClearSampleCol clears the value of the "sample_col" field.
-func (m *DetailMutation) ClearSampleCol() {
-	m.sample_col = nil
-	m.clearedFields[detail.FieldSampleCol] = struct{}{}
-}
-
-// SampleColCleared returns if the "sample_col" field was cleared in this mutation.
-func (m *DetailMutation) SampleColCleared() bool {
-	_, ok := m.clearedFields[detail.FieldSampleCol]
-	return ok
-}
-
-// ResetSampleCol resets all changes to the "sample_col" field.
-func (m *DetailMutation) ResetSampleCol() {
-	m.sample_col = nil
-	delete(m.clearedFields, detail.FieldSampleCol)
-}
-
-// Where appends a list predicates to the DetailMutation builder.
-func (m *DetailMutation) Where(ps ...predicate.Detail) {
-	m.predicates = append(m.predicates, ps...)
-}
-
-// Op returns the operation name.
-func (m *DetailMutation) Op() Op {
-	return m.op
-}
-
-// Type returns the node type of this mutation (Detail).
-func (m *DetailMutation) Type() string {
-	return m.typ
-}
-
-// Fields returns all fields that were changed during this mutation. Note that in
-// order to get all numeric fields that were incremented/decremented, call
-// AddedFields().
-func (m *DetailMutation) Fields() []string {
-	fields := make([]string, 0, 5)
-	if m.created_at != nil {
-		fields = append(fields, detail.FieldCreatedAt)
-	}
-	if m.updated_at != nil {
-		fields = append(fields, detail.FieldUpdatedAt)
-	}
-	if m.deleted_at != nil {
-		fields = append(fields, detail.FieldDeletedAt)
-	}
-	if m.ent_id != nil {
-		fields = append(fields, detail.FieldEntID)
-	}
-	if m.sample_col != nil {
-		fields = append(fields, detail.FieldSampleCol)
-	}
-	return fields
-}
-
-// Field returns the value of a field with the given name. The second boolean
-// return value indicates that this field was not set, or was not defined in the
-// schema.
-func (m *DetailMutation) Field(name string) (ent.Value, bool) {
-	switch name {
-	case detail.FieldCreatedAt:
-		return m.CreatedAt()
-	case detail.FieldUpdatedAt:
-		return m.UpdatedAt()
-	case detail.FieldDeletedAt:
-		return m.DeletedAt()
-	case detail.FieldEntID:
-		return m.EntID()
-	case detail.FieldSampleCol:
-		return m.SampleCol()
-	}
-	return nil, false
-}
-
-// OldField returns the old value of the field from the database. An error is
-// returned if the mutation operation is not UpdateOne, or the query to the
-// database failed.
-func (m *DetailMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
-	switch name {
-	case detail.FieldCreatedAt:
-		return m.OldCreatedAt(ctx)
-	case detail.FieldUpdatedAt:
-		return m.OldUpdatedAt(ctx)
-	case detail.FieldDeletedAt:
-		return m.OldDeletedAt(ctx)
-	case detail.FieldEntID:
-		return m.OldEntID(ctx)
-	case detail.FieldSampleCol:
-		return m.OldSampleCol(ctx)
-	}
-	return nil, fmt.Errorf("unknown Detail field %s", name)
-}
-
-// SetField sets the value of a field with the given name. It returns an error if
-// the field is not defined in the schema, or if the type mismatched the field
-// type.
-func (m *DetailMutation) SetField(name string, value ent.Value) error {
-	switch name {
-	case detail.FieldCreatedAt:
-		v, ok := value.(uint32)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetCreatedAt(v)
-		return nil
-	case detail.FieldUpdatedAt:
-		v, ok := value.(uint32)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetUpdatedAt(v)
-		return nil
-	case detail.FieldDeletedAt:
-		v, ok := value.(uint32)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetDeletedAt(v)
-		return nil
-	case detail.FieldEntID:
-		v, ok := value.(uuid.UUID)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetEntID(v)
-		return nil
-	case detail.FieldSampleCol:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetSampleCol(v)
-		return nil
-	}
-	return fmt.Errorf("unknown Detail field %s", name)
-}
-
-// AddedFields returns all numeric fields that were incremented/decremented during
-// this mutation.
-func (m *DetailMutation) AddedFields() []string {
-	var fields []string
-	if m.addcreated_at != nil {
-		fields = append(fields, detail.FieldCreatedAt)
-	}
-	if m.addupdated_at != nil {
-		fields = append(fields, detail.FieldUpdatedAt)
-	}
-	if m.adddeleted_at != nil {
-		fields = append(fields, detail.FieldDeletedAt)
-	}
-	return fields
-}
-
-// AddedField returns the numeric value that was incremented/decremented on a field
-// with the given name. The second boolean return value indicates that this field
-// was not set, or was not defined in the schema.
-func (m *DetailMutation) AddedField(name string) (ent.Value, bool) {
-	switch name {
-	case detail.FieldCreatedAt:
-		return m.AddedCreatedAt()
-	case detail.FieldUpdatedAt:
-		return m.AddedUpdatedAt()
-	case detail.FieldDeletedAt:
-		return m.AddedDeletedAt()
-	}
-	return nil, false
-}
-
-// AddField adds the value to the field with the given name. It returns an error if
-// the field is not defined in the schema, or if the type mismatched the field
-// type.
-func (m *DetailMutation) AddField(name string, value ent.Value) error {
-	switch name {
-	case detail.FieldCreatedAt:
-		v, ok := value.(int32)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddCreatedAt(v)
-		return nil
-	case detail.FieldUpdatedAt:
-		v, ok := value.(int32)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddUpdatedAt(v)
-		return nil
-	case detail.FieldDeletedAt:
-		v, ok := value.(int32)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddDeletedAt(v)
-		return nil
-	}
-	return fmt.Errorf("unknown Detail numeric field %s", name)
-}
-
-// ClearedFields returns all nullable fields that were cleared during this
-// mutation.
-func (m *DetailMutation) ClearedFields() []string {
-	var fields []string
-	if m.FieldCleared(detail.FieldSampleCol) {
-		fields = append(fields, detail.FieldSampleCol)
-	}
-	return fields
-}
-
-// FieldCleared returns a boolean indicating if a field with the given name was
-// cleared in this mutation.
-func (m *DetailMutation) FieldCleared(name string) bool {
-	_, ok := m.clearedFields[name]
-	return ok
-}
-
-// ClearField clears the value of the field with the given name. It returns an
-// error if the field is not defined in the schema.
-func (m *DetailMutation) ClearField(name string) error {
-	switch name {
-	case detail.FieldSampleCol:
-		m.ClearSampleCol()
-		return nil
-	}
-	return fmt.Errorf("unknown Detail nullable field %s", name)
-}
-
-// ResetField resets all changes in the mutation for the field with the given name.
-// It returns an error if the field is not defined in the schema.
-func (m *DetailMutation) ResetField(name string) error {
-	switch name {
-	case detail.FieldCreatedAt:
-		m.ResetCreatedAt()
-		return nil
-	case detail.FieldUpdatedAt:
-		m.ResetUpdatedAt()
-		return nil
-	case detail.FieldDeletedAt:
-		m.ResetDeletedAt()
-		return nil
-	case detail.FieldEntID:
-		m.ResetEntID()
-		return nil
-	case detail.FieldSampleCol:
-		m.ResetSampleCol()
-		return nil
-	}
-	return fmt.Errorf("unknown Detail field %s", name)
-}
-
-// AddedEdges returns all edge names that were set/added in this mutation.
-func (m *DetailMutation) AddedEdges() []string {
-	edges := make([]string, 0, 0)
-	return edges
-}
-
-// AddedIDs returns all IDs (to other nodes) that were added for the given edge
-// name in this mutation.
-func (m *DetailMutation) AddedIDs(name string) []ent.Value {
-	return nil
-}
-
-// RemovedEdges returns all edge names that were removed in this mutation.
-func (m *DetailMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 0)
-	return edges
-}
-
-// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
-// the given name in this mutation.
-func (m *DetailMutation) RemovedIDs(name string) []ent.Value {
-	return nil
-}
-
-// ClearedEdges returns all edge names that were cleared in this mutation.
-func (m *DetailMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 0)
-	return edges
-}
-
-// EdgeCleared returns a boolean which indicates if the edge with the given name
-// was cleared in this mutation.
-func (m *DetailMutation) EdgeCleared(name string) bool {
-	return false
-}
-
-// ClearEdge clears the value of the edge with the given name. It returns an error
-// if that edge is not defined in the schema.
-func (m *DetailMutation) ClearEdge(name string) error {
-	return fmt.Errorf("unknown Detail unique edge %s", name)
-}
-
-// ResetEdge resets all changes to the edge with the given name in this mutation.
-// It returns an error if the edge is not defined in the schema.
-func (m *DetailMutation) ResetEdge(name string) error {
-	return fmt.Errorf("unknown Detail edge %s", name)
-}
-
 // ExchangeMutation represents an operation that mutates the Exchange nodes in the graph.
 type ExchangeMutation struct {
 	config
@@ -1808,6 +1149,7 @@ type ExchangeMutation struct {
 	addcredit             *int32
 	exchange_threshold    *uint32
 	addexchange_threshold *int32
+	_path                 *string
 	clearedFields         map[string]struct{}
 	done                  bool
 	oldValue              func(context.Context) (*Exchange, error)
@@ -2360,6 +1702,55 @@ func (m *ExchangeMutation) ResetExchangeThreshold() {
 	delete(m.clearedFields, exchange.FieldExchangeThreshold)
 }
 
+// SetPath sets the "path" field.
+func (m *ExchangeMutation) SetPath(s string) {
+	m._path = &s
+}
+
+// Path returns the value of the "path" field in the mutation.
+func (m *ExchangeMutation) Path() (r string, exists bool) {
+	v := m._path
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPath returns the old "path" field's value of the Exchange entity.
+// If the Exchange object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExchangeMutation) OldPath(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPath is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPath requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPath: %w", err)
+	}
+	return oldValue.Path, nil
+}
+
+// ClearPath clears the value of the "path" field.
+func (m *ExchangeMutation) ClearPath() {
+	m._path = nil
+	m.clearedFields[exchange.FieldPath] = struct{}{}
+}
+
+// PathCleared returns if the "path" field was cleared in this mutation.
+func (m *ExchangeMutation) PathCleared() bool {
+	_, ok := m.clearedFields[exchange.FieldPath]
+	return ok
+}
+
+// ResetPath resets all changes to the "path" field.
+func (m *ExchangeMutation) ResetPath() {
+	m._path = nil
+	delete(m.clearedFields, exchange.FieldPath)
+}
+
 // Where appends a list predicates to the ExchangeMutation builder.
 func (m *ExchangeMutation) Where(ps ...predicate.Exchange) {
 	m.predicates = append(m.predicates, ps...)
@@ -2379,7 +1770,7 @@ func (m *ExchangeMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *ExchangeMutation) Fields() []string {
-	fields := make([]string, 0, 8)
+	fields := make([]string, 0, 9)
 	if m.created_at != nil {
 		fields = append(fields, exchange.FieldCreatedAt)
 	}
@@ -2403,6 +1794,9 @@ func (m *ExchangeMutation) Fields() []string {
 	}
 	if m.exchange_threshold != nil {
 		fields = append(fields, exchange.FieldExchangeThreshold)
+	}
+	if m._path != nil {
+		fields = append(fields, exchange.FieldPath)
 	}
 	return fields
 }
@@ -2428,6 +1822,8 @@ func (m *ExchangeMutation) Field(name string) (ent.Value, bool) {
 		return m.Credit()
 	case exchange.FieldExchangeThreshold:
 		return m.ExchangeThreshold()
+	case exchange.FieldPath:
+		return m.Path()
 	}
 	return nil, false
 }
@@ -2453,6 +1849,8 @@ func (m *ExchangeMutation) OldField(ctx context.Context, name string) (ent.Value
 		return m.OldCredit(ctx)
 	case exchange.FieldExchangeThreshold:
 		return m.OldExchangeThreshold(ctx)
+	case exchange.FieldPath:
+		return m.OldPath(ctx)
 	}
 	return nil, fmt.Errorf("unknown Exchange field %s", name)
 }
@@ -2517,6 +1915,13 @@ func (m *ExchangeMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetExchangeThreshold(v)
+		return nil
+	case exchange.FieldPath:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPath(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Exchange field %s", name)
@@ -2623,6 +2028,9 @@ func (m *ExchangeMutation) ClearedFields() []string {
 	if m.FieldCleared(exchange.FieldExchangeThreshold) {
 		fields = append(fields, exchange.FieldExchangeThreshold)
 	}
+	if m.FieldCleared(exchange.FieldPath) {
+		fields = append(fields, exchange.FieldPath)
+	}
 	return fields
 }
 
@@ -2648,6 +2056,9 @@ func (m *ExchangeMutation) ClearField(name string) error {
 		return nil
 	case exchange.FieldExchangeThreshold:
 		m.ClearExchangeThreshold()
+		return nil
+	case exchange.FieldPath:
+		m.ClearPath()
 		return nil
 	}
 	return fmt.Errorf("unknown Exchange nullable field %s", name)
@@ -2680,6 +2091,9 @@ func (m *ExchangeMutation) ResetField(name string) error {
 		return nil
 	case exchange.FieldExchangeThreshold:
 		m.ResetExchangeThreshold()
+		return nil
+	case exchange.FieldPath:
+		m.ResetPath()
 		return nil
 	}
 	return fmt.Errorf("unknown Exchange field %s", name)

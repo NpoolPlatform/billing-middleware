@@ -28,6 +28,7 @@ func (s *Server) CreateExchange(ctx context.Context, in *npool.CreateExchangeReq
 		exchange1.WithUsageType(req.UsageType, true),
 		exchange1.WithCredit(req.Credit, true),
 		exchange1.WithExchangeThreshold(req.ExchangeThreshold, true),
+		exchange1.WithPath(req.Path, true),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

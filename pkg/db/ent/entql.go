@@ -4,7 +4,6 @@ package ent
 
 import (
 	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/addon"
-	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/detail"
 	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/exchange"
 	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/ignoreid"
 	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/pubsubmessage"
@@ -20,7 +19,7 @@ import (
 
 // schemaGraph holds a representation of ent/schema at runtime.
 var schemaGraph = func() *sqlgraph.Schema {
-	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 8)}
+	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 7)}
 	graph.Nodes[0] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   addon.Table,
@@ -46,24 +45,6 @@ var schemaGraph = func() *sqlgraph.Schema {
 	}
 	graph.Nodes[1] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
-			Table:   detail.Table,
-			Columns: detail.Columns,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUint32,
-				Column: detail.FieldID,
-			},
-		},
-		Type: "Detail",
-		Fields: map[string]*sqlgraph.FieldSpec{
-			detail.FieldCreatedAt: {Type: field.TypeUint32, Column: detail.FieldCreatedAt},
-			detail.FieldUpdatedAt: {Type: field.TypeUint32, Column: detail.FieldUpdatedAt},
-			detail.FieldDeletedAt: {Type: field.TypeUint32, Column: detail.FieldDeletedAt},
-			detail.FieldEntID:     {Type: field.TypeUUID, Column: detail.FieldEntID},
-			detail.FieldSampleCol: {Type: field.TypeString, Column: detail.FieldSampleCol},
-		},
-	}
-	graph.Nodes[2] = &sqlgraph.Node{
-		NodeSpec: sqlgraph.NodeSpec{
 			Table:   exchange.Table,
 			Columns: exchange.Columns,
 			ID: &sqlgraph.FieldSpec{
@@ -81,9 +62,10 @@ var schemaGraph = func() *sqlgraph.Schema {
 			exchange.FieldUsageType:         {Type: field.TypeString, Column: exchange.FieldUsageType},
 			exchange.FieldCredit:            {Type: field.TypeUint32, Column: exchange.FieldCredit},
 			exchange.FieldExchangeThreshold: {Type: field.TypeUint32, Column: exchange.FieldExchangeThreshold},
+			exchange.FieldPath:              {Type: field.TypeString, Column: exchange.FieldPath},
 		},
 	}
-	graph.Nodes[3] = &sqlgraph.Node{
+	graph.Nodes[2] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   ignoreid.Table,
 			Columns: ignoreid.Columns,
@@ -101,7 +83,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			ignoreid.FieldSampleCol: {Type: field.TypeString, Column: ignoreid.FieldSampleCol},
 		},
 	}
-	graph.Nodes[4] = &sqlgraph.Node{
+	graph.Nodes[3] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   pubsubmessage.Table,
 			Columns: pubsubmessage.Columns,
@@ -123,7 +105,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			pubsubmessage.FieldArguments: {Type: field.TypeString, Column: pubsubmessage.FieldArguments},
 		},
 	}
-	graph.Nodes[5] = &sqlgraph.Node{
+	graph.Nodes[4] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   subscription.Table,
 			Columns: subscription.Columns,
@@ -149,7 +131,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			subscription.FieldQPSLimit:    {Type: field.TypeUint32, Column: subscription.FieldQPSLimit},
 		},
 	}
-	graph.Nodes[6] = &sqlgraph.Node{
+	graph.Nodes[5] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   usercreditrecord.Table,
 			Columns: usercreditrecord.Columns,
@@ -171,7 +153,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			usercreditrecord.FieldExtra:         {Type: field.TypeString, Column: usercreditrecord.FieldExtra},
 		},
 	}
-	graph.Nodes[7] = &sqlgraph.Node{
+	graph.Nodes[6] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   usersubscription.Table,
 			Columns: usersubscription.Columns,
@@ -297,71 +279,6 @@ func (f *AddonFilter) WhereDescription(p entql.StringP) {
 }
 
 // addPredicate implements the predicateAdder interface.
-func (dq *DetailQuery) addPredicate(pred func(s *sql.Selector)) {
-	dq.predicates = append(dq.predicates, pred)
-}
-
-// Filter returns a Filter implementation to apply filters on the DetailQuery builder.
-func (dq *DetailQuery) Filter() *DetailFilter {
-	return &DetailFilter{config: dq.config, predicateAdder: dq}
-}
-
-// addPredicate implements the predicateAdder interface.
-func (m *DetailMutation) addPredicate(pred func(s *sql.Selector)) {
-	m.predicates = append(m.predicates, pred)
-}
-
-// Filter returns an entql.Where implementation to apply filters on the DetailMutation builder.
-func (m *DetailMutation) Filter() *DetailFilter {
-	return &DetailFilter{config: m.config, predicateAdder: m}
-}
-
-// DetailFilter provides a generic filtering capability at runtime for DetailQuery.
-type DetailFilter struct {
-	predicateAdder
-	config
-}
-
-// Where applies the entql predicate on the query filter.
-func (f *DetailFilter) Where(p entql.P) {
-	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[1].Type, p, s); err != nil {
-			s.AddError(err)
-		}
-	})
-}
-
-// WhereID applies the entql uint32 predicate on the id field.
-func (f *DetailFilter) WhereID(p entql.Uint32P) {
-	f.Where(p.Field(detail.FieldID))
-}
-
-// WhereCreatedAt applies the entql uint32 predicate on the created_at field.
-func (f *DetailFilter) WhereCreatedAt(p entql.Uint32P) {
-	f.Where(p.Field(detail.FieldCreatedAt))
-}
-
-// WhereUpdatedAt applies the entql uint32 predicate on the updated_at field.
-func (f *DetailFilter) WhereUpdatedAt(p entql.Uint32P) {
-	f.Where(p.Field(detail.FieldUpdatedAt))
-}
-
-// WhereDeletedAt applies the entql uint32 predicate on the deleted_at field.
-func (f *DetailFilter) WhereDeletedAt(p entql.Uint32P) {
-	f.Where(p.Field(detail.FieldDeletedAt))
-}
-
-// WhereEntID applies the entql [16]byte predicate on the ent_id field.
-func (f *DetailFilter) WhereEntID(p entql.ValueP) {
-	f.Where(p.Field(detail.FieldEntID))
-}
-
-// WhereSampleCol applies the entql string predicate on the sample_col field.
-func (f *DetailFilter) WhereSampleCol(p entql.StringP) {
-	f.Where(p.Field(detail.FieldSampleCol))
-}
-
-// addPredicate implements the predicateAdder interface.
 func (eq *ExchangeQuery) addPredicate(pred func(s *sql.Selector)) {
 	eq.predicates = append(eq.predicates, pred)
 }
@@ -390,7 +307,7 @@ type ExchangeFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *ExchangeFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[2].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[1].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -441,6 +358,11 @@ func (f *ExchangeFilter) WhereExchangeThreshold(p entql.Uint32P) {
 	f.Where(p.Field(exchange.FieldExchangeThreshold))
 }
 
+// WherePath applies the entql string predicate on the path field.
+func (f *ExchangeFilter) WherePath(p entql.StringP) {
+	f.Where(p.Field(exchange.FieldPath))
+}
+
 // addPredicate implements the predicateAdder interface.
 func (iiq *IgnoreIDQuery) addPredicate(pred func(s *sql.Selector)) {
 	iiq.predicates = append(iiq.predicates, pred)
@@ -470,7 +392,7 @@ type IgnoreIDFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *IgnoreIDFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[3].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[2].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -535,7 +457,7 @@ type PubsubMessageFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *PubsubMessageFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[4].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[3].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -620,7 +542,7 @@ type SubscriptionFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *SubscriptionFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[5].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[4].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -725,7 +647,7 @@ type UserCreditRecordFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *UserCreditRecordFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[6].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[5].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -810,7 +732,7 @@ type UserSubscriptionFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *UserSubscriptionFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[7].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[6].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})

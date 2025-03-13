@@ -192,6 +192,26 @@ func (eu *ExchangeUpdate) ClearExchangeThreshold() *ExchangeUpdate {
 	return eu
 }
 
+// SetPath sets the "path" field.
+func (eu *ExchangeUpdate) SetPath(s string) *ExchangeUpdate {
+	eu.mutation.SetPath(s)
+	return eu
+}
+
+// SetNillablePath sets the "path" field if the given value is not nil.
+func (eu *ExchangeUpdate) SetNillablePath(s *string) *ExchangeUpdate {
+	if s != nil {
+		eu.SetPath(*s)
+	}
+	return eu
+}
+
+// ClearPath clears the value of the "path" field.
+func (eu *ExchangeUpdate) ClearPath() *ExchangeUpdate {
+	eu.mutation.ClearPath()
+	return eu
+}
+
 // Mutation returns the ExchangeMutation object of the builder.
 func (eu *ExchangeUpdate) Mutation() *ExchangeMutation {
 	return eu.mutation
@@ -405,6 +425,19 @@ func (eu *ExchangeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: exchange.FieldExchangeThreshold,
 		})
 	}
+	if value, ok := eu.mutation.Path(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: exchange.FieldPath,
+		})
+	}
+	if eu.mutation.PathCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: exchange.FieldPath,
+		})
+	}
 	_spec.Modifiers = eu.modifiers
 	if n, err = sqlgraph.UpdateNodes(ctx, eu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -586,6 +619,26 @@ func (euo *ExchangeUpdateOne) AddExchangeThreshold(u int32) *ExchangeUpdateOne {
 // ClearExchangeThreshold clears the value of the "exchange_threshold" field.
 func (euo *ExchangeUpdateOne) ClearExchangeThreshold() *ExchangeUpdateOne {
 	euo.mutation.ClearExchangeThreshold()
+	return euo
+}
+
+// SetPath sets the "path" field.
+func (euo *ExchangeUpdateOne) SetPath(s string) *ExchangeUpdateOne {
+	euo.mutation.SetPath(s)
+	return euo
+}
+
+// SetNillablePath sets the "path" field if the given value is not nil.
+func (euo *ExchangeUpdateOne) SetNillablePath(s *string) *ExchangeUpdateOne {
+	if s != nil {
+		euo.SetPath(*s)
+	}
+	return euo
+}
+
+// ClearPath clears the value of the "path" field.
+func (euo *ExchangeUpdateOne) ClearPath() *ExchangeUpdateOne {
+	euo.mutation.ClearPath()
 	return euo
 }
 
@@ -830,6 +883,19 @@ func (euo *ExchangeUpdateOne) sqlSave(ctx context.Context) (_node *Exchange, err
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Column: exchange.FieldExchangeThreshold,
+		})
+	}
+	if value, ok := euo.mutation.Path(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: exchange.FieldPath,
+		})
+	}
+	if euo.mutation.PathCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: exchange.FieldPath,
 		})
 	}
 	_spec.Modifiers = euo.modifiers

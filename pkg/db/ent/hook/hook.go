@@ -22,19 +22,6 @@ func (f AddonFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error
 	return f(ctx, mv)
 }
 
-// The DetailFunc type is an adapter to allow the use of ordinary
-// function as Detail mutator.
-type DetailFunc func(context.Context, *ent.DetailMutation) (ent.Value, error)
-
-// Mutate calls f(ctx, m).
-func (f DetailFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	mv, ok := m.(*ent.DetailMutation)
-	if !ok {
-		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.DetailMutation", m)
-	}
-	return f(ctx, mv)
-}
-
 // The ExchangeFunc type is an adapter to allow the use of ordinary
 // function as Exchange mutator.
 type ExchangeFunc func(context.Context, *ent.ExchangeMutation) (ent.Value, error)

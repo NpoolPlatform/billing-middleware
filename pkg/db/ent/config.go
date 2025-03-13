@@ -29,7 +29,6 @@ type config struct {
 // hooks per client, for fast access.
 type hooks struct {
 	Addon            []ent.Hook
-	Detail           []ent.Hook
 	Exchange         []ent.Hook
 	IgnoreID         []ent.Hook
 	PubsubMessage    []ent.Hook
