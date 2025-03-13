@@ -8,7 +8,7 @@ require (
 	github.com/NpoolPlatform/basal-middleware v0.0.0-20231015112137-254853c60eec
 	github.com/NpoolPlatform/go-service-framework v0.0.0-20240507084859-362174af9b92
 	github.com/NpoolPlatform/libent-cruder v0.0.0-20240323085036-7679b4818ce7
-	github.com/NpoolPlatform/message v0.0.0-20250311030836-46e4c8b75ad1
+	github.com/NpoolPlatform/message v0.0.0-20250313090001-87cf392af6de
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/google/uuid v1.3.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.10.0
@@ -118,5 +118,3 @@ replace entgo.io/ent => entgo.io/ent v0.11.2
 replace ariga.io/atlas => ariga.io/atlas v0.5.1-0.20220717122844-8593d7eb1a8e
 
 replace github.com/ugorji/go => github.com/ugorji/go v0.0.0-20190204201341-e444a5086c43
-
-replace github.com/NpoolPlatform/message v0.0.0-20250311030836-46e4c8b75ad1 => ../message
