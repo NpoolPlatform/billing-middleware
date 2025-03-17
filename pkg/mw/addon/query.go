@@ -3,6 +3,7 @@ package addon
 import (
 	"context"
 
+	"entgo.io/ent/dialect/sql"
 	"github.com/NpoolPlatform/billing-middleware/pkg/db"
 	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent"
 	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
@@ -15,6 +16,19 @@ type queryHandler struct {
 	stmCount *ent.AddonSelect
 	infos    []*npool.Addon
 	total    uint32
+}
+
+func (h *queryHandler) queryJoin() {
+	if h.stmSelect != nil {
+		h.baseQueryHandler.queryJoin()
+		return
+	}
+	if h.stmCount == nil {
+		return
+	}
+	h.stmCount.Modify(func(s *sql.Selector) {
+		h.queryJoinMyself(s)
+	})
 }
 
 func (h *queryHandler) scan(ctx context.Context) error {
@@ -96,7 +110,7 @@ func (h *Handler) GetAddonsCount(ctx context.Context) (uint32, error) {
 		}
 		handler.total = uint32(_total)
 
-		return handler.scan(_ctx)
+		return nil
 	})
 	if err != nil {
 		return 0, wlog.WrapError(err)
