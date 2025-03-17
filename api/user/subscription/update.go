@@ -27,6 +27,7 @@ func (s *Server) UpdateSubscription(ctx context.Context, in *npool.UpdateSubscri
 		subscription1.WithEntID(req.EntID, false),
 		subscription1.WithStartAt(req.StartAt, false),
 		subscription1.WithEndAt(req.EndAt, false),
+		subscription1.WithPackageID(req.PackageID, false),
 		subscription1.WithUsageState(req.UsageState, false),
 		subscription1.WithSubscriptionCredit(req.SubscriptionCredit, false),
 		subscription1.WithAddonCredit(req.AddonCredit, false),

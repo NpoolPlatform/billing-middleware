@@ -31,7 +31,6 @@ func (h *createHandler) constructSQL() {
 	comma = ", "
 	_sql += comma + "user_id"
 	_sql += comma + "package_id"
-	_sql += comma + "order_id"
 	_sql += comma + "start_at"
 	_sql += comma + "end_at"
 	_sql += comma + "usage_state"
@@ -57,7 +56,7 @@ func (h *createHandler) constructSQL() {
 	_sql += fmt.Sprintf("%v%v as end_at", comma, *h.EndAt)
 	_sql += fmt.Sprintf("%v'%v' as usage_state", comma, *h.UsageState)
 	_sql += fmt.Sprintf("%v%v as subscription_credit", comma, *h.SubscriptionCredit)
-	_sql += fmt.Sprintf("%v%v as addon_credit", comma, *h.SubscriptionCredit)
+	_sql += fmt.Sprintf("%v%v as addon_credit", comma, *h.AddonCredit)
 
 	_sql += fmt.Sprintf("%v%v as created_at", comma, now)
 	_sql += fmt.Sprintf("%v%v as updated_at", comma, now)
@@ -68,6 +67,7 @@ func (h *createHandler) constructSQL() {
 	_sql += fmt.Sprintf("where us.user_id = '%v' and deleted_at = 0", *h.UserID)
 	_sql += " limit 1)"
 
+	fmt.Println("_sql: ", _sql)
 	h.sql = _sql
 }
 

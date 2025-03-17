@@ -37,7 +37,7 @@ var ret = npool.Subscription{
 	UsageState:         types.UsageState_Usful,
 	UsageStateStr:      types.UsageState_Usful.String(),
 	SubscriptionCredit: uint32(10),
-	AddonCredit:        uint32(10),
+	AddonCredit:        uint32(20),
 }
 
 func setup(t *testing.T) func(*testing.T) {
@@ -78,6 +78,7 @@ func updateSubscription(t *testing.T) {
 	ret.UsageStateStr = types.UsageState_Expire.String()
 	ret.SubscriptionCredit = uint32(20)
 	ret.AddonCredit = uint32(30)
+	ret.PackageID = uuid.NewString()
 	handler, err := NewHandler(
 		context.Background(),
 		WithID(&ret.ID, true),
@@ -86,6 +87,7 @@ func updateSubscription(t *testing.T) {
 		WithUsageState(&ret.UsageState, true),
 		WithSubscriptionCredit(&ret.SubscriptionCredit, true),
 		WithAddonCredit(&ret.AddonCredit, true),
+		WithPackageID(&ret.PackageID, true),
 	)
 	assert.Nil(t, err)
 
