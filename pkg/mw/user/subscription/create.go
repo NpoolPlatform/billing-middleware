@@ -30,7 +30,9 @@ func (h *createHandler) constructSQL() {
 	_sql += comma + "app_id"
 	comma = ", "
 	_sql += comma + "user_id"
-	_sql += comma + "package_id"
+	if h.PackageID != nil {
+		_sql += comma + "package_id"
+	}
 	_sql += comma + "start_at"
 	_sql += comma + "end_at"
 	_sql += comma + "usage_state"
@@ -51,7 +53,9 @@ func (h *createHandler) constructSQL() {
 	_sql += fmt.Sprintf("%v'%v' as app_id", comma, *h.AppID)
 	comma = ", "
 	_sql += fmt.Sprintf("%v'%v' as user_id", comma, *h.UserID)
-	_sql += fmt.Sprintf("%v'%v' as package_id", comma, *h.PackageID)
+	if h.PackageID != nil {
+		_sql += fmt.Sprintf("%v'%v' as package_id", comma, *h.PackageID)
+	}
 	_sql += fmt.Sprintf("%v%v as start_at", comma, *h.StartAt)
 	_sql += fmt.Sprintf("%v%v as end_at", comma, *h.EndAt)
 	_sql += fmt.Sprintf("%v'%v' as usage_state", comma, *h.UsageState)
