@@ -72,7 +72,7 @@ func (h *createHandler) constructSQL() {
 	_sql += ") as tmp "
 	_sql += "where not exists ("
 	_sql += "select 1 from subscriptions as ss "
-	_sql += fmt.Sprintf("where ss.package_name = '%v' and deleted_at = 0", *h.PackageName)
+	_sql += fmt.Sprintf("where ss.package_name = '%v' and ss.app_id = '%v' and deleted_at = 0", *h.PackageName, *h.AppID)
 	_sql += " limit 1)"
 
 	h.sql = _sql

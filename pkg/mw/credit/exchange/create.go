@@ -56,7 +56,7 @@ func (h *createHandler) constructSQL() {
 	_sql += ") as tmp "
 	_sql += "where not exists ("
 	_sql += "select 1 from exchanges as ec "
-	_sql += fmt.Sprintf("where ec.usage_type = '%v' and deleted_at = 0", *h.UsageType)
+	_sql += fmt.Sprintf("where ec.usage_type = '%v' and ec.app_id = '%v' and deleted_at = 0", *h.UsageType, *h.AppID)
 	_sql += " limit 1)"
 
 	h.sql = _sql
