@@ -8,11 +8,16 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/NpoolPlatform/service-template/pkg/db/ent/migrate"
+	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/migrate"
 
-	"github.com/NpoolPlatform/service-template/pkg/db/ent/detail"
-	"github.com/NpoolPlatform/service-template/pkg/db/ent/ignoreid"
-	"github.com/NpoolPlatform/service-template/pkg/db/ent/pubsubmessage"
+	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/addon"
+	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/exchange"
+	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/ignoreid"
+	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/pubsubmessage"
+	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/subscription"
+	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/usercreditrecord"
+	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/usersubscription"
+	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/usersubscriptionchange"
 
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
@@ -23,12 +28,22 @@ type Client struct {
 	config
 	// Schema is the client for creating, migrating and dropping schema.
 	Schema *migrate.Schema
-	// Detail is the client for interacting with the Detail builders.
-	Detail *DetailClient
+	// Addon is the client for interacting with the Addon builders.
+	Addon *AddonClient
+	// Exchange is the client for interacting with the Exchange builders.
+	Exchange *ExchangeClient
 	// IgnoreID is the client for interacting with the IgnoreID builders.
 	IgnoreID *IgnoreIDClient
 	// PubsubMessage is the client for interacting with the PubsubMessage builders.
 	PubsubMessage *PubsubMessageClient
+	// Subscription is the client for interacting with the Subscription builders.
+	Subscription *SubscriptionClient
+	// UserCreditRecord is the client for interacting with the UserCreditRecord builders.
+	UserCreditRecord *UserCreditRecordClient
+	// UserSubscription is the client for interacting with the UserSubscription builders.
+	UserSubscription *UserSubscriptionClient
+	// UserSubscriptionChange is the client for interacting with the UserSubscriptionChange builders.
+	UserSubscriptionChange *UserSubscriptionChangeClient
 }
 
 // NewClient creates a new client configured with the given options.
@@ -42,9 +57,14 @@ func NewClient(opts ...Option) *Client {
 
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
-	c.Detail = NewDetailClient(c.config)
+	c.Addon = NewAddonClient(c.config)
+	c.Exchange = NewExchangeClient(c.config)
 	c.IgnoreID = NewIgnoreIDClient(c.config)
 	c.PubsubMessage = NewPubsubMessageClient(c.config)
+	c.Subscription = NewSubscriptionClient(c.config)
+	c.UserCreditRecord = NewUserCreditRecordClient(c.config)
+	c.UserSubscription = NewUserSubscriptionClient(c.config)
+	c.UserSubscriptionChange = NewUserSubscriptionChangeClient(c.config)
 }
 
 // Open opens a database/sql.DB specified by the driver name and
@@ -76,11 +96,16 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	cfg := c.config
 	cfg.driver = tx
 	return &Tx{
-		ctx:           ctx,
-		config:        cfg,
-		Detail:        NewDetailClient(cfg),
-		IgnoreID:      NewIgnoreIDClient(cfg),
-		PubsubMessage: NewPubsubMessageClient(cfg),
+		ctx:                    ctx,
+		config:                 cfg,
+		Addon:                  NewAddonClient(cfg),
+		Exchange:               NewExchangeClient(cfg),
+		IgnoreID:               NewIgnoreIDClient(cfg),
+		PubsubMessage:          NewPubsubMessageClient(cfg),
+		Subscription:           NewSubscriptionClient(cfg),
+		UserCreditRecord:       NewUserCreditRecordClient(cfg),
+		UserSubscription:       NewUserSubscriptionClient(cfg),
+		UserSubscriptionChange: NewUserSubscriptionChangeClient(cfg),
 	}, nil
 }
 
@@ -98,18 +123,23 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg := c.config
 	cfg.driver = &txDriver{tx: tx, drv: c.driver}
 	return &Tx{
-		ctx:           ctx,
-		config:        cfg,
-		Detail:        NewDetailClient(cfg),
-		IgnoreID:      NewIgnoreIDClient(cfg),
-		PubsubMessage: NewPubsubMessageClient(cfg),
+		ctx:                    ctx,
+		config:                 cfg,
+		Addon:                  NewAddonClient(cfg),
+		Exchange:               NewExchangeClient(cfg),
+		IgnoreID:               NewIgnoreIDClient(cfg),
+		PubsubMessage:          NewPubsubMessageClient(cfg),
+		Subscription:           NewSubscriptionClient(cfg),
+		UserCreditRecord:       NewUserCreditRecordClient(cfg),
+		UserSubscription:       NewUserSubscriptionClient(cfg),
+		UserSubscriptionChange: NewUserSubscriptionChangeClient(cfg),
 	}, nil
 }
 
 // Debug returns a new debug-client. It's used to get verbose logging on specific operations.
 //
 //	client.Debug().
-//		Detail.
+//		Addon.
 //		Query().
 //		Count(ctx)
 //
@@ -132,89 +162,94 @@ func (c *Client) Close() error {
 // Use adds the mutation hooks to all the entity clients.
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
-	c.Detail.Use(hooks...)
+	c.Addon.Use(hooks...)
+	c.Exchange.Use(hooks...)
 	c.IgnoreID.Use(hooks...)
 	c.PubsubMessage.Use(hooks...)
+	c.Subscription.Use(hooks...)
+	c.UserCreditRecord.Use(hooks...)
+	c.UserSubscription.Use(hooks...)
+	c.UserSubscriptionChange.Use(hooks...)
 }
 
-// DetailClient is a client for the Detail schema.
-type DetailClient struct {
+// AddonClient is a client for the Addon schema.
+type AddonClient struct {
 	config
 }
 
-// NewDetailClient returns a client for the Detail from the given config.
-func NewDetailClient(c config) *DetailClient {
-	return &DetailClient{config: c}
+// NewAddonClient returns a client for the Addon from the given config.
+func NewAddonClient(c config) *AddonClient {
+	return &AddonClient{config: c}
 }
 
 // Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `detail.Hooks(f(g(h())))`.
-func (c *DetailClient) Use(hooks ...Hook) {
-	c.hooks.Detail = append(c.hooks.Detail, hooks...)
+// A call to `Use(f, g, h)` equals to `addon.Hooks(f(g(h())))`.
+func (c *AddonClient) Use(hooks ...Hook) {
+	c.hooks.Addon = append(c.hooks.Addon, hooks...)
 }
 
-// Create returns a builder for creating a Detail entity.
-func (c *DetailClient) Create() *DetailCreate {
-	mutation := newDetailMutation(c.config, OpCreate)
-	return &DetailCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Create returns a builder for creating a Addon entity.
+func (c *AddonClient) Create() *AddonCreate {
+	mutation := newAddonMutation(c.config, OpCreate)
+	return &AddonCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// CreateBulk returns a builder for creating a bulk of Detail entities.
-func (c *DetailClient) CreateBulk(builders ...*DetailCreate) *DetailCreateBulk {
-	return &DetailCreateBulk{config: c.config, builders: builders}
+// CreateBulk returns a builder for creating a bulk of Addon entities.
+func (c *AddonClient) CreateBulk(builders ...*AddonCreate) *AddonCreateBulk {
+	return &AddonCreateBulk{config: c.config, builders: builders}
 }
 
-// Update returns an update builder for Detail.
-func (c *DetailClient) Update() *DetailUpdate {
-	mutation := newDetailMutation(c.config, OpUpdate)
-	return &DetailUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Update returns an update builder for Addon.
+func (c *AddonClient) Update() *AddonUpdate {
+	mutation := newAddonMutation(c.config, OpUpdate)
+	return &AddonUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // UpdateOne returns an update builder for the given entity.
-func (c *DetailClient) UpdateOne(d *Detail) *DetailUpdateOne {
-	mutation := newDetailMutation(c.config, OpUpdateOne, withDetail(d))
-	return &DetailUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+func (c *AddonClient) UpdateOne(a *Addon) *AddonUpdateOne {
+	mutation := newAddonMutation(c.config, OpUpdateOne, withAddon(a))
+	return &AddonUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *DetailClient) UpdateOneID(id uint32) *DetailUpdateOne {
-	mutation := newDetailMutation(c.config, OpUpdateOne, withDetailID(id))
-	return &DetailUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+func (c *AddonClient) UpdateOneID(id uint32) *AddonUpdateOne {
+	mutation := newAddonMutation(c.config, OpUpdateOne, withAddonID(id))
+	return &AddonUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// Delete returns a delete builder for Detail.
-func (c *DetailClient) Delete() *DetailDelete {
-	mutation := newDetailMutation(c.config, OpDelete)
-	return &DetailDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Delete returns a delete builder for Addon.
+func (c *AddonClient) Delete() *AddonDelete {
+	mutation := newAddonMutation(c.config, OpDelete)
+	return &AddonDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // DeleteOne returns a builder for deleting the given entity.
-func (c *DetailClient) DeleteOne(d *Detail) *DetailDeleteOne {
-	return c.DeleteOneID(d.ID)
+func (c *AddonClient) DeleteOne(a *Addon) *AddonDeleteOne {
+	return c.DeleteOneID(a.ID)
 }
 
 // DeleteOne returns a builder for deleting the given entity by its id.
-func (c *DetailClient) DeleteOneID(id uint32) *DetailDeleteOne {
-	builder := c.Delete().Where(detail.ID(id))
+func (c *AddonClient) DeleteOneID(id uint32) *AddonDeleteOne {
+	builder := c.Delete().Where(addon.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
-	return &DetailDeleteOne{builder}
+	return &AddonDeleteOne{builder}
 }
 
-// Query returns a query builder for Detail.
-func (c *DetailClient) Query() *DetailQuery {
-	return &DetailQuery{
+// Query returns a query builder for Addon.
+func (c *AddonClient) Query() *AddonQuery {
+	return &AddonQuery{
 		config: c.config,
 	}
 }
 
-// Get returns a Detail entity by its id.
-func (c *DetailClient) Get(ctx context.Context, id uint32) (*Detail, error) {
-	return c.Query().Where(detail.ID(id)).Only(ctx)
+// Get returns a Addon entity by its id.
+func (c *AddonClient) Get(ctx context.Context, id uint32) (*Addon, error) {
+	return c.Query().Where(addon.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *DetailClient) GetX(ctx context.Context, id uint32) *Detail {
+func (c *AddonClient) GetX(ctx context.Context, id uint32) *Addon {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -223,9 +258,100 @@ func (c *DetailClient) GetX(ctx context.Context, id uint32) *Detail {
 }
 
 // Hooks returns the client hooks.
-func (c *DetailClient) Hooks() []Hook {
-	hooks := c.hooks.Detail
-	return append(hooks[:len(hooks):len(hooks)], detail.Hooks[:]...)
+func (c *AddonClient) Hooks() []Hook {
+	hooks := c.hooks.Addon
+	return append(hooks[:len(hooks):len(hooks)], addon.Hooks[:]...)
+}
+
+// ExchangeClient is a client for the Exchange schema.
+type ExchangeClient struct {
+	config
+}
+
+// NewExchangeClient returns a client for the Exchange from the given config.
+func NewExchangeClient(c config) *ExchangeClient {
+	return &ExchangeClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `exchange.Hooks(f(g(h())))`.
+func (c *ExchangeClient) Use(hooks ...Hook) {
+	c.hooks.Exchange = append(c.hooks.Exchange, hooks...)
+}
+
+// Create returns a builder for creating a Exchange entity.
+func (c *ExchangeClient) Create() *ExchangeCreate {
+	mutation := newExchangeMutation(c.config, OpCreate)
+	return &ExchangeCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Exchange entities.
+func (c *ExchangeClient) CreateBulk(builders ...*ExchangeCreate) *ExchangeCreateBulk {
+	return &ExchangeCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Exchange.
+func (c *ExchangeClient) Update() *ExchangeUpdate {
+	mutation := newExchangeMutation(c.config, OpUpdate)
+	return &ExchangeUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ExchangeClient) UpdateOne(e *Exchange) *ExchangeUpdateOne {
+	mutation := newExchangeMutation(c.config, OpUpdateOne, withExchange(e))
+	return &ExchangeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ExchangeClient) UpdateOneID(id uint32) *ExchangeUpdateOne {
+	mutation := newExchangeMutation(c.config, OpUpdateOne, withExchangeID(id))
+	return &ExchangeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Exchange.
+func (c *ExchangeClient) Delete() *ExchangeDelete {
+	mutation := newExchangeMutation(c.config, OpDelete)
+	return &ExchangeDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *ExchangeClient) DeleteOne(e *Exchange) *ExchangeDeleteOne {
+	return c.DeleteOneID(e.ID)
+}
+
+// DeleteOne returns a builder for deleting the given entity by its id.
+func (c *ExchangeClient) DeleteOneID(id uint32) *ExchangeDeleteOne {
+	builder := c.Delete().Where(exchange.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ExchangeDeleteOne{builder}
+}
+
+// Query returns a query builder for Exchange.
+func (c *ExchangeClient) Query() *ExchangeQuery {
+	return &ExchangeQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a Exchange entity by its id.
+func (c *ExchangeClient) Get(ctx context.Context, id uint32) (*Exchange, error) {
+	return c.Query().Where(exchange.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ExchangeClient) GetX(ctx context.Context, id uint32) *Exchange {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *ExchangeClient) Hooks() []Hook {
+	hooks := c.hooks.Exchange
+	return append(hooks[:len(hooks):len(hooks)], exchange.Hooks[:]...)
 }
 
 // IgnoreIDClient is a client for the IgnoreID schema.
@@ -408,4 +534,368 @@ func (c *PubsubMessageClient) GetX(ctx context.Context, id uint32) *PubsubMessag
 func (c *PubsubMessageClient) Hooks() []Hook {
 	hooks := c.hooks.PubsubMessage
 	return append(hooks[:len(hooks):len(hooks)], pubsubmessage.Hooks[:]...)
+}
+
+// SubscriptionClient is a client for the Subscription schema.
+type SubscriptionClient struct {
+	config
+}
+
+// NewSubscriptionClient returns a client for the Subscription from the given config.
+func NewSubscriptionClient(c config) *SubscriptionClient {
+	return &SubscriptionClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `subscription.Hooks(f(g(h())))`.
+func (c *SubscriptionClient) Use(hooks ...Hook) {
+	c.hooks.Subscription = append(c.hooks.Subscription, hooks...)
+}
+
+// Create returns a builder for creating a Subscription entity.
+func (c *SubscriptionClient) Create() *SubscriptionCreate {
+	mutation := newSubscriptionMutation(c.config, OpCreate)
+	return &SubscriptionCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Subscription entities.
+func (c *SubscriptionClient) CreateBulk(builders ...*SubscriptionCreate) *SubscriptionCreateBulk {
+	return &SubscriptionCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Subscription.
+func (c *SubscriptionClient) Update() *SubscriptionUpdate {
+	mutation := newSubscriptionMutation(c.config, OpUpdate)
+	return &SubscriptionUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *SubscriptionClient) UpdateOne(s *Subscription) *SubscriptionUpdateOne {
+	mutation := newSubscriptionMutation(c.config, OpUpdateOne, withSubscription(s))
+	return &SubscriptionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *SubscriptionClient) UpdateOneID(id uint32) *SubscriptionUpdateOne {
+	mutation := newSubscriptionMutation(c.config, OpUpdateOne, withSubscriptionID(id))
+	return &SubscriptionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Subscription.
+func (c *SubscriptionClient) Delete() *SubscriptionDelete {
+	mutation := newSubscriptionMutation(c.config, OpDelete)
+	return &SubscriptionDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *SubscriptionClient) DeleteOne(s *Subscription) *SubscriptionDeleteOne {
+	return c.DeleteOneID(s.ID)
+}
+
+// DeleteOne returns a builder for deleting the given entity by its id.
+func (c *SubscriptionClient) DeleteOneID(id uint32) *SubscriptionDeleteOne {
+	builder := c.Delete().Where(subscription.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &SubscriptionDeleteOne{builder}
+}
+
+// Query returns a query builder for Subscription.
+func (c *SubscriptionClient) Query() *SubscriptionQuery {
+	return &SubscriptionQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a Subscription entity by its id.
+func (c *SubscriptionClient) Get(ctx context.Context, id uint32) (*Subscription, error) {
+	return c.Query().Where(subscription.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *SubscriptionClient) GetX(ctx context.Context, id uint32) *Subscription {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *SubscriptionClient) Hooks() []Hook {
+	hooks := c.hooks.Subscription
+	return append(hooks[:len(hooks):len(hooks)], subscription.Hooks[:]...)
+}
+
+// UserCreditRecordClient is a client for the UserCreditRecord schema.
+type UserCreditRecordClient struct {
+	config
+}
+
+// NewUserCreditRecordClient returns a client for the UserCreditRecord from the given config.
+func NewUserCreditRecordClient(c config) *UserCreditRecordClient {
+	return &UserCreditRecordClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `usercreditrecord.Hooks(f(g(h())))`.
+func (c *UserCreditRecordClient) Use(hooks ...Hook) {
+	c.hooks.UserCreditRecord = append(c.hooks.UserCreditRecord, hooks...)
+}
+
+// Create returns a builder for creating a UserCreditRecord entity.
+func (c *UserCreditRecordClient) Create() *UserCreditRecordCreate {
+	mutation := newUserCreditRecordMutation(c.config, OpCreate)
+	return &UserCreditRecordCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of UserCreditRecord entities.
+func (c *UserCreditRecordClient) CreateBulk(builders ...*UserCreditRecordCreate) *UserCreditRecordCreateBulk {
+	return &UserCreditRecordCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for UserCreditRecord.
+func (c *UserCreditRecordClient) Update() *UserCreditRecordUpdate {
+	mutation := newUserCreditRecordMutation(c.config, OpUpdate)
+	return &UserCreditRecordUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *UserCreditRecordClient) UpdateOne(ucr *UserCreditRecord) *UserCreditRecordUpdateOne {
+	mutation := newUserCreditRecordMutation(c.config, OpUpdateOne, withUserCreditRecord(ucr))
+	return &UserCreditRecordUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *UserCreditRecordClient) UpdateOneID(id uint32) *UserCreditRecordUpdateOne {
+	mutation := newUserCreditRecordMutation(c.config, OpUpdateOne, withUserCreditRecordID(id))
+	return &UserCreditRecordUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for UserCreditRecord.
+func (c *UserCreditRecordClient) Delete() *UserCreditRecordDelete {
+	mutation := newUserCreditRecordMutation(c.config, OpDelete)
+	return &UserCreditRecordDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *UserCreditRecordClient) DeleteOne(ucr *UserCreditRecord) *UserCreditRecordDeleteOne {
+	return c.DeleteOneID(ucr.ID)
+}
+
+// DeleteOne returns a builder for deleting the given entity by its id.
+func (c *UserCreditRecordClient) DeleteOneID(id uint32) *UserCreditRecordDeleteOne {
+	builder := c.Delete().Where(usercreditrecord.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &UserCreditRecordDeleteOne{builder}
+}
+
+// Query returns a query builder for UserCreditRecord.
+func (c *UserCreditRecordClient) Query() *UserCreditRecordQuery {
+	return &UserCreditRecordQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a UserCreditRecord entity by its id.
+func (c *UserCreditRecordClient) Get(ctx context.Context, id uint32) (*UserCreditRecord, error) {
+	return c.Query().Where(usercreditrecord.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *UserCreditRecordClient) GetX(ctx context.Context, id uint32) *UserCreditRecord {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *UserCreditRecordClient) Hooks() []Hook {
+	hooks := c.hooks.UserCreditRecord
+	return append(hooks[:len(hooks):len(hooks)], usercreditrecord.Hooks[:]...)
+}
+
+// UserSubscriptionClient is a client for the UserSubscription schema.
+type UserSubscriptionClient struct {
+	config
+}
+
+// NewUserSubscriptionClient returns a client for the UserSubscription from the given config.
+func NewUserSubscriptionClient(c config) *UserSubscriptionClient {
+	return &UserSubscriptionClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `usersubscription.Hooks(f(g(h())))`.
+func (c *UserSubscriptionClient) Use(hooks ...Hook) {
+	c.hooks.UserSubscription = append(c.hooks.UserSubscription, hooks...)
+}
+
+// Create returns a builder for creating a UserSubscription entity.
+func (c *UserSubscriptionClient) Create() *UserSubscriptionCreate {
+	mutation := newUserSubscriptionMutation(c.config, OpCreate)
+	return &UserSubscriptionCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of UserSubscription entities.
+func (c *UserSubscriptionClient) CreateBulk(builders ...*UserSubscriptionCreate) *UserSubscriptionCreateBulk {
+	return &UserSubscriptionCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for UserSubscription.
+func (c *UserSubscriptionClient) Update() *UserSubscriptionUpdate {
+	mutation := newUserSubscriptionMutation(c.config, OpUpdate)
+	return &UserSubscriptionUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *UserSubscriptionClient) UpdateOne(us *UserSubscription) *UserSubscriptionUpdateOne {
+	mutation := newUserSubscriptionMutation(c.config, OpUpdateOne, withUserSubscription(us))
+	return &UserSubscriptionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *UserSubscriptionClient) UpdateOneID(id uint32) *UserSubscriptionUpdateOne {
+	mutation := newUserSubscriptionMutation(c.config, OpUpdateOne, withUserSubscriptionID(id))
+	return &UserSubscriptionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for UserSubscription.
+func (c *UserSubscriptionClient) Delete() *UserSubscriptionDelete {
+	mutation := newUserSubscriptionMutation(c.config, OpDelete)
+	return &UserSubscriptionDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *UserSubscriptionClient) DeleteOne(us *UserSubscription) *UserSubscriptionDeleteOne {
+	return c.DeleteOneID(us.ID)
+}
+
+// DeleteOne returns a builder for deleting the given entity by its id.
+func (c *UserSubscriptionClient) DeleteOneID(id uint32) *UserSubscriptionDeleteOne {
+	builder := c.Delete().Where(usersubscription.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &UserSubscriptionDeleteOne{builder}
+}
+
+// Query returns a query builder for UserSubscription.
+func (c *UserSubscriptionClient) Query() *UserSubscriptionQuery {
+	return &UserSubscriptionQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a UserSubscription entity by its id.
+func (c *UserSubscriptionClient) Get(ctx context.Context, id uint32) (*UserSubscription, error) {
+	return c.Query().Where(usersubscription.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *UserSubscriptionClient) GetX(ctx context.Context, id uint32) *UserSubscription {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *UserSubscriptionClient) Hooks() []Hook {
+	hooks := c.hooks.UserSubscription
+	return append(hooks[:len(hooks):len(hooks)], usersubscription.Hooks[:]...)
+}
+
+// UserSubscriptionChangeClient is a client for the UserSubscriptionChange schema.
+type UserSubscriptionChangeClient struct {
+	config
+}
+
+// NewUserSubscriptionChangeClient returns a client for the UserSubscriptionChange from the given config.
+func NewUserSubscriptionChangeClient(c config) *UserSubscriptionChangeClient {
+	return &UserSubscriptionChangeClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `usersubscriptionchange.Hooks(f(g(h())))`.
+func (c *UserSubscriptionChangeClient) Use(hooks ...Hook) {
+	c.hooks.UserSubscriptionChange = append(c.hooks.UserSubscriptionChange, hooks...)
+}
+
+// Create returns a builder for creating a UserSubscriptionChange entity.
+func (c *UserSubscriptionChangeClient) Create() *UserSubscriptionChangeCreate {
+	mutation := newUserSubscriptionChangeMutation(c.config, OpCreate)
+	return &UserSubscriptionChangeCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of UserSubscriptionChange entities.
+func (c *UserSubscriptionChangeClient) CreateBulk(builders ...*UserSubscriptionChangeCreate) *UserSubscriptionChangeCreateBulk {
+	return &UserSubscriptionChangeCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for UserSubscriptionChange.
+func (c *UserSubscriptionChangeClient) Update() *UserSubscriptionChangeUpdate {
+	mutation := newUserSubscriptionChangeMutation(c.config, OpUpdate)
+	return &UserSubscriptionChangeUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *UserSubscriptionChangeClient) UpdateOne(usc *UserSubscriptionChange) *UserSubscriptionChangeUpdateOne {
+	mutation := newUserSubscriptionChangeMutation(c.config, OpUpdateOne, withUserSubscriptionChange(usc))
+	return &UserSubscriptionChangeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *UserSubscriptionChangeClient) UpdateOneID(id uint32) *UserSubscriptionChangeUpdateOne {
+	mutation := newUserSubscriptionChangeMutation(c.config, OpUpdateOne, withUserSubscriptionChangeID(id))
+	return &UserSubscriptionChangeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for UserSubscriptionChange.
+func (c *UserSubscriptionChangeClient) Delete() *UserSubscriptionChangeDelete {
+	mutation := newUserSubscriptionChangeMutation(c.config, OpDelete)
+	return &UserSubscriptionChangeDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *UserSubscriptionChangeClient) DeleteOne(usc *UserSubscriptionChange) *UserSubscriptionChangeDeleteOne {
+	return c.DeleteOneID(usc.ID)
+}
+
+// DeleteOne returns a builder for deleting the given entity by its id.
+func (c *UserSubscriptionChangeClient) DeleteOneID(id uint32) *UserSubscriptionChangeDeleteOne {
+	builder := c.Delete().Where(usersubscriptionchange.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &UserSubscriptionChangeDeleteOne{builder}
+}
+
+// Query returns a query builder for UserSubscriptionChange.
+func (c *UserSubscriptionChangeClient) Query() *UserSubscriptionChangeQuery {
+	return &UserSubscriptionChangeQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a UserSubscriptionChange entity by its id.
+func (c *UserSubscriptionChangeClient) Get(ctx context.Context, id uint32) (*UserSubscriptionChange, error) {
+	return c.Query().Where(usersubscriptionchange.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *UserSubscriptionChangeClient) GetX(ctx context.Context, id uint32) *UserSubscriptionChange {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *UserSubscriptionChangeClient) Hooks() []Hook {
+	hooks := c.hooks.UserSubscriptionChange
+	return append(hooks[:len(hooks):len(hooks)], usersubscriptionchange.Hooks[:]...)
 }

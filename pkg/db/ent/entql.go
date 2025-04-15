@@ -3,9 +3,14 @@
 package ent
 
 import (
-	"github.com/NpoolPlatform/service-template/pkg/db/ent/detail"
-	"github.com/NpoolPlatform/service-template/pkg/db/ent/ignoreid"
-	"github.com/NpoolPlatform/service-template/pkg/db/ent/pubsubmessage"
+	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/addon"
+	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/exchange"
+	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/ignoreid"
+	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/pubsubmessage"
+	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/subscription"
+	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/usercreditrecord"
+	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/usersubscription"
+	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/usersubscriptionchange"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -15,26 +20,53 @@ import (
 
 // schemaGraph holds a representation of ent/schema at runtime.
 var schemaGraph = func() *sqlgraph.Schema {
-	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 3)}
+	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 8)}
 	graph.Nodes[0] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
-			Table:   detail.Table,
-			Columns: detail.Columns,
+			Table:   addon.Table,
+			Columns: addon.Columns,
 			ID: &sqlgraph.FieldSpec{
 				Type:   field.TypeUint32,
-				Column: detail.FieldID,
+				Column: addon.FieldID,
 			},
 		},
-		Type: "Detail",
+		Type: "Addon",
 		Fields: map[string]*sqlgraph.FieldSpec{
-			detail.FieldCreatedAt: {Type: field.TypeUint32, Column: detail.FieldCreatedAt},
-			detail.FieldUpdatedAt: {Type: field.TypeUint32, Column: detail.FieldUpdatedAt},
-			detail.FieldDeletedAt: {Type: field.TypeUint32, Column: detail.FieldDeletedAt},
-			detail.FieldEntID:     {Type: field.TypeUUID, Column: detail.FieldEntID},
-			detail.FieldSampleCol: {Type: field.TypeString, Column: detail.FieldSampleCol},
+			addon.FieldCreatedAt:   {Type: field.TypeUint32, Column: addon.FieldCreatedAt},
+			addon.FieldUpdatedAt:   {Type: field.TypeUint32, Column: addon.FieldUpdatedAt},
+			addon.FieldDeletedAt:   {Type: field.TypeUint32, Column: addon.FieldDeletedAt},
+			addon.FieldEntID:       {Type: field.TypeUUID, Column: addon.FieldEntID},
+			addon.FieldAppID:       {Type: field.TypeUUID, Column: addon.FieldAppID},
+			addon.FieldPrice:       {Type: field.TypeOther, Column: addon.FieldPrice},
+			addon.FieldCredit:      {Type: field.TypeUint32, Column: addon.FieldCredit},
+			addon.FieldSortOrder:   {Type: field.TypeUint32, Column: addon.FieldSortOrder},
+			addon.FieldEnabled:     {Type: field.TypeBool, Column: addon.FieldEnabled},
+			addon.FieldDescription: {Type: field.TypeString, Column: addon.FieldDescription},
 		},
 	}
 	graph.Nodes[1] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   exchange.Table,
+			Columns: exchange.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeUint32,
+				Column: exchange.FieldID,
+			},
+		},
+		Type: "Exchange",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			exchange.FieldCreatedAt:         {Type: field.TypeUint32, Column: exchange.FieldCreatedAt},
+			exchange.FieldUpdatedAt:         {Type: field.TypeUint32, Column: exchange.FieldUpdatedAt},
+			exchange.FieldDeletedAt:         {Type: field.TypeUint32, Column: exchange.FieldDeletedAt},
+			exchange.FieldEntID:             {Type: field.TypeUUID, Column: exchange.FieldEntID},
+			exchange.FieldAppID:             {Type: field.TypeUUID, Column: exchange.FieldAppID},
+			exchange.FieldUsageType:         {Type: field.TypeString, Column: exchange.FieldUsageType},
+			exchange.FieldCredit:            {Type: field.TypeUint32, Column: exchange.FieldCredit},
+			exchange.FieldExchangeThreshold: {Type: field.TypeUint32, Column: exchange.FieldExchangeThreshold},
+			exchange.FieldPath:              {Type: field.TypeString, Column: exchange.FieldPath},
+		},
+	}
+	graph.Nodes[2] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   ignoreid.Table,
 			Columns: ignoreid.Columns,
@@ -52,7 +84,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			ignoreid.FieldSampleCol: {Type: field.TypeString, Column: ignoreid.FieldSampleCol},
 		},
 	}
-	graph.Nodes[2] = &sqlgraph.Node{
+	graph.Nodes[3] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   pubsubmessage.Table,
 			Columns: pubsubmessage.Columns,
@@ -74,6 +106,101 @@ var schemaGraph = func() *sqlgraph.Schema {
 			pubsubmessage.FieldArguments: {Type: field.TypeString, Column: pubsubmessage.FieldArguments},
 		},
 	}
+	graph.Nodes[4] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   subscription.Table,
+			Columns: subscription.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeUint32,
+				Column: subscription.FieldID,
+			},
+		},
+		Type: "Subscription",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			subscription.FieldCreatedAt:   {Type: field.TypeUint32, Column: subscription.FieldCreatedAt},
+			subscription.FieldUpdatedAt:   {Type: field.TypeUint32, Column: subscription.FieldUpdatedAt},
+			subscription.FieldDeletedAt:   {Type: field.TypeUint32, Column: subscription.FieldDeletedAt},
+			subscription.FieldEntID:       {Type: field.TypeUUID, Column: subscription.FieldEntID},
+			subscription.FieldAppID:       {Type: field.TypeUUID, Column: subscription.FieldAppID},
+			subscription.FieldPackageName: {Type: field.TypeString, Column: subscription.FieldPackageName},
+			subscription.FieldPrice:       {Type: field.TypeOther, Column: subscription.FieldPrice},
+			subscription.FieldDescription: {Type: field.TypeString, Column: subscription.FieldDescription},
+			subscription.FieldSortOrder:   {Type: field.TypeUint32, Column: subscription.FieldSortOrder},
+			subscription.FieldPackageType: {Type: field.TypeString, Column: subscription.FieldPackageType},
+			subscription.FieldCredit:      {Type: field.TypeUint32, Column: subscription.FieldCredit},
+			subscription.FieldResetType:   {Type: field.TypeString, Column: subscription.FieldResetType},
+			subscription.FieldQPSLimit:    {Type: field.TypeUint32, Column: subscription.FieldQPSLimit},
+		},
+	}
+	graph.Nodes[5] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   usercreditrecord.Table,
+			Columns: usercreditrecord.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeUint32,
+				Column: usercreditrecord.FieldID,
+			},
+		},
+		Type: "UserCreditRecord",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			usercreditrecord.FieldCreatedAt:     {Type: field.TypeUint32, Column: usercreditrecord.FieldCreatedAt},
+			usercreditrecord.FieldUpdatedAt:     {Type: field.TypeUint32, Column: usercreditrecord.FieldUpdatedAt},
+			usercreditrecord.FieldDeletedAt:     {Type: field.TypeUint32, Column: usercreditrecord.FieldDeletedAt},
+			usercreditrecord.FieldEntID:         {Type: field.TypeUUID, Column: usercreditrecord.FieldEntID},
+			usercreditrecord.FieldAppID:         {Type: field.TypeUUID, Column: usercreditrecord.FieldAppID},
+			usercreditrecord.FieldUserID:        {Type: field.TypeUUID, Column: usercreditrecord.FieldUserID},
+			usercreditrecord.FieldOperationType: {Type: field.TypeString, Column: usercreditrecord.FieldOperationType},
+			usercreditrecord.FieldCreditsChange: {Type: field.TypeInt32, Column: usercreditrecord.FieldCreditsChange},
+			usercreditrecord.FieldExtra:         {Type: field.TypeString, Column: usercreditrecord.FieldExtra},
+		},
+	}
+	graph.Nodes[6] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   usersubscription.Table,
+			Columns: usersubscription.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeUint32,
+				Column: usersubscription.FieldID,
+			},
+		},
+		Type: "UserSubscription",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			usersubscription.FieldCreatedAt:          {Type: field.TypeUint32, Column: usersubscription.FieldCreatedAt},
+			usersubscription.FieldUpdatedAt:          {Type: field.TypeUint32, Column: usersubscription.FieldUpdatedAt},
+			usersubscription.FieldDeletedAt:          {Type: field.TypeUint32, Column: usersubscription.FieldDeletedAt},
+			usersubscription.FieldEntID:              {Type: field.TypeUUID, Column: usersubscription.FieldEntID},
+			usersubscription.FieldAppID:              {Type: field.TypeUUID, Column: usersubscription.FieldAppID},
+			usersubscription.FieldUserID:             {Type: field.TypeUUID, Column: usersubscription.FieldUserID},
+			usersubscription.FieldPackageID:          {Type: field.TypeUUID, Column: usersubscription.FieldPackageID},
+			usersubscription.FieldStartAt:            {Type: field.TypeUint32, Column: usersubscription.FieldStartAt},
+			usersubscription.FieldEndAt:              {Type: field.TypeUint32, Column: usersubscription.FieldEndAt},
+			usersubscription.FieldUsageState:         {Type: field.TypeString, Column: usersubscription.FieldUsageState},
+			usersubscription.FieldSubscriptionCredit: {Type: field.TypeUint32, Column: usersubscription.FieldSubscriptionCredit},
+			usersubscription.FieldAddonCredit:        {Type: field.TypeUint32, Column: usersubscription.FieldAddonCredit},
+		},
+	}
+	graph.Nodes[7] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   usersubscriptionchange.Table,
+			Columns: usersubscriptionchange.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeUint32,
+				Column: usersubscriptionchange.FieldID,
+			},
+		},
+		Type: "UserSubscriptionChange",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			usersubscriptionchange.FieldCreatedAt:          {Type: field.TypeUint32, Column: usersubscriptionchange.FieldCreatedAt},
+			usersubscriptionchange.FieldUpdatedAt:          {Type: field.TypeUint32, Column: usersubscriptionchange.FieldUpdatedAt},
+			usersubscriptionchange.FieldDeletedAt:          {Type: field.TypeUint32, Column: usersubscriptionchange.FieldDeletedAt},
+			usersubscriptionchange.FieldEntID:              {Type: field.TypeUUID, Column: usersubscriptionchange.FieldEntID},
+			usersubscriptionchange.FieldAppID:              {Type: field.TypeUUID, Column: usersubscriptionchange.FieldAppID},
+			usersubscriptionchange.FieldUserID:             {Type: field.TypeUUID, Column: usersubscriptionchange.FieldUserID},
+			usersubscriptionchange.FieldUserSubscriptionID: {Type: field.TypeUUID, Column: usersubscriptionchange.FieldUserSubscriptionID},
+			usersubscriptionchange.FieldOldPackageID:       {Type: field.TypeUUID, Column: usersubscriptionchange.FieldOldPackageID},
+			usersubscriptionchange.FieldNewPackageID:       {Type: field.TypeUUID, Column: usersubscriptionchange.FieldNewPackageID},
+		},
+	}
 	return graph
 }()
 
@@ -84,33 +211,33 @@ type predicateAdder interface {
 }
 
 // addPredicate implements the predicateAdder interface.
-func (dq *DetailQuery) addPredicate(pred func(s *sql.Selector)) {
-	dq.predicates = append(dq.predicates, pred)
+func (aq *AddonQuery) addPredicate(pred func(s *sql.Selector)) {
+	aq.predicates = append(aq.predicates, pred)
 }
 
-// Filter returns a Filter implementation to apply filters on the DetailQuery builder.
-func (dq *DetailQuery) Filter() *DetailFilter {
-	return &DetailFilter{config: dq.config, predicateAdder: dq}
+// Filter returns a Filter implementation to apply filters on the AddonQuery builder.
+func (aq *AddonQuery) Filter() *AddonFilter {
+	return &AddonFilter{config: aq.config, predicateAdder: aq}
 }
 
 // addPredicate implements the predicateAdder interface.
-func (m *DetailMutation) addPredicate(pred func(s *sql.Selector)) {
+func (m *AddonMutation) addPredicate(pred func(s *sql.Selector)) {
 	m.predicates = append(m.predicates, pred)
 }
 
-// Filter returns an entql.Where implementation to apply filters on the DetailMutation builder.
-func (m *DetailMutation) Filter() *DetailFilter {
-	return &DetailFilter{config: m.config, predicateAdder: m}
+// Filter returns an entql.Where implementation to apply filters on the AddonMutation builder.
+func (m *AddonMutation) Filter() *AddonFilter {
+	return &AddonFilter{config: m.config, predicateAdder: m}
 }
 
-// DetailFilter provides a generic filtering capability at runtime for DetailQuery.
-type DetailFilter struct {
+// AddonFilter provides a generic filtering capability at runtime for AddonQuery.
+type AddonFilter struct {
 	predicateAdder
 	config
 }
 
 // Where applies the entql predicate on the query filter.
-func (f *DetailFilter) Where(p entql.P) {
+func (f *AddonFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
 		if err := schemaGraph.EvalP(schemaGraph.Nodes[0].Type, p, s); err != nil {
 			s.AddError(err)
@@ -119,33 +246,143 @@ func (f *DetailFilter) Where(p entql.P) {
 }
 
 // WhereID applies the entql uint32 predicate on the id field.
-func (f *DetailFilter) WhereID(p entql.Uint32P) {
-	f.Where(p.Field(detail.FieldID))
+func (f *AddonFilter) WhereID(p entql.Uint32P) {
+	f.Where(p.Field(addon.FieldID))
 }
 
 // WhereCreatedAt applies the entql uint32 predicate on the created_at field.
-func (f *DetailFilter) WhereCreatedAt(p entql.Uint32P) {
-	f.Where(p.Field(detail.FieldCreatedAt))
+func (f *AddonFilter) WhereCreatedAt(p entql.Uint32P) {
+	f.Where(p.Field(addon.FieldCreatedAt))
 }
 
 // WhereUpdatedAt applies the entql uint32 predicate on the updated_at field.
-func (f *DetailFilter) WhereUpdatedAt(p entql.Uint32P) {
-	f.Where(p.Field(detail.FieldUpdatedAt))
+func (f *AddonFilter) WhereUpdatedAt(p entql.Uint32P) {
+	f.Where(p.Field(addon.FieldUpdatedAt))
 }
 
 // WhereDeletedAt applies the entql uint32 predicate on the deleted_at field.
-func (f *DetailFilter) WhereDeletedAt(p entql.Uint32P) {
-	f.Where(p.Field(detail.FieldDeletedAt))
+func (f *AddonFilter) WhereDeletedAt(p entql.Uint32P) {
+	f.Where(p.Field(addon.FieldDeletedAt))
 }
 
 // WhereEntID applies the entql [16]byte predicate on the ent_id field.
-func (f *DetailFilter) WhereEntID(p entql.ValueP) {
-	f.Where(p.Field(detail.FieldEntID))
+func (f *AddonFilter) WhereEntID(p entql.ValueP) {
+	f.Where(p.Field(addon.FieldEntID))
 }
 
-// WhereSampleCol applies the entql string predicate on the sample_col field.
-func (f *DetailFilter) WhereSampleCol(p entql.StringP) {
-	f.Where(p.Field(detail.FieldSampleCol))
+// WhereAppID applies the entql [16]byte predicate on the app_id field.
+func (f *AddonFilter) WhereAppID(p entql.ValueP) {
+	f.Where(p.Field(addon.FieldAppID))
+}
+
+// WherePrice applies the entql other predicate on the price field.
+func (f *AddonFilter) WherePrice(p entql.OtherP) {
+	f.Where(p.Field(addon.FieldPrice))
+}
+
+// WhereCredit applies the entql uint32 predicate on the credit field.
+func (f *AddonFilter) WhereCredit(p entql.Uint32P) {
+	f.Where(p.Field(addon.FieldCredit))
+}
+
+// WhereSortOrder applies the entql uint32 predicate on the sort_order field.
+func (f *AddonFilter) WhereSortOrder(p entql.Uint32P) {
+	f.Where(p.Field(addon.FieldSortOrder))
+}
+
+// WhereEnabled applies the entql bool predicate on the enabled field.
+func (f *AddonFilter) WhereEnabled(p entql.BoolP) {
+	f.Where(p.Field(addon.FieldEnabled))
+}
+
+// WhereDescription applies the entql string predicate on the description field.
+func (f *AddonFilter) WhereDescription(p entql.StringP) {
+	f.Where(p.Field(addon.FieldDescription))
+}
+
+// addPredicate implements the predicateAdder interface.
+func (eq *ExchangeQuery) addPredicate(pred func(s *sql.Selector)) {
+	eq.predicates = append(eq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the ExchangeQuery builder.
+func (eq *ExchangeQuery) Filter() *ExchangeFilter {
+	return &ExchangeFilter{config: eq.config, predicateAdder: eq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *ExchangeMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the ExchangeMutation builder.
+func (m *ExchangeMutation) Filter() *ExchangeFilter {
+	return &ExchangeFilter{config: m.config, predicateAdder: m}
+}
+
+// ExchangeFilter provides a generic filtering capability at runtime for ExchangeQuery.
+type ExchangeFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *ExchangeFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[1].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql uint32 predicate on the id field.
+func (f *ExchangeFilter) WhereID(p entql.Uint32P) {
+	f.Where(p.Field(exchange.FieldID))
+}
+
+// WhereCreatedAt applies the entql uint32 predicate on the created_at field.
+func (f *ExchangeFilter) WhereCreatedAt(p entql.Uint32P) {
+	f.Where(p.Field(exchange.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql uint32 predicate on the updated_at field.
+func (f *ExchangeFilter) WhereUpdatedAt(p entql.Uint32P) {
+	f.Where(p.Field(exchange.FieldUpdatedAt))
+}
+
+// WhereDeletedAt applies the entql uint32 predicate on the deleted_at field.
+func (f *ExchangeFilter) WhereDeletedAt(p entql.Uint32P) {
+	f.Where(p.Field(exchange.FieldDeletedAt))
+}
+
+// WhereEntID applies the entql [16]byte predicate on the ent_id field.
+func (f *ExchangeFilter) WhereEntID(p entql.ValueP) {
+	f.Where(p.Field(exchange.FieldEntID))
+}
+
+// WhereAppID applies the entql [16]byte predicate on the app_id field.
+func (f *ExchangeFilter) WhereAppID(p entql.ValueP) {
+	f.Where(p.Field(exchange.FieldAppID))
+}
+
+// WhereUsageType applies the entql string predicate on the usage_type field.
+func (f *ExchangeFilter) WhereUsageType(p entql.StringP) {
+	f.Where(p.Field(exchange.FieldUsageType))
+}
+
+// WhereCredit applies the entql uint32 predicate on the credit field.
+func (f *ExchangeFilter) WhereCredit(p entql.Uint32P) {
+	f.Where(p.Field(exchange.FieldCredit))
+}
+
+// WhereExchangeThreshold applies the entql uint32 predicate on the exchange_threshold field.
+func (f *ExchangeFilter) WhereExchangeThreshold(p entql.Uint32P) {
+	f.Where(p.Field(exchange.FieldExchangeThreshold))
+}
+
+// WherePath applies the entql string predicate on the path field.
+func (f *ExchangeFilter) WherePath(p entql.StringP) {
+	f.Where(p.Field(exchange.FieldPath))
 }
 
 // addPredicate implements the predicateAdder interface.
@@ -177,7 +414,7 @@ type IgnoreIDFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *IgnoreIDFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[1].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[2].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -242,7 +479,7 @@ type PubsubMessageFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *PubsubMessageFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[2].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[3].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -296,4 +533,379 @@ func (f *PubsubMessageFilter) WhereUndoID(p entql.ValueP) {
 // WhereArguments applies the entql string predicate on the arguments field.
 func (f *PubsubMessageFilter) WhereArguments(p entql.StringP) {
 	f.Where(p.Field(pubsubmessage.FieldArguments))
+}
+
+// addPredicate implements the predicateAdder interface.
+func (sq *SubscriptionQuery) addPredicate(pred func(s *sql.Selector)) {
+	sq.predicates = append(sq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the SubscriptionQuery builder.
+func (sq *SubscriptionQuery) Filter() *SubscriptionFilter {
+	return &SubscriptionFilter{config: sq.config, predicateAdder: sq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *SubscriptionMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the SubscriptionMutation builder.
+func (m *SubscriptionMutation) Filter() *SubscriptionFilter {
+	return &SubscriptionFilter{config: m.config, predicateAdder: m}
+}
+
+// SubscriptionFilter provides a generic filtering capability at runtime for SubscriptionQuery.
+type SubscriptionFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *SubscriptionFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[4].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql uint32 predicate on the id field.
+func (f *SubscriptionFilter) WhereID(p entql.Uint32P) {
+	f.Where(p.Field(subscription.FieldID))
+}
+
+// WhereCreatedAt applies the entql uint32 predicate on the created_at field.
+func (f *SubscriptionFilter) WhereCreatedAt(p entql.Uint32P) {
+	f.Where(p.Field(subscription.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql uint32 predicate on the updated_at field.
+func (f *SubscriptionFilter) WhereUpdatedAt(p entql.Uint32P) {
+	f.Where(p.Field(subscription.FieldUpdatedAt))
+}
+
+// WhereDeletedAt applies the entql uint32 predicate on the deleted_at field.
+func (f *SubscriptionFilter) WhereDeletedAt(p entql.Uint32P) {
+	f.Where(p.Field(subscription.FieldDeletedAt))
+}
+
+// WhereEntID applies the entql [16]byte predicate on the ent_id field.
+func (f *SubscriptionFilter) WhereEntID(p entql.ValueP) {
+	f.Where(p.Field(subscription.FieldEntID))
+}
+
+// WhereAppID applies the entql [16]byte predicate on the app_id field.
+func (f *SubscriptionFilter) WhereAppID(p entql.ValueP) {
+	f.Where(p.Field(subscription.FieldAppID))
+}
+
+// WherePackageName applies the entql string predicate on the package_name field.
+func (f *SubscriptionFilter) WherePackageName(p entql.StringP) {
+	f.Where(p.Field(subscription.FieldPackageName))
+}
+
+// WherePrice applies the entql other predicate on the price field.
+func (f *SubscriptionFilter) WherePrice(p entql.OtherP) {
+	f.Where(p.Field(subscription.FieldPrice))
+}
+
+// WhereDescription applies the entql string predicate on the description field.
+func (f *SubscriptionFilter) WhereDescription(p entql.StringP) {
+	f.Where(p.Field(subscription.FieldDescription))
+}
+
+// WhereSortOrder applies the entql uint32 predicate on the sort_order field.
+func (f *SubscriptionFilter) WhereSortOrder(p entql.Uint32P) {
+	f.Where(p.Field(subscription.FieldSortOrder))
+}
+
+// WherePackageType applies the entql string predicate on the package_type field.
+func (f *SubscriptionFilter) WherePackageType(p entql.StringP) {
+	f.Where(p.Field(subscription.FieldPackageType))
+}
+
+// WhereCredit applies the entql uint32 predicate on the credit field.
+func (f *SubscriptionFilter) WhereCredit(p entql.Uint32P) {
+	f.Where(p.Field(subscription.FieldCredit))
+}
+
+// WhereResetType applies the entql string predicate on the reset_type field.
+func (f *SubscriptionFilter) WhereResetType(p entql.StringP) {
+	f.Where(p.Field(subscription.FieldResetType))
+}
+
+// WhereQPSLimit applies the entql uint32 predicate on the qps_limit field.
+func (f *SubscriptionFilter) WhereQPSLimit(p entql.Uint32P) {
+	f.Where(p.Field(subscription.FieldQPSLimit))
+}
+
+// addPredicate implements the predicateAdder interface.
+func (ucrq *UserCreditRecordQuery) addPredicate(pred func(s *sql.Selector)) {
+	ucrq.predicates = append(ucrq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the UserCreditRecordQuery builder.
+func (ucrq *UserCreditRecordQuery) Filter() *UserCreditRecordFilter {
+	return &UserCreditRecordFilter{config: ucrq.config, predicateAdder: ucrq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *UserCreditRecordMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the UserCreditRecordMutation builder.
+func (m *UserCreditRecordMutation) Filter() *UserCreditRecordFilter {
+	return &UserCreditRecordFilter{config: m.config, predicateAdder: m}
+}
+
+// UserCreditRecordFilter provides a generic filtering capability at runtime for UserCreditRecordQuery.
+type UserCreditRecordFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *UserCreditRecordFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[5].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql uint32 predicate on the id field.
+func (f *UserCreditRecordFilter) WhereID(p entql.Uint32P) {
+	f.Where(p.Field(usercreditrecord.FieldID))
+}
+
+// WhereCreatedAt applies the entql uint32 predicate on the created_at field.
+func (f *UserCreditRecordFilter) WhereCreatedAt(p entql.Uint32P) {
+	f.Where(p.Field(usercreditrecord.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql uint32 predicate on the updated_at field.
+func (f *UserCreditRecordFilter) WhereUpdatedAt(p entql.Uint32P) {
+	f.Where(p.Field(usercreditrecord.FieldUpdatedAt))
+}
+
+// WhereDeletedAt applies the entql uint32 predicate on the deleted_at field.
+func (f *UserCreditRecordFilter) WhereDeletedAt(p entql.Uint32P) {
+	f.Where(p.Field(usercreditrecord.FieldDeletedAt))
+}
+
+// WhereEntID applies the entql [16]byte predicate on the ent_id field.
+func (f *UserCreditRecordFilter) WhereEntID(p entql.ValueP) {
+	f.Where(p.Field(usercreditrecord.FieldEntID))
+}
+
+// WhereAppID applies the entql [16]byte predicate on the app_id field.
+func (f *UserCreditRecordFilter) WhereAppID(p entql.ValueP) {
+	f.Where(p.Field(usercreditrecord.FieldAppID))
+}
+
+// WhereUserID applies the entql [16]byte predicate on the user_id field.
+func (f *UserCreditRecordFilter) WhereUserID(p entql.ValueP) {
+	f.Where(p.Field(usercreditrecord.FieldUserID))
+}
+
+// WhereOperationType applies the entql string predicate on the operation_type field.
+func (f *UserCreditRecordFilter) WhereOperationType(p entql.StringP) {
+	f.Where(p.Field(usercreditrecord.FieldOperationType))
+}
+
+// WhereCreditsChange applies the entql int32 predicate on the credits_change field.
+func (f *UserCreditRecordFilter) WhereCreditsChange(p entql.Int32P) {
+	f.Where(p.Field(usercreditrecord.FieldCreditsChange))
+}
+
+// WhereExtra applies the entql string predicate on the extra field.
+func (f *UserCreditRecordFilter) WhereExtra(p entql.StringP) {
+	f.Where(p.Field(usercreditrecord.FieldExtra))
+}
+
+// addPredicate implements the predicateAdder interface.
+func (usq *UserSubscriptionQuery) addPredicate(pred func(s *sql.Selector)) {
+	usq.predicates = append(usq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the UserSubscriptionQuery builder.
+func (usq *UserSubscriptionQuery) Filter() *UserSubscriptionFilter {
+	return &UserSubscriptionFilter{config: usq.config, predicateAdder: usq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *UserSubscriptionMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the UserSubscriptionMutation builder.
+func (m *UserSubscriptionMutation) Filter() *UserSubscriptionFilter {
+	return &UserSubscriptionFilter{config: m.config, predicateAdder: m}
+}
+
+// UserSubscriptionFilter provides a generic filtering capability at runtime for UserSubscriptionQuery.
+type UserSubscriptionFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *UserSubscriptionFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[6].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql uint32 predicate on the id field.
+func (f *UserSubscriptionFilter) WhereID(p entql.Uint32P) {
+	f.Where(p.Field(usersubscription.FieldID))
+}
+
+// WhereCreatedAt applies the entql uint32 predicate on the created_at field.
+func (f *UserSubscriptionFilter) WhereCreatedAt(p entql.Uint32P) {
+	f.Where(p.Field(usersubscription.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql uint32 predicate on the updated_at field.
+func (f *UserSubscriptionFilter) WhereUpdatedAt(p entql.Uint32P) {
+	f.Where(p.Field(usersubscription.FieldUpdatedAt))
+}
+
+// WhereDeletedAt applies the entql uint32 predicate on the deleted_at field.
+func (f *UserSubscriptionFilter) WhereDeletedAt(p entql.Uint32P) {
+	f.Where(p.Field(usersubscription.FieldDeletedAt))
+}
+
+// WhereEntID applies the entql [16]byte predicate on the ent_id field.
+func (f *UserSubscriptionFilter) WhereEntID(p entql.ValueP) {
+	f.Where(p.Field(usersubscription.FieldEntID))
+}
+
+// WhereAppID applies the entql [16]byte predicate on the app_id field.
+func (f *UserSubscriptionFilter) WhereAppID(p entql.ValueP) {
+	f.Where(p.Field(usersubscription.FieldAppID))
+}
+
+// WhereUserID applies the entql [16]byte predicate on the user_id field.
+func (f *UserSubscriptionFilter) WhereUserID(p entql.ValueP) {
+	f.Where(p.Field(usersubscription.FieldUserID))
+}
+
+// WherePackageID applies the entql [16]byte predicate on the package_id field.
+func (f *UserSubscriptionFilter) WherePackageID(p entql.ValueP) {
+	f.Where(p.Field(usersubscription.FieldPackageID))
+}
+
+// WhereStartAt applies the entql uint32 predicate on the start_at field.
+func (f *UserSubscriptionFilter) WhereStartAt(p entql.Uint32P) {
+	f.Where(p.Field(usersubscription.FieldStartAt))
+}
+
+// WhereEndAt applies the entql uint32 predicate on the end_at field.
+func (f *UserSubscriptionFilter) WhereEndAt(p entql.Uint32P) {
+	f.Where(p.Field(usersubscription.FieldEndAt))
+}
+
+// WhereUsageState applies the entql string predicate on the usage_state field.
+func (f *UserSubscriptionFilter) WhereUsageState(p entql.StringP) {
+	f.Where(p.Field(usersubscription.FieldUsageState))
+}
+
+// WhereSubscriptionCredit applies the entql uint32 predicate on the subscription_credit field.
+func (f *UserSubscriptionFilter) WhereSubscriptionCredit(p entql.Uint32P) {
+	f.Where(p.Field(usersubscription.FieldSubscriptionCredit))
+}
+
+// WhereAddonCredit applies the entql uint32 predicate on the addon_credit field.
+func (f *UserSubscriptionFilter) WhereAddonCredit(p entql.Uint32P) {
+	f.Where(p.Field(usersubscription.FieldAddonCredit))
+}
+
+// addPredicate implements the predicateAdder interface.
+func (uscq *UserSubscriptionChangeQuery) addPredicate(pred func(s *sql.Selector)) {
+	uscq.predicates = append(uscq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the UserSubscriptionChangeQuery builder.
+func (uscq *UserSubscriptionChangeQuery) Filter() *UserSubscriptionChangeFilter {
+	return &UserSubscriptionChangeFilter{config: uscq.config, predicateAdder: uscq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *UserSubscriptionChangeMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the UserSubscriptionChangeMutation builder.
+func (m *UserSubscriptionChangeMutation) Filter() *UserSubscriptionChangeFilter {
+	return &UserSubscriptionChangeFilter{config: m.config, predicateAdder: m}
+}
+
+// UserSubscriptionChangeFilter provides a generic filtering capability at runtime for UserSubscriptionChangeQuery.
+type UserSubscriptionChangeFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *UserSubscriptionChangeFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[7].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql uint32 predicate on the id field.
+func (f *UserSubscriptionChangeFilter) WhereID(p entql.Uint32P) {
+	f.Where(p.Field(usersubscriptionchange.FieldID))
+}
+
+// WhereCreatedAt applies the entql uint32 predicate on the created_at field.
+func (f *UserSubscriptionChangeFilter) WhereCreatedAt(p entql.Uint32P) {
+	f.Where(p.Field(usersubscriptionchange.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql uint32 predicate on the updated_at field.
+func (f *UserSubscriptionChangeFilter) WhereUpdatedAt(p entql.Uint32P) {
+	f.Where(p.Field(usersubscriptionchange.FieldUpdatedAt))
+}
+
+// WhereDeletedAt applies the entql uint32 predicate on the deleted_at field.
+func (f *UserSubscriptionChangeFilter) WhereDeletedAt(p entql.Uint32P) {
+	f.Where(p.Field(usersubscriptionchange.FieldDeletedAt))
+}
+
+// WhereEntID applies the entql [16]byte predicate on the ent_id field.
+func (f *UserSubscriptionChangeFilter) WhereEntID(p entql.ValueP) {
+	f.Where(p.Field(usersubscriptionchange.FieldEntID))
+}
+
+// WhereAppID applies the entql [16]byte predicate on the app_id field.
+func (f *UserSubscriptionChangeFilter) WhereAppID(p entql.ValueP) {
+	f.Where(p.Field(usersubscriptionchange.FieldAppID))
+}
+
+// WhereUserID applies the entql [16]byte predicate on the user_id field.
+func (f *UserSubscriptionChangeFilter) WhereUserID(p entql.ValueP) {
+	f.Where(p.Field(usersubscriptionchange.FieldUserID))
+}
+
+// WhereUserSubscriptionID applies the entql [16]byte predicate on the user_subscription_id field.
+func (f *UserSubscriptionChangeFilter) WhereUserSubscriptionID(p entql.ValueP) {
+	f.Where(p.Field(usersubscriptionchange.FieldUserSubscriptionID))
+}
+
+// WhereOldPackageID applies the entql [16]byte predicate on the old_package_id field.
+func (f *UserSubscriptionChangeFilter) WhereOldPackageID(p entql.ValueP) {
+	f.Where(p.Field(usersubscriptionchange.FieldOldPackageID))
+}
+
+// WhereNewPackageID applies the entql [16]byte predicate on the new_package_id field.
+func (f *UserSubscriptionChangeFilter) WhereNewPackageID(p entql.ValueP) {
+	f.Where(p.Field(usersubscriptionchange.FieldNewPackageID))
 }

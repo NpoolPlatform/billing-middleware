@@ -1,6 +1,6 @@
 # Npool ledger manager
 
-[![Test](https://github.com/NpoolPlatform/service-template/actions/workflows/main.yml/badge.svg?branch=master)](https://github.com/NpoolPlatform/service-template/actions/workflows/main.yml)
+[![Test](https://github.com/NpoolPlatform/billing-middleware/actions/workflows/main.yml/badge.svg?branch=master)](https://github.com/NpoolPlatform/billing-middleware/actions/workflows/main.yml)
 
 [目录](#目录)
 - [功能](#功能)
@@ -40,24 +40,24 @@
 * make verify-build ```编译目标```
 * make test ```单元测试```
 * make generate-docker-images ```生成docker镜像```
-* make service-template ```单独编译服务```
-* make service-template-image ```单独生成服务镜像```
+* make billing-middleware ```单独编译服务```
+* make billing-middleware-image ```单独生成服务镜像```
 * make deploy-to-k8s-cluster ```部署到k8s集群```
 
 ### 步骤
-* 在github上将模板仓库https://github.com/NpoolPlatform/service-template.git import为https://github.com/NpoolPlatform/my-service-name.git
+* 在github上将模板仓库https://github.com/NpoolPlatform/billing-middleware.git import为https://github.com/NpoolPlatform/my-service-name.git
 * git clone https://github.com/NpoolPlatform/my-service-name.git
 * cd my-service-name
-* mv cmd/service-template cmd/my-service
+* mv cmd/billing-middleware cmd/my-service
 * 修改cmd/my-service/main.go中的serviceName为My Service
-* mv cmd/my-service/ServiceTemplate.viper.yaml cmd/my-service/MyService.viper.yaml
+* mv cmd/my-service/BillingMiddleware.viper.yaml cmd/my-service/MyService.viper.yaml
 * 将cmd/my-service/MyService.viper.yaml中的内容修改为当前服务对应内容
 * 修改Dockerfile和k8s部署文档为当前服务对应内容
   * grep -rb "service template" ./*
-  * grep -rb "ServiceTemplate" ./*
+  * grep -rb "BillingMiddleware" ./*
   * grep -rb "Service Template" ./*
   * grep -rb "service_template" ./*
-  * grep -rb "service-template" ./*
+  * grep -rb "billing-middleware" ./*
   * grep -rb "servicetmpl" ./*
   * 修改cmd/my-service/k8s中的三个yaml文件，包含端口，服务名字
   * grep -rb "serviceid"，并使用uuid生成新值替换

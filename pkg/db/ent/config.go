@@ -28,9 +28,14 @@ type config struct {
 
 // hooks per client, for fast access.
 type hooks struct {
-	Detail        []ent.Hook
-	IgnoreID      []ent.Hook
-	PubsubMessage []ent.Hook
+	Addon                  []ent.Hook
+	Exchange               []ent.Hook
+	IgnoreID               []ent.Hook
+	PubsubMessage          []ent.Hook
+	Subscription           []ent.Hook
+	UserCreditRecord       []ent.Hook
+	UserSubscription       []ent.Hook
+	UserSubscriptionChange []ent.Hook
 }
 
 // Options applies the options on the config object.

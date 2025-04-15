@@ -6,18 +6,31 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/NpoolPlatform/service-template/pkg/db/ent"
+	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent"
 )
 
-// The DetailFunc type is an adapter to allow the use of ordinary
-// function as Detail mutator.
-type DetailFunc func(context.Context, *ent.DetailMutation) (ent.Value, error)
+// The AddonFunc type is an adapter to allow the use of ordinary
+// function as Addon mutator.
+type AddonFunc func(context.Context, *ent.AddonMutation) (ent.Value, error)
 
 // Mutate calls f(ctx, m).
-func (f DetailFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	mv, ok := m.(*ent.DetailMutation)
+func (f AddonFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.AddonMutation)
 	if !ok {
-		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.DetailMutation", m)
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AddonMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The ExchangeFunc type is an adapter to allow the use of ordinary
+// function as Exchange mutator.
+type ExchangeFunc func(context.Context, *ent.ExchangeMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ExchangeFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.ExchangeMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ExchangeMutation", m)
 	}
 	return f(ctx, mv)
 }
@@ -44,6 +57,58 @@ func (f PubsubMessageFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Valu
 	mv, ok := m.(*ent.PubsubMessageMutation)
 	if !ok {
 		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PubsubMessageMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The SubscriptionFunc type is an adapter to allow the use of ordinary
+// function as Subscription mutator.
+type SubscriptionFunc func(context.Context, *ent.SubscriptionMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f SubscriptionFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.SubscriptionMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.SubscriptionMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The UserCreditRecordFunc type is an adapter to allow the use of ordinary
+// function as UserCreditRecord mutator.
+type UserCreditRecordFunc func(context.Context, *ent.UserCreditRecordMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f UserCreditRecordFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.UserCreditRecordMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.UserCreditRecordMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The UserSubscriptionFunc type is an adapter to allow the use of ordinary
+// function as UserSubscription mutator.
+type UserSubscriptionFunc func(context.Context, *ent.UserSubscriptionMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f UserSubscriptionFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.UserSubscriptionMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.UserSubscriptionMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The UserSubscriptionChangeFunc type is an adapter to allow the use of ordinary
+// function as UserSubscriptionChange mutator.
+type UserSubscriptionChangeFunc func(context.Context, *ent.UserSubscriptionChangeMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f UserSubscriptionChangeFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.UserSubscriptionChangeMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.UserSubscriptionChangeMutation", m)
 	}
 	return f(ctx, mv)
 }

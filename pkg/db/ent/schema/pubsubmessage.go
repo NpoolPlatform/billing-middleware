@@ -4,9 +4,9 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
+	"github.com/NpoolPlatform/billing-middleware/pkg/db/mixin"
 	crudermixin "github.com/NpoolPlatform/libent-cruder/pkg/mixin"
 	msgpb "github.com/NpoolPlatform/message/npool/basetypes/v1"
-	"github.com/NpoolPlatform/service-template/pkg/db/mixin"
 	"github.com/google/uuid"
 )
 

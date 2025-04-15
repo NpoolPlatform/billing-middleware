@@ -12,8 +12,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/NpoolPlatform/service-template/pkg/db/ent/ignoreid"
-	"github.com/NpoolPlatform/service-template/pkg/db/ent/predicate"
+	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/ignoreid"
+	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent/predicate"
 )
 
 // IgnoreIDQuery is the builder for querying IgnoreID entities.

@@ -3,8 +3,8 @@ package schema
 import (
 	"entgo.io/ent"
 	"entgo.io/ent/schema/field"
+	"github.com/NpoolPlatform/billing-middleware/pkg/db/mixin"
 	crudermixin "github.com/NpoolPlatform/libent-cruder/pkg/mixin"
-	"github.com/NpoolPlatform/service-template/pkg/db/mixin"
 )
 
 // IgnoreID holds the schema definition for the IgnoreID entity.
