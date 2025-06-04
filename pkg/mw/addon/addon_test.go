@@ -30,7 +30,7 @@ func init() {
 var ret = npool.Addon{
 	EntID:       uuid.NewString(),
 	AppID:       uuid.NewString(),
-	Price:       decimal.NewFromInt(22).String(),
+	UsdPrice:    decimal.NewFromInt(22).String(),
 	Credit:      uint32(16),
 	SortOrder:   uint32(1),
 	Enabled:     true,
@@ -46,7 +46,7 @@ func createAddon(t *testing.T) {
 		context.Background(),
 		WithEntID(&ret.EntID, true),
 		WithAppID(&ret.AppID, true),
-		WithPrice(&ret.Price, true),
+		WithUsdPrice(&ret.UsdPrice, true),
 		WithCredit(&ret.Credit, true),
 		WithSortOrder(&ret.SortOrder, true),
 		WithEnabled(&ret.Enabled, true),
@@ -67,7 +67,7 @@ func createAddon(t *testing.T) {
 }
 
 func updateAddon(t *testing.T) {
-	ret.Price = decimal.NewFromInt(15).String()
+	ret.UsdPrice = decimal.NewFromInt(15).String()
 	ret.Credit = uint32(25)
 	ret.SortOrder = uint32(2)
 	ret.Enabled = false
@@ -75,7 +75,7 @@ func updateAddon(t *testing.T) {
 	handler, err := NewHandler(
 		context.Background(),
 		WithID(&ret.ID, true),
-		WithPrice(&ret.Price, true),
+		WithUsdPrice(&ret.UsdPrice, true),
 		WithCredit(&ret.Credit, true),
 		WithSortOrder(&ret.SortOrder, true),
 		WithEnabled(&ret.Enabled, true),

@@ -35,7 +35,7 @@ var ret = &npool.Subscription{
 	EntID:          uuid.NewString(),
 	AppID:          uuid.NewString(),
 	PackageName:    uuid.NewString(),
-	Price:          decimal.NewFromInt(10).String(),
+	UsdPrice:          decimal.NewFromInt(10).String(),
 	Description:    uuid.NewString(),
 	SortOrder:      uint32(1),
 	PackageType:    types.PackageType_Normal,
@@ -55,7 +55,7 @@ func createSubscription(t *testing.T) {
 		EntID:       &ret.EntID,
 		AppID:       &ret.AppID,
 		PackageName: &ret.PackageName,
-		Price:       &ret.Price,
+		UsdPrice:       &ret.UsdPrice,
 		Description: &ret.Description,
 		SortOrder:   &ret.SortOrder,
 		PackageType: &ret.PackageType,
@@ -76,7 +76,7 @@ func createSubscription(t *testing.T) {
 
 func updateSubscription(t *testing.T) {
 	ret.PackageName = uuid.NewString()
-	ret.Price = decimal.NewFromInt(10).String()
+	ret.UsdPrice = decimal.NewFromInt(10).String()
 	ret.Description = uuid.NewString()
 	ret.SortOrder = uint32(2)
 	ret.Credit = uint32(10)
@@ -87,7 +87,7 @@ func updateSubscription(t *testing.T) {
 		ID:          &ret.ID,
 		EntID:       &ret.EntID,
 		PackageName: &ret.PackageName,
-		Price:       &ret.Price,
+		UsdPrice:       &ret.UsdPrice,
 		Description: &ret.Description,
 		SortOrder:   &ret.SortOrder,
 		Credit:      &ret.Credit,
