@@ -33,7 +33,7 @@ func init() {
 var ret = &npool.Addon{
 	EntID:       uuid.NewString(),
 	AppID:       uuid.NewString(),
-	Price:       decimal.NewFromInt(22).String(),
+	UsdPrice:    decimal.NewFromInt(22).String(),
 	Credit:      uint32(16),
 	SortOrder:   uint32(1),
 	Enabled:     true,
@@ -48,7 +48,7 @@ func createAddon(t *testing.T) {
 	err := CreateAddon(context.Background(), &npool.AddonReq{
 		EntID:       &ret.EntID,
 		AppID:       &ret.AppID,
-		Price:       &ret.Price,
+		UsdPrice:    &ret.UsdPrice,
 		Credit:      &ret.Credit,
 		SortOrder:   &ret.SortOrder,
 		Enabled:     &ret.Enabled,
@@ -66,7 +66,7 @@ func createAddon(t *testing.T) {
 }
 
 func updateAddon(t *testing.T) {
-	ret.Price = decimal.NewFromInt(15).String()
+	ret.UsdPrice = decimal.NewFromInt(15).String()
 	ret.Credit = uint32(25)
 	ret.SortOrder = uint32(2)
 	ret.Enabled = false
@@ -74,7 +74,7 @@ func updateAddon(t *testing.T) {
 	err := UpdateAddon(context.Background(), &npool.AddonReq{
 		ID:          &ret.ID,
 		EntID:       &ret.EntID,
-		Price:       &ret.Price,
+		UsdPrice:    &ret.UsdPrice,
 		Credit:      &ret.Credit,
 		SortOrder:   &ret.SortOrder,
 		Enabled:     &ret.Enabled,
