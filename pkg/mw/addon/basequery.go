@@ -33,12 +33,13 @@ func (h *baseQueryHandler) queryAddon(cli *ent.Client) error {
 	return nil
 }
 
-func (h *baseQueryHandler) queryAddons(cli *ent.Client) (*ent.AddonSelect, error) {
+func (h *baseQueryHandler) queryAddons(cli *ent.Client) error {
 	stm, err := addoncrud.SetQueryConds(cli.Addon.Query(), h.AddonConds)
 	if err != nil {
-		return nil, wlog.WrapError(err)
+		return wlog.WrapError(err)
 	}
-	return h.selectAddon(stm), nil
+	h.stmSelect = h.selectAddon(stm)
+	return nil
 }
 
 func (h *baseQueryHandler) queryJoinMyself(s *sql.Selector) {

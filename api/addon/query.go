@@ -72,32 +72,3 @@ func (s *Server) GetAddons(ctx context.Context, in *npool.GetAddonsRequest) (*np
 		Infos: infos,
 	}, nil
 }
-
-func (s *Server) GetAddonsCount(ctx context.Context, in *npool.GetAddonsCountRequest) (*npool.GetAddonsCountResponse, error) {
-	handler, err := addon1.NewHandler(
-		ctx,
-		addon1.WithConds(in.GetConds()),
-	)
-	if err != nil {
-		logger.Sugar().Errorw(
-			"GetAddonsCount",
-			"In", in,
-			"Error", err,
-		)
-		return &npool.GetAddonsCountResponse{}, status.Error(codes.Aborted, err.Error())
-	}
-
-	total, err := handler.GetAddonsCount(ctx)
-	if err != nil {
-		logger.Sugar().Errorw(
-			"GetAddonsCount",
-			"In", in,
-			"Error", err,
-		)
-		return &npool.GetAddonsCountResponse{}, status.Error(codes.Aborted, err.Error())
-	}
-
-	return &npool.GetAddonsCountResponse{
-		Total: total,
-	}, nil
-}

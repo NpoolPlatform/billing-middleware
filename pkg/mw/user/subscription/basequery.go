@@ -14,6 +14,12 @@ type baseQueryHandler struct {
 	stmSelect *ent.UserSubscriptionSelect
 }
 
+func (h *queryHandler) queryJoin() {
+	if h.stmSelect != nil {
+		h.baseQueryHandler.queryJoin()
+	}
+}
+
 func (h *baseQueryHandler) selectSubscription(stm *ent.UserSubscriptionQuery) *ent.UserSubscriptionSelect {
 	return stm.Select(entsubscription.FieldID)
 }
@@ -33,12 +39,13 @@ func (h *baseQueryHandler) querySubscription(cli *ent.Client) error {
 	return nil
 }
 
-func (h *baseQueryHandler) querySubscriptions(cli *ent.Client) (*ent.UserSubscriptionSelect, error) {
+func (h *baseQueryHandler) querySubscriptions(cli *ent.Client) error {
 	stm, err := subscriptioncrud.SetQueryConds(cli.UserSubscription.Query(), h.SubscriptionConds)
 	if err != nil {
-		return nil, wlog.WrapError(err)
+		return wlog.WrapError(err)
 	}
-	return h.selectSubscription(stm), nil
+	h.stmSelect = h.selectSubscription(stm)
+	return nil
 }
 
 func (h *baseQueryHandler) queryJoinMyself(s *sql.Selector) {

@@ -72,38 +72,3 @@ func (s *Server) GetSubscriptions(ctx context.Context, in *npool.GetSubscription
 		Infos: infos,
 	}, nil
 }
-
-func (s *Server) GetSubscriptionsCount(
-	ctx context.Context,
-	in *npool.GetSubscriptionsCountRequest,
-) (
-	*npool.GetSubscriptionsCountResponse,
-	error,
-) {
-	handler, err := subscription1.NewHandler(
-		ctx,
-		subscription1.WithConds(in.GetConds()),
-	)
-	if err != nil {
-		logger.Sugar().Errorw(
-			"GetSubscriptionsCount",
-			"In", in,
-			"Error", err,
-		)
-		return &npool.GetSubscriptionsCountResponse{}, status.Error(codes.Aborted, err.Error())
-	}
-
-	total, err := handler.GetSubscriptionsCount(ctx)
-	if err != nil {
-		logger.Sugar().Errorw(
-			"GetSubscriptionsCount",
-			"In", in,
-			"Error", err,
-		)
-		return &npool.GetSubscriptionsCountResponse{}, status.Error(codes.Aborted, err.Error())
-	}
-
-	return &npool.GetSubscriptionsCountResponse{
-		Total: total,
-	}, nil
-}

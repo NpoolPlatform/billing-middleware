@@ -31,7 +31,7 @@ func (h *Handler) ExistSubscriptionChangeConds(ctx context.Context) (exist bool,
 		Handler: h,
 	}
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		if handler.stmSelect, err = handler.querySubscriptionChanges(cli); err != nil {
+		if err = handler.querySubscriptionChanges(cli); err != nil {
 			return wlog.WrapError(err)
 		}
 		handler.queryJoin()

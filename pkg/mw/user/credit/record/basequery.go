@@ -14,6 +14,12 @@ type baseQueryHandler struct {
 	stmSelect *ent.UserCreditRecordSelect
 }
 
+func (h *queryHandler) queryJoin() {
+	if h.stmSelect != nil {
+		h.baseQueryHandler.queryJoin()
+	}
+}
+
 func (h *baseQueryHandler) selectRecord(stm *ent.UserCreditRecordQuery) *ent.UserCreditRecordSelect {
 	return stm.Select(entrecord.FieldID)
 }
@@ -33,12 +39,13 @@ func (h *baseQueryHandler) queryRecord(cli *ent.Client) error {
 	return nil
 }
 
-func (h *baseQueryHandler) queryRecords(cli *ent.Client) (*ent.UserCreditRecordSelect, error) {
+func (h *baseQueryHandler) queryRecords(cli *ent.Client) error {
 	stm, err := recordcrud.SetQueryConds(cli.UserCreditRecord.Query(), h.RecordConds)
 	if err != nil {
-		return nil, wlog.WrapError(err)
+		return wlog.WrapError(err)
 	}
-	return h.selectRecord(stm), nil
+	h.stmSelect = h.selectRecord(stm)
+	return nil
 }
 
 func (h *baseQueryHandler) queryJoinMyself(s *sql.Selector) {

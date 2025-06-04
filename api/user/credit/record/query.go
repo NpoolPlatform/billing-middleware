@@ -72,32 +72,3 @@ func (s *Server) GetRecords(ctx context.Context, in *npool.GetRecordsRequest) (*
 		Infos: infos,
 	}, nil
 }
-
-func (s *Server) GetRecordsCount(ctx context.Context, in *npool.GetRecordsCountRequest) (*npool.GetRecordsCountResponse, error) {
-	handler, err := record1.NewHandler(
-		ctx,
-		record1.WithConds(in.GetConds()),
-	)
-	if err != nil {
-		logger.Sugar().Errorw(
-			"GetRecordsCount",
-			"In", in,
-			"Error", err,
-		)
-		return &npool.GetRecordsCountResponse{}, status.Error(codes.Aborted, err.Error())
-	}
-
-	total, err := handler.GetRecordsCount(ctx)
-	if err != nil {
-		logger.Sugar().Errorw(
-			"GetRecordsCount",
-			"In", in,
-			"Error", err,
-		)
-		return &npool.GetRecordsCountResponse{}, status.Error(codes.Aborted, err.Error())
-	}
-
-	return &npool.GetRecordsCountResponse{
-		Total: total,
-	}, nil
-}

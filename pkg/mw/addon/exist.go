@@ -31,7 +31,7 @@ func (h *Handler) ExistAddonConds(ctx context.Context) (exist bool, err error) {
 		Handler: h,
 	}
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		if handler.stmSelect, err = handler.queryAddons(cli); err != nil {
+		if err = handler.queryAddons(cli); err != nil {
 			return wlog.WrapError(err)
 		}
 		handler.queryJoin()

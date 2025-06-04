@@ -3,7 +3,6 @@ package record
 import (
 	"context"
 
-	"entgo.io/ent/dialect/sql"
 	"github.com/NpoolPlatform/billing-middleware/pkg/db"
 	"github.com/NpoolPlatform/billing-middleware/pkg/db/ent"
 	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
@@ -13,22 +12,7 @@ import (
 
 type queryHandler struct {
 	*baseQueryHandler
-	stmCount *ent.UserCreditRecordSelect
-	infos    []*npool.Record
-	total    uint32
-}
-
-func (h *queryHandler) queryJoin() {
-	if h.stmSelect != nil {
-		h.baseQueryHandler.queryJoin()
-		return
-	}
-	if h.stmCount == nil {
-		return
-	}
-	h.stmCount.Modify(func(s *sql.Selector) {
-		h.queryJoinMyself(s)
-	})
+	infos []*npool.Record
 }
 
 func (h *queryHandler) scan(ctx context.Context) error {
@@ -75,7 +59,7 @@ func (h *Handler) GetRecords(ctx context.Context) ([]*npool.Record, error) {
 	}
 	var err error
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		if handler.stmSelect, err = handler.queryRecords(cli); err != nil {
+		if err = handler.queryRecords(cli); err != nil {
 			return wlog.WrapError(err)
 		}
 		handler.queryJoin()
@@ -89,30 +73,4 @@ func (h *Handler) GetRecords(ctx context.Context) ([]*npool.Record, error) {
 	}
 	handler.formalize()
 	return handler.infos, nil
-}
-
-func (h *Handler) GetRecordsCount(ctx context.Context) (uint32, error) {
-	handler := &queryHandler{
-		baseQueryHandler: &baseQueryHandler{
-			Handler: h,
-		},
-	}
-	var err error
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		if handler.stmCount, err = handler.queryRecords(cli); err != nil {
-			return wlog.WrapError(err)
-		}
-		handler.queryJoin()
-		_total, err := handler.stmCount.Count(_ctx)
-		if err != nil {
-			return wlog.WrapError(err)
-		}
-		handler.total = uint32(_total)
-
-		return nil
-	})
-	if err != nil {
-		return 0, wlog.WrapError(err)
-	}
-	return handler.total, nil
 }

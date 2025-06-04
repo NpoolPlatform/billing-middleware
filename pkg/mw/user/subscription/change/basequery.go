@@ -33,12 +33,13 @@ func (h *baseQueryHandler) querySubscriptionChange(cli *ent.Client) error {
 	return nil
 }
 
-func (h *baseQueryHandler) querySubscriptionChanges(cli *ent.Client) (*ent.UserSubscriptionChangeSelect, error) {
+func (h *baseQueryHandler) querySubscriptionChanges(cli *ent.Client) error {
 	stm, err := subscriptioncrud.SetQueryConds(cli.UserSubscriptionChange.Query(), h.SubscriptionConds)
 	if err != nil {
-		return nil, wlog.WrapError(err)
+		return wlog.WrapError(err)
 	}
-	return h.selectSubscriptionChange(stm), nil
+	h.stmSelect = h.selectSubscriptionChange(stm)
+	return nil
 }
 
 func (h *baseQueryHandler) queryJoinMyself(s *sql.Selector) {

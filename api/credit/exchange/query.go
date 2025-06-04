@@ -72,32 +72,3 @@ func (s *Server) GetExchanges(ctx context.Context, in *npool.GetExchangesRequest
 		Infos: infos,
 	}, nil
 }
-
-func (s *Server) GetExchangesCount(ctx context.Context, in *npool.GetExchangesCountRequest) (*npool.GetExchangesCountResponse, error) {
-	handler, err := exchange1.NewHandler(
-		ctx,
-		exchange1.WithConds(in.GetConds()),
-	)
-	if err != nil {
-		logger.Sugar().Errorw(
-			"GetExchangesCount",
-			"In", in,
-			"Error", err,
-		)
-		return &npool.GetExchangesCountResponse{}, status.Error(codes.Aborted, err.Error())
-	}
-
-	total, err := handler.GetExchangesCount(ctx)
-	if err != nil {
-		logger.Sugar().Errorw(
-			"GetExchangesCount",
-			"In", in,
-			"Error", err,
-		)
-		return &npool.GetExchangesCountResponse{}, status.Error(codes.Aborted, err.Error())
-	}
-
-	return &npool.GetExchangesCountResponse{
-		Total: total,
-	}, nil
-}

@@ -33,12 +33,13 @@ func (h *baseQueryHandler) queryExchange(cli *ent.Client) error {
 	return nil
 }
 
-func (h *baseQueryHandler) queryExchanges(cli *ent.Client) (*ent.ExchangeSelect, error) {
+func (h *baseQueryHandler) queryExchanges(cli *ent.Client) error {
 	stm, err := exchangecrud.SetQueryConds(cli.Exchange.Query(), h.ExchangeConds)
 	if err != nil {
-		return nil, wlog.WrapError(err)
+		return wlog.WrapError(err)
 	}
-	return h.selectExchange(stm), nil
+	h.stmSelect = h.selectExchange(stm)
+	return nil
 }
 
 func (h *baseQueryHandler) queryJoinMyself(s *sql.Selector) {
