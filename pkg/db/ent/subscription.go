@@ -29,8 +29,8 @@ type Subscription struct {
 	AppID uuid.UUID `json:"app_id,omitempty"`
 	// PackageName holds the value of the "package_name" field.
 	PackageName string `json:"package_name,omitempty"`
-	// Price holds the value of the "price" field.
-	Price decimal.Decimal `json:"price,omitempty"`
+	// UsdPrice holds the value of the "usd_price" field.
+	UsdPrice decimal.Decimal `json:"usd_price,omitempty"`
 	// Description holds the value of the "description" field.
 	Description string `json:"description,omitempty"`
 	// SortOrder holds the value of the "sort_order" field.
@@ -50,7 +50,7 @@ func (*Subscription) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case subscription.FieldPrice:
+		case subscription.FieldUsdPrice:
 			values[i] = new(decimal.Decimal)
 		case subscription.FieldID, subscription.FieldCreatedAt, subscription.FieldUpdatedAt, subscription.FieldDeletedAt, subscription.FieldSortOrder, subscription.FieldCredit, subscription.FieldQPSLimit:
 			values[i] = new(sql.NullInt64)
@@ -115,11 +115,11 @@ func (s *Subscription) assignValues(columns []string, values []interface{}) erro
 			} else if value.Valid {
 				s.PackageName = value.String
 			}
-		case subscription.FieldPrice:
+		case subscription.FieldUsdPrice:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
-				return fmt.Errorf("unexpected type %T for field price", values[i])
+				return fmt.Errorf("unexpected type %T for field usd_price", values[i])
 			} else if value != nil {
-				s.Price = *value
+				s.UsdPrice = *value
 			}
 		case subscription.FieldDescription:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -203,8 +203,8 @@ func (s *Subscription) String() string {
 	builder.WriteString("package_name=")
 	builder.WriteString(s.PackageName)
 	builder.WriteString(", ")
-	builder.WriteString("price=")
-	builder.WriteString(fmt.Sprintf("%v", s.Price))
+	builder.WriteString("usd_price=")
+	builder.WriteString(fmt.Sprintf("%v", s.UsdPrice))
 	builder.WriteString(", ")
 	builder.WriteString("description=")
 	builder.WriteString(s.Description)

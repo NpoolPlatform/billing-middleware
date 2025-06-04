@@ -38,8 +38,8 @@ func (h *queryHandler) scan(ctx context.Context) error {
 
 func (h *queryHandler) formalize() {
 	for _, info := range h.infos {
-		amount, _ := decimal.NewFromString(info.Price)
-		info.Price = amount.String()
+		amount, _ := decimal.NewFromString(info.UsdPrice)
+		info.UsdPrice = amount.String()
 		info.PackageType = types.PackageType(types.PackageType_value[info.PackageTypeStr])
 		info.ResetType = types.ResetType(types.ResetType_value[info.ResetTypeStr])
 	}

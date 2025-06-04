@@ -32,7 +32,7 @@ func (Addon) Fields() []ent.Field {
 				return uuid.UUID{}
 			}),
 		field.
-			Other("price", decimal.Decimal{}).
+			Other("usd_price", decimal.Decimal{}).
 			SchemaType(map[string]string{
 				dialect.MySQL: "decimal(37,18)",
 			}).

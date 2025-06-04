@@ -93,16 +93,16 @@ func (ac *AddonCreate) SetNillableAppID(u *uuid.UUID) *AddonCreate {
 	return ac
 }
 
-// SetPrice sets the "price" field.
-func (ac *AddonCreate) SetPrice(d decimal.Decimal) *AddonCreate {
-	ac.mutation.SetPrice(d)
+// SetUsdPrice sets the "usd_price" field.
+func (ac *AddonCreate) SetUsdPrice(d decimal.Decimal) *AddonCreate {
+	ac.mutation.SetUsdPrice(d)
 	return ac
 }
 
-// SetNillablePrice sets the "price" field if the given value is not nil.
-func (ac *AddonCreate) SetNillablePrice(d *decimal.Decimal) *AddonCreate {
+// SetNillableUsdPrice sets the "usd_price" field if the given value is not nil.
+func (ac *AddonCreate) SetNillableUsdPrice(d *decimal.Decimal) *AddonCreate {
 	if d != nil {
-		ac.SetPrice(*d)
+		ac.SetUsdPrice(*d)
 	}
 	return ac
 }
@@ -283,9 +283,9 @@ func (ac *AddonCreate) defaults() error {
 		v := addon.DefaultAppID()
 		ac.mutation.SetAppID(v)
 	}
-	if _, ok := ac.mutation.Price(); !ok {
-		v := addon.DefaultPrice
-		ac.mutation.SetPrice(v)
+	if _, ok := ac.mutation.UsdPrice(); !ok {
+		v := addon.DefaultUsdPrice
+		ac.mutation.SetUsdPrice(v)
 	}
 	if _, ok := ac.mutation.Credit(); !ok {
 		v := addon.DefaultCredit
@@ -394,13 +394,13 @@ func (ac *AddonCreate) createSpec() (*Addon, *sqlgraph.CreateSpec) {
 		})
 		_node.AppID = value
 	}
-	if value, ok := ac.mutation.Price(); ok {
+	if value, ok := ac.mutation.UsdPrice(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: addon.FieldPrice,
+			Column: addon.FieldUsdPrice,
 		})
-		_node.Price = value
+		_node.UsdPrice = value
 	}
 	if value, ok := ac.mutation.Credit(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -572,21 +572,21 @@ func (u *AddonUpsert) ClearAppID() *AddonUpsert {
 	return u
 }
 
-// SetPrice sets the "price" field.
-func (u *AddonUpsert) SetPrice(v decimal.Decimal) *AddonUpsert {
-	u.Set(addon.FieldPrice, v)
+// SetUsdPrice sets the "usd_price" field.
+func (u *AddonUpsert) SetUsdPrice(v decimal.Decimal) *AddonUpsert {
+	u.Set(addon.FieldUsdPrice, v)
 	return u
 }
 
-// UpdatePrice sets the "price" field to the value that was provided on create.
-func (u *AddonUpsert) UpdatePrice() *AddonUpsert {
-	u.SetExcluded(addon.FieldPrice)
+// UpdateUsdPrice sets the "usd_price" field to the value that was provided on create.
+func (u *AddonUpsert) UpdateUsdPrice() *AddonUpsert {
+	u.SetExcluded(addon.FieldUsdPrice)
 	return u
 }
 
-// ClearPrice clears the value of the "price" field.
-func (u *AddonUpsert) ClearPrice() *AddonUpsert {
-	u.SetNull(addon.FieldPrice)
+// ClearUsdPrice clears the value of the "usd_price" field.
+func (u *AddonUpsert) ClearUsdPrice() *AddonUpsert {
+	u.SetNull(addon.FieldUsdPrice)
 	return u
 }
 
@@ -822,24 +822,24 @@ func (u *AddonUpsertOne) ClearAppID() *AddonUpsertOne {
 	})
 }
 
-// SetPrice sets the "price" field.
-func (u *AddonUpsertOne) SetPrice(v decimal.Decimal) *AddonUpsertOne {
+// SetUsdPrice sets the "usd_price" field.
+func (u *AddonUpsertOne) SetUsdPrice(v decimal.Decimal) *AddonUpsertOne {
 	return u.Update(func(s *AddonUpsert) {
-		s.SetPrice(v)
+		s.SetUsdPrice(v)
 	})
 }
 
-// UpdatePrice sets the "price" field to the value that was provided on create.
-func (u *AddonUpsertOne) UpdatePrice() *AddonUpsertOne {
+// UpdateUsdPrice sets the "usd_price" field to the value that was provided on create.
+func (u *AddonUpsertOne) UpdateUsdPrice() *AddonUpsertOne {
 	return u.Update(func(s *AddonUpsert) {
-		s.UpdatePrice()
+		s.UpdateUsdPrice()
 	})
 }
 
-// ClearPrice clears the value of the "price" field.
-func (u *AddonUpsertOne) ClearPrice() *AddonUpsertOne {
+// ClearUsdPrice clears the value of the "usd_price" field.
+func (u *AddonUpsertOne) ClearUsdPrice() *AddonUpsertOne {
 	return u.Update(func(s *AddonUpsert) {
-		s.ClearPrice()
+		s.ClearUsdPrice()
 	})
 }
 
@@ -1254,24 +1254,24 @@ func (u *AddonUpsertBulk) ClearAppID() *AddonUpsertBulk {
 	})
 }
 
-// SetPrice sets the "price" field.
-func (u *AddonUpsertBulk) SetPrice(v decimal.Decimal) *AddonUpsertBulk {
+// SetUsdPrice sets the "usd_price" field.
+func (u *AddonUpsertBulk) SetUsdPrice(v decimal.Decimal) *AddonUpsertBulk {
 	return u.Update(func(s *AddonUpsert) {
-		s.SetPrice(v)
+		s.SetUsdPrice(v)
 	})
 }
 
-// UpdatePrice sets the "price" field to the value that was provided on create.
-func (u *AddonUpsertBulk) UpdatePrice() *AddonUpsertBulk {
+// UpdateUsdPrice sets the "usd_price" field to the value that was provided on create.
+func (u *AddonUpsertBulk) UpdateUsdPrice() *AddonUpsertBulk {
 	return u.Update(func(s *AddonUpsert) {
-		s.UpdatePrice()
+		s.UpdateUsdPrice()
 	})
 }
 
-// ClearPrice clears the value of the "price" field.
-func (u *AddonUpsertBulk) ClearPrice() *AddonUpsertBulk {
+// ClearUsdPrice clears the value of the "usd_price" field.
+func (u *AddonUpsertBulk) ClearUsdPrice() *AddonUpsertBulk {
 	return u.Update(func(s *AddonUpsert) {
-		s.ClearPrice()
+		s.ClearUsdPrice()
 	})
 }
 

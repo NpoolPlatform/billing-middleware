@@ -26,7 +26,7 @@ func (s *Server) CreateAddon(ctx context.Context, in *npool.CreateAddonRequest) 
 		ctx,
 		addon1.WithEntID(req.EntID, false),
 		addon1.WithAppID(req.AppID, true),
-		addon1.WithPrice(req.Price, true),
+		addon1.WithUsdPrice(req.UsdPrice, true),
 		addon1.WithCredit(req.Credit, true),
 		addon1.WithSortOrder(req.SortOrder, true),
 		addon1.WithEnabled(req.Enabled, false),

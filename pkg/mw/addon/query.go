@@ -37,8 +37,8 @@ func (h *queryHandler) scan(ctx context.Context) error {
 
 func (h *queryHandler) formalize() {
 	for _, info := range h.infos {
-		amount, _ := decimal.NewFromString(info.Price)
-		info.Price = amount.String()
+		amount, _ := decimal.NewFromString(info.UsdPrice)
+		info.UsdPrice = amount.String()
 	}
 }
 

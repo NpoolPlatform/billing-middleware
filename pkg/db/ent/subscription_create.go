@@ -107,16 +107,16 @@ func (sc *SubscriptionCreate) SetNillablePackageName(s *string) *SubscriptionCre
 	return sc
 }
 
-// SetPrice sets the "price" field.
-func (sc *SubscriptionCreate) SetPrice(d decimal.Decimal) *SubscriptionCreate {
-	sc.mutation.SetPrice(d)
+// SetUsdPrice sets the "usd_price" field.
+func (sc *SubscriptionCreate) SetUsdPrice(d decimal.Decimal) *SubscriptionCreate {
+	sc.mutation.SetUsdPrice(d)
 	return sc
 }
 
-// SetNillablePrice sets the "price" field if the given value is not nil.
-func (sc *SubscriptionCreate) SetNillablePrice(d *decimal.Decimal) *SubscriptionCreate {
+// SetNillableUsdPrice sets the "usd_price" field if the given value is not nil.
+func (sc *SubscriptionCreate) SetNillableUsdPrice(d *decimal.Decimal) *SubscriptionCreate {
 	if d != nil {
-		sc.SetPrice(*d)
+		sc.SetUsdPrice(*d)
 	}
 	return sc
 }
@@ -329,9 +329,9 @@ func (sc *SubscriptionCreate) defaults() error {
 		v := subscription.DefaultPackageName
 		sc.mutation.SetPackageName(v)
 	}
-	if _, ok := sc.mutation.Price(); !ok {
-		v := subscription.DefaultPrice
-		sc.mutation.SetPrice(v)
+	if _, ok := sc.mutation.UsdPrice(); !ok {
+		v := subscription.DefaultUsdPrice
+		sc.mutation.SetUsdPrice(v)
 	}
 	if _, ok := sc.mutation.Description(); !ok {
 		v := subscription.DefaultDescription
@@ -465,13 +465,13 @@ func (sc *SubscriptionCreate) createSpec() (*Subscription, *sqlgraph.CreateSpec)
 		})
 		_node.PackageName = value
 	}
-	if value, ok := sc.mutation.Price(); ok {
+	if value, ok := sc.mutation.UsdPrice(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: subscription.FieldPrice,
+			Column: subscription.FieldUsdPrice,
 		})
-		_node.Price = value
+		_node.UsdPrice = value
 	}
 	if value, ok := sc.mutation.Description(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -677,21 +677,21 @@ func (u *SubscriptionUpsert) ClearPackageName() *SubscriptionUpsert {
 	return u
 }
 
-// SetPrice sets the "price" field.
-func (u *SubscriptionUpsert) SetPrice(v decimal.Decimal) *SubscriptionUpsert {
-	u.Set(subscription.FieldPrice, v)
+// SetUsdPrice sets the "usd_price" field.
+func (u *SubscriptionUpsert) SetUsdPrice(v decimal.Decimal) *SubscriptionUpsert {
+	u.Set(subscription.FieldUsdPrice, v)
 	return u
 }
 
-// UpdatePrice sets the "price" field to the value that was provided on create.
-func (u *SubscriptionUpsert) UpdatePrice() *SubscriptionUpsert {
-	u.SetExcluded(subscription.FieldPrice)
+// UpdateUsdPrice sets the "usd_price" field to the value that was provided on create.
+func (u *SubscriptionUpsert) UpdateUsdPrice() *SubscriptionUpsert {
+	u.SetExcluded(subscription.FieldUsdPrice)
 	return u
 }
 
-// ClearPrice clears the value of the "price" field.
-func (u *SubscriptionUpsert) ClearPrice() *SubscriptionUpsert {
-	u.SetNull(subscription.FieldPrice)
+// ClearUsdPrice clears the value of the "usd_price" field.
+func (u *SubscriptionUpsert) ClearUsdPrice() *SubscriptionUpsert {
+	u.SetNull(subscription.FieldUsdPrice)
 	return u
 }
 
@@ -990,24 +990,24 @@ func (u *SubscriptionUpsertOne) ClearPackageName() *SubscriptionUpsertOne {
 	})
 }
 
-// SetPrice sets the "price" field.
-func (u *SubscriptionUpsertOne) SetPrice(v decimal.Decimal) *SubscriptionUpsertOne {
+// SetUsdPrice sets the "usd_price" field.
+func (u *SubscriptionUpsertOne) SetUsdPrice(v decimal.Decimal) *SubscriptionUpsertOne {
 	return u.Update(func(s *SubscriptionUpsert) {
-		s.SetPrice(v)
+		s.SetUsdPrice(v)
 	})
 }
 
-// UpdatePrice sets the "price" field to the value that was provided on create.
-func (u *SubscriptionUpsertOne) UpdatePrice() *SubscriptionUpsertOne {
+// UpdateUsdPrice sets the "usd_price" field to the value that was provided on create.
+func (u *SubscriptionUpsertOne) UpdateUsdPrice() *SubscriptionUpsertOne {
 	return u.Update(func(s *SubscriptionUpsert) {
-		s.UpdatePrice()
+		s.UpdateUsdPrice()
 	})
 }
 
-// ClearPrice clears the value of the "price" field.
-func (u *SubscriptionUpsertOne) ClearPrice() *SubscriptionUpsertOne {
+// ClearUsdPrice clears the value of the "usd_price" field.
+func (u *SubscriptionUpsertOne) ClearUsdPrice() *SubscriptionUpsertOne {
 	return u.Update(func(s *SubscriptionUpsert) {
-		s.ClearPrice()
+		s.ClearUsdPrice()
 	})
 }
 
@@ -1492,24 +1492,24 @@ func (u *SubscriptionUpsertBulk) ClearPackageName() *SubscriptionUpsertBulk {
 	})
 }
 
-// SetPrice sets the "price" field.
-func (u *SubscriptionUpsertBulk) SetPrice(v decimal.Decimal) *SubscriptionUpsertBulk {
+// SetUsdPrice sets the "usd_price" field.
+func (u *SubscriptionUpsertBulk) SetUsdPrice(v decimal.Decimal) *SubscriptionUpsertBulk {
 	return u.Update(func(s *SubscriptionUpsert) {
-		s.SetPrice(v)
+		s.SetUsdPrice(v)
 	})
 }
 
-// UpdatePrice sets the "price" field to the value that was provided on create.
-func (u *SubscriptionUpsertBulk) UpdatePrice() *SubscriptionUpsertBulk {
+// UpdateUsdPrice sets the "usd_price" field to the value that was provided on create.
+func (u *SubscriptionUpsertBulk) UpdateUsdPrice() *SubscriptionUpsertBulk {
 	return u.Update(func(s *SubscriptionUpsert) {
-		s.UpdatePrice()
+		s.UpdateUsdPrice()
 	})
 }
 
-// ClearPrice clears the value of the "price" field.
-func (u *SubscriptionUpsertBulk) ClearPrice() *SubscriptionUpsertBulk {
+// ClearUsdPrice clears the value of the "usd_price" field.
+func (u *SubscriptionUpsertBulk) ClearUsdPrice() *SubscriptionUpsertBulk {
 	return u.Update(func(s *SubscriptionUpsert) {
-		s.ClearPrice()
+		s.ClearUsdPrice()
 	})
 }
 

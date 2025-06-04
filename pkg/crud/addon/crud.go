@@ -14,7 +14,7 @@ type Req struct {
 	ID          *uint32
 	EntID       *uuid.UUID
 	AppID       *uuid.UUID
-	Price       *decimal.Decimal
+	UsdPrice    *decimal.Decimal
 	Credit      *uint32
 	SortOrder   *uint32
 	Enabled     *bool
@@ -29,8 +29,8 @@ func CreateSet(c *ent.AddonCreate, req *Req) *ent.AddonCreate {
 	if req.AppID != nil {
 		c.SetAppID(*req.AppID)
 	}
-	if req.Price != nil {
-		c.SetPrice(*req.Price)
+	if req.UsdPrice != nil {
+		c.SetUsdPrice(*req.UsdPrice)
 	}
 	if req.Credit != nil {
 		c.SetCredit(*req.Credit)
@@ -49,8 +49,8 @@ func CreateSet(c *ent.AddonCreate, req *Req) *ent.AddonCreate {
 }
 
 func UpdateSet(u *ent.AddonUpdateOne, req *Req) *ent.AddonUpdateOne {
-	if req.Price != nil {
-		u.SetPrice(*req.Price)
+	if req.UsdPrice != nil {
+		u.SetUsdPrice(*req.UsdPrice)
 	}
 	if req.Description != nil {
 		u.SetDescription(*req.Description)

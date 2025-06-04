@@ -56,7 +56,7 @@ type AddonMutation struct {
 	adddeleted_at *int32
 	ent_id        *uuid.UUID
 	app_id        *uuid.UUID
-	price         *decimal.Decimal
+	usd_price     *decimal.Decimal
 	credit        *uint32
 	addcredit     *int32
 	sort_order    *uint32
@@ -426,53 +426,53 @@ func (m *AddonMutation) ResetAppID() {
 	delete(m.clearedFields, addon.FieldAppID)
 }
 
-// SetPrice sets the "price" field.
-func (m *AddonMutation) SetPrice(d decimal.Decimal) {
-	m.price = &d
+// SetUsdPrice sets the "usd_price" field.
+func (m *AddonMutation) SetUsdPrice(d decimal.Decimal) {
+	m.usd_price = &d
 }
 
-// Price returns the value of the "price" field in the mutation.
-func (m *AddonMutation) Price() (r decimal.Decimal, exists bool) {
-	v := m.price
+// UsdPrice returns the value of the "usd_price" field in the mutation.
+func (m *AddonMutation) UsdPrice() (r decimal.Decimal, exists bool) {
+	v := m.usd_price
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldPrice returns the old "price" field's value of the Addon entity.
+// OldUsdPrice returns the old "usd_price" field's value of the Addon entity.
 // If the Addon object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AddonMutation) OldPrice(ctx context.Context) (v decimal.Decimal, err error) {
+func (m *AddonMutation) OldUsdPrice(ctx context.Context) (v decimal.Decimal, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldPrice is only allowed on UpdateOne operations")
+		return v, errors.New("OldUsdPrice is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldPrice requires an ID field in the mutation")
+		return v, errors.New("OldUsdPrice requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldPrice: %w", err)
+		return v, fmt.Errorf("querying old value for OldUsdPrice: %w", err)
 	}
-	return oldValue.Price, nil
+	return oldValue.UsdPrice, nil
 }
 
-// ClearPrice clears the value of the "price" field.
-func (m *AddonMutation) ClearPrice() {
-	m.price = nil
-	m.clearedFields[addon.FieldPrice] = struct{}{}
+// ClearUsdPrice clears the value of the "usd_price" field.
+func (m *AddonMutation) ClearUsdPrice() {
+	m.usd_price = nil
+	m.clearedFields[addon.FieldUsdPrice] = struct{}{}
 }
 
-// PriceCleared returns if the "price" field was cleared in this mutation.
-func (m *AddonMutation) PriceCleared() bool {
-	_, ok := m.clearedFields[addon.FieldPrice]
+// UsdPriceCleared returns if the "usd_price" field was cleared in this mutation.
+func (m *AddonMutation) UsdPriceCleared() bool {
+	_, ok := m.clearedFields[addon.FieldUsdPrice]
 	return ok
 }
 
-// ResetPrice resets all changes to the "price" field.
-func (m *AddonMutation) ResetPrice() {
-	m.price = nil
-	delete(m.clearedFields, addon.FieldPrice)
+// ResetUsdPrice resets all changes to the "usd_price" field.
+func (m *AddonMutation) ResetUsdPrice() {
+	m.usd_price = nil
+	delete(m.clearedFields, addon.FieldUsdPrice)
 }
 
 // SetCredit sets the "credit" field.
@@ -748,8 +748,8 @@ func (m *AddonMutation) Fields() []string {
 	if m.app_id != nil {
 		fields = append(fields, addon.FieldAppID)
 	}
-	if m.price != nil {
-		fields = append(fields, addon.FieldPrice)
+	if m.usd_price != nil {
+		fields = append(fields, addon.FieldUsdPrice)
 	}
 	if m.credit != nil {
 		fields = append(fields, addon.FieldCredit)
@@ -781,8 +781,8 @@ func (m *AddonMutation) Field(name string) (ent.Value, bool) {
 		return m.EntID()
 	case addon.FieldAppID:
 		return m.AppID()
-	case addon.FieldPrice:
-		return m.Price()
+	case addon.FieldUsdPrice:
+		return m.UsdPrice()
 	case addon.FieldCredit:
 		return m.Credit()
 	case addon.FieldSortOrder:
@@ -810,8 +810,8 @@ func (m *AddonMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldEntID(ctx)
 	case addon.FieldAppID:
 		return m.OldAppID(ctx)
-	case addon.FieldPrice:
-		return m.OldPrice(ctx)
+	case addon.FieldUsdPrice:
+		return m.OldUsdPrice(ctx)
 	case addon.FieldCredit:
 		return m.OldCredit(ctx)
 	case addon.FieldSortOrder:
@@ -864,12 +864,12 @@ func (m *AddonMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetAppID(v)
 		return nil
-	case addon.FieldPrice:
+	case addon.FieldUsdPrice:
 		v, ok := value.(decimal.Decimal)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetPrice(v)
+		m.SetUsdPrice(v)
 		return nil
 	case addon.FieldCredit:
 		v, ok := value.(uint32)
@@ -995,8 +995,8 @@ func (m *AddonMutation) ClearedFields() []string {
 	if m.FieldCleared(addon.FieldAppID) {
 		fields = append(fields, addon.FieldAppID)
 	}
-	if m.FieldCleared(addon.FieldPrice) {
-		fields = append(fields, addon.FieldPrice)
+	if m.FieldCleared(addon.FieldUsdPrice) {
+		fields = append(fields, addon.FieldUsdPrice)
 	}
 	if m.FieldCleared(addon.FieldCredit) {
 		fields = append(fields, addon.FieldCredit)
@@ -1027,8 +1027,8 @@ func (m *AddonMutation) ClearField(name string) error {
 	case addon.FieldAppID:
 		m.ClearAppID()
 		return nil
-	case addon.FieldPrice:
-		m.ClearPrice()
+	case addon.FieldUsdPrice:
+		m.ClearUsdPrice()
 		return nil
 	case addon.FieldCredit:
 		m.ClearCredit()
@@ -1065,8 +1065,8 @@ func (m *AddonMutation) ResetField(name string) error {
 	case addon.FieldAppID:
 		m.ResetAppID()
 		return nil
-	case addon.FieldPrice:
-		m.ResetPrice()
+	case addon.FieldUsdPrice:
+		m.ResetUsdPrice()
 		return nil
 	case addon.FieldCredit:
 		m.ResetCredit()
@@ -3770,7 +3770,7 @@ type SubscriptionMutation struct {
 	ent_id        *uuid.UUID
 	app_id        *uuid.UUID
 	package_name  *string
-	price         *decimal.Decimal
+	usd_price     *decimal.Decimal
 	description   *string
 	sort_order    *uint32
 	addsort_order *int32
@@ -4192,53 +4192,53 @@ func (m *SubscriptionMutation) ResetPackageName() {
 	delete(m.clearedFields, subscription.FieldPackageName)
 }
 
-// SetPrice sets the "price" field.
-func (m *SubscriptionMutation) SetPrice(d decimal.Decimal) {
-	m.price = &d
+// SetUsdPrice sets the "usd_price" field.
+func (m *SubscriptionMutation) SetUsdPrice(d decimal.Decimal) {
+	m.usd_price = &d
 }
 
-// Price returns the value of the "price" field in the mutation.
-func (m *SubscriptionMutation) Price() (r decimal.Decimal, exists bool) {
-	v := m.price
+// UsdPrice returns the value of the "usd_price" field in the mutation.
+func (m *SubscriptionMutation) UsdPrice() (r decimal.Decimal, exists bool) {
+	v := m.usd_price
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldPrice returns the old "price" field's value of the Subscription entity.
+// OldUsdPrice returns the old "usd_price" field's value of the Subscription entity.
 // If the Subscription object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SubscriptionMutation) OldPrice(ctx context.Context) (v decimal.Decimal, err error) {
+func (m *SubscriptionMutation) OldUsdPrice(ctx context.Context) (v decimal.Decimal, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldPrice is only allowed on UpdateOne operations")
+		return v, errors.New("OldUsdPrice is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldPrice requires an ID field in the mutation")
+		return v, errors.New("OldUsdPrice requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldPrice: %w", err)
+		return v, fmt.Errorf("querying old value for OldUsdPrice: %w", err)
 	}
-	return oldValue.Price, nil
+	return oldValue.UsdPrice, nil
 }
 
-// ClearPrice clears the value of the "price" field.
-func (m *SubscriptionMutation) ClearPrice() {
-	m.price = nil
-	m.clearedFields[subscription.FieldPrice] = struct{}{}
+// ClearUsdPrice clears the value of the "usd_price" field.
+func (m *SubscriptionMutation) ClearUsdPrice() {
+	m.usd_price = nil
+	m.clearedFields[subscription.FieldUsdPrice] = struct{}{}
 }
 
-// PriceCleared returns if the "price" field was cleared in this mutation.
-func (m *SubscriptionMutation) PriceCleared() bool {
-	_, ok := m.clearedFields[subscription.FieldPrice]
+// UsdPriceCleared returns if the "usd_price" field was cleared in this mutation.
+func (m *SubscriptionMutation) UsdPriceCleared() bool {
+	_, ok := m.clearedFields[subscription.FieldUsdPrice]
 	return ok
 }
 
-// ResetPrice resets all changes to the "price" field.
-func (m *SubscriptionMutation) ResetPrice() {
-	m.price = nil
-	delete(m.clearedFields, subscription.FieldPrice)
+// ResetUsdPrice resets all changes to the "usd_price" field.
+func (m *SubscriptionMutation) ResetUsdPrice() {
+	m.usd_price = nil
+	delete(m.clearedFields, subscription.FieldUsdPrice)
 }
 
 // SetDescription sets the "description" field.
@@ -4636,8 +4636,8 @@ func (m *SubscriptionMutation) Fields() []string {
 	if m.package_name != nil {
 		fields = append(fields, subscription.FieldPackageName)
 	}
-	if m.price != nil {
-		fields = append(fields, subscription.FieldPrice)
+	if m.usd_price != nil {
+		fields = append(fields, subscription.FieldUsdPrice)
 	}
 	if m.description != nil {
 		fields = append(fields, subscription.FieldDescription)
@@ -4677,8 +4677,8 @@ func (m *SubscriptionMutation) Field(name string) (ent.Value, bool) {
 		return m.AppID()
 	case subscription.FieldPackageName:
 		return m.PackageName()
-	case subscription.FieldPrice:
-		return m.Price()
+	case subscription.FieldUsdPrice:
+		return m.UsdPrice()
 	case subscription.FieldDescription:
 		return m.Description()
 	case subscription.FieldSortOrder:
@@ -4712,8 +4712,8 @@ func (m *SubscriptionMutation) OldField(ctx context.Context, name string) (ent.V
 		return m.OldAppID(ctx)
 	case subscription.FieldPackageName:
 		return m.OldPackageName(ctx)
-	case subscription.FieldPrice:
-		return m.OldPrice(ctx)
+	case subscription.FieldUsdPrice:
+		return m.OldUsdPrice(ctx)
 	case subscription.FieldDescription:
 		return m.OldDescription(ctx)
 	case subscription.FieldSortOrder:
@@ -4777,12 +4777,12 @@ func (m *SubscriptionMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetPackageName(v)
 		return nil
-	case subscription.FieldPrice:
+	case subscription.FieldUsdPrice:
 		v, ok := value.(decimal.Decimal)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetPrice(v)
+		m.SetUsdPrice(v)
 		return nil
 	case subscription.FieldDescription:
 		v, ok := value.(string)
@@ -4937,8 +4937,8 @@ func (m *SubscriptionMutation) ClearedFields() []string {
 	if m.FieldCleared(subscription.FieldPackageName) {
 		fields = append(fields, subscription.FieldPackageName)
 	}
-	if m.FieldCleared(subscription.FieldPrice) {
-		fields = append(fields, subscription.FieldPrice)
+	if m.FieldCleared(subscription.FieldUsdPrice) {
+		fields = append(fields, subscription.FieldUsdPrice)
 	}
 	if m.FieldCleared(subscription.FieldDescription) {
 		fields = append(fields, subscription.FieldDescription)
@@ -4978,8 +4978,8 @@ func (m *SubscriptionMutation) ClearField(name string) error {
 	case subscription.FieldPackageName:
 		m.ClearPackageName()
 		return nil
-	case subscription.FieldPrice:
-		m.ClearPrice()
+	case subscription.FieldUsdPrice:
+		m.ClearUsdPrice()
 		return nil
 	case subscription.FieldDescription:
 		m.ClearDescription()
@@ -5025,8 +5025,8 @@ func (m *SubscriptionMutation) ResetField(name string) error {
 	case subscription.FieldPackageName:
 		m.ResetPackageName()
 		return nil
-	case subscription.FieldPrice:
-		m.ResetPrice()
+	case subscription.FieldUsdPrice:
+		m.ResetUsdPrice()
 		return nil
 	case subscription.FieldDescription:
 		m.ResetDescription()

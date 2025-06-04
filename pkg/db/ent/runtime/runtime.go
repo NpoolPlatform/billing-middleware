@@ -63,10 +63,10 @@ func init() {
 	addonDescAppID := addonFields[0].Descriptor()
 	// addon.DefaultAppID holds the default value on creation for the app_id field.
 	addon.DefaultAppID = addonDescAppID.Default.(func() uuid.UUID)
-	// addonDescPrice is the schema descriptor for price field.
-	addonDescPrice := addonFields[1].Descriptor()
-	// addon.DefaultPrice holds the default value on creation for the price field.
-	addon.DefaultPrice = addonDescPrice.Default.(decimal.Decimal)
+	// addonDescUsdPrice is the schema descriptor for usd_price field.
+	addonDescUsdPrice := addonFields[1].Descriptor()
+	// addon.DefaultUsdPrice holds the default value on creation for the usd_price field.
+	addon.DefaultUsdPrice = addonDescUsdPrice.Default.(decimal.Decimal)
 	// addonDescCredit is the schema descriptor for credit field.
 	addonDescCredit := addonFields[2].Descriptor()
 	// addon.DefaultCredit holds the default value on creation for the credit field.
@@ -271,10 +271,10 @@ func init() {
 	subscriptionDescPackageName := subscriptionFields[1].Descriptor()
 	// subscription.DefaultPackageName holds the default value on creation for the package_name field.
 	subscription.DefaultPackageName = subscriptionDescPackageName.Default.(string)
-	// subscriptionDescPrice is the schema descriptor for price field.
-	subscriptionDescPrice := subscriptionFields[2].Descriptor()
-	// subscription.DefaultPrice holds the default value on creation for the price field.
-	subscription.DefaultPrice = subscriptionDescPrice.Default.(decimal.Decimal)
+	// subscriptionDescUsdPrice is the schema descriptor for usd_price field.
+	subscriptionDescUsdPrice := subscriptionFields[2].Descriptor()
+	// subscription.DefaultUsdPrice holds the default value on creation for the usd_price field.
+	subscription.DefaultUsdPrice = subscriptionDescUsdPrice.Default.(decimal.Decimal)
 	// subscriptionDescDescription is the schema descriptor for description field.
 	subscriptionDescDescription := subscriptionFields[3].Descriptor()
 	// subscription.DefaultDescription holds the default value on creation for the description field.

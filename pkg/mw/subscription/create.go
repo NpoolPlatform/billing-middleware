@@ -55,7 +55,7 @@ func (h *createHandler) constructSQL() {
 	_sql += fmt.Sprintf("%v'%v' as app_id", comma, *h.AppID)
 	comma = ", "
 	_sql += fmt.Sprintf("%v'%v' as package_name", comma, *h.PackageName)
-	_sql += fmt.Sprintf("%v'%v' as price", comma, *h.Price)
+	_sql += fmt.Sprintf("%v'%v' as usd_price", comma, *h.UsdPrice)
 	_sql += fmt.Sprintf("%v'%v' as credit", comma, *h.Credit)
 	_sql += fmt.Sprintf("%v'%v' as sort_order", comma, *h.SortOrder)
 	_sql += fmt.Sprintf("%v'%v' as package_type", comma, *h.PackageType)

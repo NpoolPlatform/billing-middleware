@@ -51,7 +51,7 @@ func (h *baseQueryHandler) queryJoinMyself(s *sql.Selector) {
 		AppendSelect(
 			t1.C(entaddon.FieldEntID),
 			t1.C(entaddon.FieldAppID),
-			t1.C(entaddon.FieldPrice),
+			t1.C(entaddon.FieldUsdPrice),
 			t1.C(entaddon.FieldCredit),
 			t1.C(entaddon.FieldSortOrder),
 			t1.C(entaddon.FieldEnabled),

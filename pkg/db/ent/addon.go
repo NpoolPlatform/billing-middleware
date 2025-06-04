@@ -27,8 +27,8 @@ type Addon struct {
 	EntID uuid.UUID `json:"ent_id,omitempty"`
 	// AppID holds the value of the "app_id" field.
 	AppID uuid.UUID `json:"app_id,omitempty"`
-	// Price holds the value of the "price" field.
-	Price decimal.Decimal `json:"price,omitempty"`
+	// UsdPrice holds the value of the "usd_price" field.
+	UsdPrice decimal.Decimal `json:"usd_price,omitempty"`
 	// Credit holds the value of the "credit" field.
 	Credit uint32 `json:"credit,omitempty"`
 	// SortOrder holds the value of the "sort_order" field.
@@ -44,7 +44,7 @@ func (*Addon) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case addon.FieldPrice:
+		case addon.FieldUsdPrice:
 			values[i] = new(decimal.Decimal)
 		case addon.FieldEnabled:
 			values[i] = new(sql.NullBool)
@@ -105,11 +105,11 @@ func (a *Addon) assignValues(columns []string, values []interface{}) error {
 			} else if value != nil {
 				a.AppID = *value
 			}
-		case addon.FieldPrice:
+		case addon.FieldUsdPrice:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
-				return fmt.Errorf("unexpected type %T for field price", values[i])
+				return fmt.Errorf("unexpected type %T for field usd_price", values[i])
 			} else if value != nil {
-				a.Price = *value
+				a.UsdPrice = *value
 			}
 		case addon.FieldCredit:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -178,8 +178,8 @@ func (a *Addon) String() string {
 	builder.WriteString("app_id=")
 	builder.WriteString(fmt.Sprintf("%v", a.AppID))
 	builder.WriteString(", ")
-	builder.WriteString("price=")
-	builder.WriteString(fmt.Sprintf("%v", a.Price))
+	builder.WriteString("usd_price=")
+	builder.WriteString(fmt.Sprintf("%v", a.UsdPrice))
 	builder.WriteString(", ")
 	builder.WriteString("credit=")
 	builder.WriteString(fmt.Sprintf("%v", a.Credit))

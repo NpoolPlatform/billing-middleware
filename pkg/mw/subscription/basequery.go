@@ -52,7 +52,7 @@ func (h *baseQueryHandler) queryJoinMyself(s *sql.Selector) {
 			t1.C(entsubscription.FieldEntID),
 			t1.C(entsubscription.FieldAppID),
 			t1.C(entsubscription.FieldPackageName),
-			t1.C(entsubscription.FieldPrice),
+			t1.C(entsubscription.FieldUsdPrice),
 			t1.C(entsubscription.FieldDescription),
 			t1.C(entsubscription.FieldSortOrder),
 			t1.C(entsubscription.FieldPackageType),

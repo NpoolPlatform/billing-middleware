@@ -93,7 +93,7 @@ func WithPackageName(s *string, must bool) func(context.Context, *Handler) error
 	}
 }
 
-func WithPrice(s *string, must bool) func(context.Context, *Handler) error {
+func WithUsdPrice(s *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if s == nil {
 			if must {
@@ -105,7 +105,7 @@ func WithPrice(s *string, must bool) func(context.Context, *Handler) error {
 		if err != nil {
 			return wlog.WrapError(err)
 		}
-		h.Price = &amount
+		h.UsdPrice = &amount
 
 		return nil
 	}

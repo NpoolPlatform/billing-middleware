@@ -21,8 +21,8 @@ func (h *updateHandler) constructSQL() error {
 	now := uint32(time.Now().Unix())
 
 	_sql := "update addons "
-	if h.Price != nil {
-		_sql += fmt.Sprintf("%vprice = '%v', ", set, *h.Price)
+	if h.UsdPrice != nil {
+		_sql += fmt.Sprintf("%vusd_price = '%v', ", set, *h.UsdPrice)
 		set = ""
 	}
 	if h.Credit != nil {

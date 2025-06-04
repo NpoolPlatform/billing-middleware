@@ -23,8 +23,8 @@ const (
 	FieldEntID = "ent_id"
 	// FieldAppID holds the string denoting the app_id field in the database.
 	FieldAppID = "app_id"
-	// FieldPrice holds the string denoting the price field in the database.
-	FieldPrice = "price"
+	// FieldUsdPrice holds the string denoting the usd_price field in the database.
+	FieldUsdPrice = "usd_price"
 	// FieldCredit holds the string denoting the credit field in the database.
 	FieldCredit = "credit"
 	// FieldSortOrder holds the string denoting the sort_order field in the database.
@@ -45,7 +45,7 @@ var Columns = []string{
 	FieldDeletedAt,
 	FieldEntID,
 	FieldAppID,
-	FieldPrice,
+	FieldUsdPrice,
 	FieldCredit,
 	FieldSortOrder,
 	FieldEnabled,
@@ -83,8 +83,8 @@ var (
 	DefaultEntID func() uuid.UUID
 	// DefaultAppID holds the default value on creation for the "app_id" field.
 	DefaultAppID func() uuid.UUID
-	// DefaultPrice holds the default value on creation for the "price" field.
-	DefaultPrice decimal.Decimal
+	// DefaultUsdPrice holds the default value on creation for the "usd_price" field.
+	DefaultUsdPrice decimal.Decimal
 	// DefaultCredit holds the default value on creation for the "credit" field.
 	DefaultCredit uint32
 	// DefaultSortOrder holds the default value on creation for the "sort_order" field.

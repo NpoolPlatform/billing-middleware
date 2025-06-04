@@ -25,8 +25,8 @@ const (
 	FieldAppID = "app_id"
 	// FieldPackageName holds the string denoting the package_name field in the database.
 	FieldPackageName = "package_name"
-	// FieldPrice holds the string denoting the price field in the database.
-	FieldPrice = "price"
+	// FieldUsdPrice holds the string denoting the usd_price field in the database.
+	FieldUsdPrice = "usd_price"
 	// FieldDescription holds the string denoting the description field in the database.
 	FieldDescription = "description"
 	// FieldSortOrder holds the string denoting the sort_order field in the database.
@@ -52,7 +52,7 @@ var Columns = []string{
 	FieldEntID,
 	FieldAppID,
 	FieldPackageName,
-	FieldPrice,
+	FieldUsdPrice,
 	FieldDescription,
 	FieldSortOrder,
 	FieldPackageType,
@@ -94,8 +94,8 @@ var (
 	DefaultAppID func() uuid.UUID
 	// DefaultPackageName holds the default value on creation for the "package_name" field.
 	DefaultPackageName string
-	// DefaultPrice holds the default value on creation for the "price" field.
-	DefaultPrice decimal.Decimal
+	// DefaultUsdPrice holds the default value on creation for the "usd_price" field.
+	DefaultUsdPrice decimal.Decimal
 	// DefaultDescription holds the default value on creation for the "description" field.
 	DefaultDescription string
 	// DefaultSortOrder holds the default value on creation for the "sort_order" field.

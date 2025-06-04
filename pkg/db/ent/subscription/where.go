@@ -122,10 +122,10 @@ func PackageName(v string) predicate.Subscription {
 	})
 }
 
-// Price applies equality check predicate on the "price" field. It's identical to PriceEQ.
-func Price(v decimal.Decimal) predicate.Subscription {
+// UsdPrice applies equality check predicate on the "usd_price" field. It's identical to UsdPriceEQ.
+func UsdPrice(v decimal.Decimal) predicate.Subscription {
 	return predicate.Subscription(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldPrice), v))
+		s.Where(sql.EQ(s.C(FieldUsdPrice), v))
 	})
 }
 
@@ -618,81 +618,81 @@ func PackageNameContainsFold(v string) predicate.Subscription {
 	})
 }
 
-// PriceEQ applies the EQ predicate on the "price" field.
-func PriceEQ(v decimal.Decimal) predicate.Subscription {
+// UsdPriceEQ applies the EQ predicate on the "usd_price" field.
+func UsdPriceEQ(v decimal.Decimal) predicate.Subscription {
 	return predicate.Subscription(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldPrice), v))
+		s.Where(sql.EQ(s.C(FieldUsdPrice), v))
 	})
 }
 
-// PriceNEQ applies the NEQ predicate on the "price" field.
-func PriceNEQ(v decimal.Decimal) predicate.Subscription {
+// UsdPriceNEQ applies the NEQ predicate on the "usd_price" field.
+func UsdPriceNEQ(v decimal.Decimal) predicate.Subscription {
 	return predicate.Subscription(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldPrice), v))
+		s.Where(sql.NEQ(s.C(FieldUsdPrice), v))
 	})
 }
 
-// PriceIn applies the In predicate on the "price" field.
-func PriceIn(vs ...decimal.Decimal) predicate.Subscription {
+// UsdPriceIn applies the In predicate on the "usd_price" field.
+func UsdPriceIn(vs ...decimal.Decimal) predicate.Subscription {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.Subscription(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldPrice), v...))
+		s.Where(sql.In(s.C(FieldUsdPrice), v...))
 	})
 }
 
-// PriceNotIn applies the NotIn predicate on the "price" field.
-func PriceNotIn(vs ...decimal.Decimal) predicate.Subscription {
+// UsdPriceNotIn applies the NotIn predicate on the "usd_price" field.
+func UsdPriceNotIn(vs ...decimal.Decimal) predicate.Subscription {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.Subscription(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldPrice), v...))
+		s.Where(sql.NotIn(s.C(FieldUsdPrice), v...))
 	})
 }
 
-// PriceGT applies the GT predicate on the "price" field.
-func PriceGT(v decimal.Decimal) predicate.Subscription {
+// UsdPriceGT applies the GT predicate on the "usd_price" field.
+func UsdPriceGT(v decimal.Decimal) predicate.Subscription {
 	return predicate.Subscription(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldPrice), v))
+		s.Where(sql.GT(s.C(FieldUsdPrice), v))
 	})
 }
 
-// PriceGTE applies the GTE predicate on the "price" field.
-func PriceGTE(v decimal.Decimal) predicate.Subscription {
+// UsdPriceGTE applies the GTE predicate on the "usd_price" field.
+func UsdPriceGTE(v decimal.Decimal) predicate.Subscription {
 	return predicate.Subscription(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldPrice), v))
+		s.Where(sql.GTE(s.C(FieldUsdPrice), v))
 	})
 }
 
-// PriceLT applies the LT predicate on the "price" field.
-func PriceLT(v decimal.Decimal) predicate.Subscription {
+// UsdPriceLT applies the LT predicate on the "usd_price" field.
+func UsdPriceLT(v decimal.Decimal) predicate.Subscription {
 	return predicate.Subscription(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldPrice), v))
+		s.Where(sql.LT(s.C(FieldUsdPrice), v))
 	})
 }
 
-// PriceLTE applies the LTE predicate on the "price" field.
-func PriceLTE(v decimal.Decimal) predicate.Subscription {
+// UsdPriceLTE applies the LTE predicate on the "usd_price" field.
+func UsdPriceLTE(v decimal.Decimal) predicate.Subscription {
 	return predicate.Subscription(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldPrice), v))
+		s.Where(sql.LTE(s.C(FieldUsdPrice), v))
 	})
 }
 
-// PriceIsNil applies the IsNil predicate on the "price" field.
-func PriceIsNil() predicate.Subscription {
+// UsdPriceIsNil applies the IsNil predicate on the "usd_price" field.
+func UsdPriceIsNil() predicate.Subscription {
 	return predicate.Subscription(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldPrice)))
+		s.Where(sql.IsNull(s.C(FieldUsdPrice)))
 	})
 }
 
-// PriceNotNil applies the NotNil predicate on the "price" field.
-func PriceNotNil() predicate.Subscription {
+// UsdPriceNotNil applies the NotNil predicate on the "usd_price" field.
+func UsdPriceNotNil() predicate.Subscription {
 	return predicate.Subscription(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldPrice)))
+		s.Where(sql.NotNull(s.C(FieldUsdPrice)))
 	})
 }
 

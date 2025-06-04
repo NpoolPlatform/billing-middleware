@@ -119,23 +119,23 @@ func (au *AddonUpdate) ClearAppID() *AddonUpdate {
 	return au
 }
 
-// SetPrice sets the "price" field.
-func (au *AddonUpdate) SetPrice(d decimal.Decimal) *AddonUpdate {
-	au.mutation.SetPrice(d)
+// SetUsdPrice sets the "usd_price" field.
+func (au *AddonUpdate) SetUsdPrice(d decimal.Decimal) *AddonUpdate {
+	au.mutation.SetUsdPrice(d)
 	return au
 }
 
-// SetNillablePrice sets the "price" field if the given value is not nil.
-func (au *AddonUpdate) SetNillablePrice(d *decimal.Decimal) *AddonUpdate {
+// SetNillableUsdPrice sets the "usd_price" field if the given value is not nil.
+func (au *AddonUpdate) SetNillableUsdPrice(d *decimal.Decimal) *AddonUpdate {
 	if d != nil {
-		au.SetPrice(*d)
+		au.SetUsdPrice(*d)
 	}
 	return au
 }
 
-// ClearPrice clears the value of the "price" field.
-func (au *AddonUpdate) ClearPrice() *AddonUpdate {
-	au.mutation.ClearPrice()
+// ClearUsdPrice clears the value of the "usd_price" field.
+func (au *AddonUpdate) ClearUsdPrice() *AddonUpdate {
+	au.mutation.ClearUsdPrice()
 	return au
 }
 
@@ -393,17 +393,17 @@ func (au *AddonUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: addon.FieldAppID,
 		})
 	}
-	if value, ok := au.mutation.Price(); ok {
+	if value, ok := au.mutation.UsdPrice(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: addon.FieldPrice,
+			Column: addon.FieldUsdPrice,
 		})
 	}
-	if au.mutation.PriceCleared() {
+	if au.mutation.UsdPriceCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
-			Column: addon.FieldPrice,
+			Column: addon.FieldUsdPrice,
 		})
 	}
 	if value, ok := au.mutation.Credit(); ok {
@@ -582,23 +582,23 @@ func (auo *AddonUpdateOne) ClearAppID() *AddonUpdateOne {
 	return auo
 }
 
-// SetPrice sets the "price" field.
-func (auo *AddonUpdateOne) SetPrice(d decimal.Decimal) *AddonUpdateOne {
-	auo.mutation.SetPrice(d)
+// SetUsdPrice sets the "usd_price" field.
+func (auo *AddonUpdateOne) SetUsdPrice(d decimal.Decimal) *AddonUpdateOne {
+	auo.mutation.SetUsdPrice(d)
 	return auo
 }
 
-// SetNillablePrice sets the "price" field if the given value is not nil.
-func (auo *AddonUpdateOne) SetNillablePrice(d *decimal.Decimal) *AddonUpdateOne {
+// SetNillableUsdPrice sets the "usd_price" field if the given value is not nil.
+func (auo *AddonUpdateOne) SetNillableUsdPrice(d *decimal.Decimal) *AddonUpdateOne {
 	if d != nil {
-		auo.SetPrice(*d)
+		auo.SetUsdPrice(*d)
 	}
 	return auo
 }
 
-// ClearPrice clears the value of the "price" field.
-func (auo *AddonUpdateOne) ClearPrice() *AddonUpdateOne {
-	auo.mutation.ClearPrice()
+// ClearUsdPrice clears the value of the "usd_price" field.
+func (auo *AddonUpdateOne) ClearUsdPrice() *AddonUpdateOne {
+	auo.mutation.ClearUsdPrice()
 	return auo
 }
 
@@ -886,17 +886,17 @@ func (auo *AddonUpdateOne) sqlSave(ctx context.Context) (_node *Addon, err error
 			Column: addon.FieldAppID,
 		})
 	}
-	if value, ok := auo.mutation.Price(); ok {
+	if value, ok := auo.mutation.UsdPrice(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: addon.FieldPrice,
+			Column: addon.FieldUsdPrice,
 		})
 	}
-	if auo.mutation.PriceCleared() {
+	if auo.mutation.UsdPriceCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
-			Column: addon.FieldPrice,
+			Column: addon.FieldUsdPrice,
 		})
 	}
 	if value, ok := auo.mutation.Credit(); ok {

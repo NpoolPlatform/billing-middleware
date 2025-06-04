@@ -139,23 +139,23 @@ func (su *SubscriptionUpdate) ClearPackageName() *SubscriptionUpdate {
 	return su
 }
 
-// SetPrice sets the "price" field.
-func (su *SubscriptionUpdate) SetPrice(d decimal.Decimal) *SubscriptionUpdate {
-	su.mutation.SetPrice(d)
+// SetUsdPrice sets the "usd_price" field.
+func (su *SubscriptionUpdate) SetUsdPrice(d decimal.Decimal) *SubscriptionUpdate {
+	su.mutation.SetUsdPrice(d)
 	return su
 }
 
-// SetNillablePrice sets the "price" field if the given value is not nil.
-func (su *SubscriptionUpdate) SetNillablePrice(d *decimal.Decimal) *SubscriptionUpdate {
+// SetNillableUsdPrice sets the "usd_price" field if the given value is not nil.
+func (su *SubscriptionUpdate) SetNillableUsdPrice(d *decimal.Decimal) *SubscriptionUpdate {
 	if d != nil {
-		su.SetPrice(*d)
+		su.SetUsdPrice(*d)
 	}
 	return su
 }
 
-// ClearPrice clears the value of the "price" field.
-func (su *SubscriptionUpdate) ClearPrice() *SubscriptionUpdate {
-	su.mutation.ClearPrice()
+// ClearUsdPrice clears the value of the "usd_price" field.
+func (su *SubscriptionUpdate) ClearUsdPrice() *SubscriptionUpdate {
+	su.mutation.ClearUsdPrice()
 	return su
 }
 
@@ -473,17 +473,17 @@ func (su *SubscriptionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: subscription.FieldPackageName,
 		})
 	}
-	if value, ok := su.mutation.Price(); ok {
+	if value, ok := su.mutation.UsdPrice(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: subscription.FieldPrice,
+			Column: subscription.FieldUsdPrice,
 		})
 	}
-	if su.mutation.PriceCleared() {
+	if su.mutation.UsdPriceCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
-			Column: subscription.FieldPrice,
+			Column: subscription.FieldUsdPrice,
 		})
 	}
 	if value, ok := su.mutation.Description(); ok {
@@ -715,23 +715,23 @@ func (suo *SubscriptionUpdateOne) ClearPackageName() *SubscriptionUpdateOne {
 	return suo
 }
 
-// SetPrice sets the "price" field.
-func (suo *SubscriptionUpdateOne) SetPrice(d decimal.Decimal) *SubscriptionUpdateOne {
-	suo.mutation.SetPrice(d)
+// SetUsdPrice sets the "usd_price" field.
+func (suo *SubscriptionUpdateOne) SetUsdPrice(d decimal.Decimal) *SubscriptionUpdateOne {
+	suo.mutation.SetUsdPrice(d)
 	return suo
 }
 
-// SetNillablePrice sets the "price" field if the given value is not nil.
-func (suo *SubscriptionUpdateOne) SetNillablePrice(d *decimal.Decimal) *SubscriptionUpdateOne {
+// SetNillableUsdPrice sets the "usd_price" field if the given value is not nil.
+func (suo *SubscriptionUpdateOne) SetNillableUsdPrice(d *decimal.Decimal) *SubscriptionUpdateOne {
 	if d != nil {
-		suo.SetPrice(*d)
+		suo.SetUsdPrice(*d)
 	}
 	return suo
 }
 
-// ClearPrice clears the value of the "price" field.
-func (suo *SubscriptionUpdateOne) ClearPrice() *SubscriptionUpdateOne {
-	suo.mutation.ClearPrice()
+// ClearUsdPrice clears the value of the "usd_price" field.
+func (suo *SubscriptionUpdateOne) ClearUsdPrice() *SubscriptionUpdateOne {
+	suo.mutation.ClearUsdPrice()
 	return suo
 }
 
@@ -1079,17 +1079,17 @@ func (suo *SubscriptionUpdateOne) sqlSave(ctx context.Context) (_node *Subscript
 			Column: subscription.FieldPackageName,
 		})
 	}
-	if value, ok := suo.mutation.Price(); ok {
+	if value, ok := suo.mutation.UsdPrice(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: subscription.FieldPrice,
+			Column: subscription.FieldUsdPrice,
 		})
 	}
-	if suo.mutation.PriceCleared() {
+	if suo.mutation.UsdPriceCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
-			Column: subscription.FieldPrice,
+			Column: subscription.FieldUsdPrice,
 		})
 	}
 	if value, ok := suo.mutation.Description(); ok {

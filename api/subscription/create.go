@@ -26,7 +26,7 @@ func (s *Server) CreateSubscription(ctx context.Context, in *npool.CreateSubscri
 		subscription1.WithEntID(req.EntID, false),
 		subscription1.WithAppID(req.AppID, true),
 		subscription1.WithPackageName(req.PackageName, true),
-		subscription1.WithPrice(req.Price, true),
+		subscription1.WithUsdPrice(req.UsdPrice, true),
 		subscription1.WithDescription(req.Description, false),
 		subscription1.WithSortOrder(req.SortOrder, true),
 		subscription1.WithPackageType(req.PackageType, true),

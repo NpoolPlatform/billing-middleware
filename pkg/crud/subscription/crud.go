@@ -16,7 +16,7 @@ type Req struct {
 	EntID       *uuid.UUID
 	AppID       *uuid.UUID
 	PackageName *string
-	Price       *decimal.Decimal
+	UsdPrice    *decimal.Decimal
 	Description *string
 	SortOrder   *uint32
 	PackageType *types.PackageType
@@ -36,8 +36,8 @@ func CreateSet(c *ent.SubscriptionCreate, req *Req) *ent.SubscriptionCreate {
 	if req.PackageName != nil {
 		c.SetPackageName(*req.PackageName)
 	}
-	if req.Price != nil {
-		c.SetPrice(*req.Price)
+	if req.UsdPrice != nil {
+		c.SetUsdPrice(*req.UsdPrice)
 	}
 	if req.Description != nil {
 		c.SetDescription(*req.Description)
@@ -64,8 +64,8 @@ func UpdateSet(u *ent.SubscriptionUpdateOne, req *Req) *ent.SubscriptionUpdateOn
 	if req.PackageName != nil {
 		u.SetPackageName(*req.PackageName)
 	}
-	if req.Price != nil {
-		u.SetPrice(*req.Price)
+	if req.UsdPrice != nil {
+		u.SetUsdPrice(*req.UsdPrice)
 	}
 	if req.Description != nil {
 		u.SetDescription(*req.Description)

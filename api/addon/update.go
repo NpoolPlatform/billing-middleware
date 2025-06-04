@@ -26,7 +26,7 @@ func (s *Server) UpdateAddon(ctx context.Context, in *npool.UpdateAddonRequest) 
 		ctx,
 		addon1.WithID(req.ID, false),
 		addon1.WithEntID(req.EntID, false),
-		addon1.WithPrice(req.Price, false),
+		addon1.WithUsdPrice(req.UsdPrice, false),
 		addon1.WithCredit(req.Credit, false),
 		addon1.WithSortOrder(req.SortOrder, false),
 		addon1.WithEnabled(req.Enabled, false),

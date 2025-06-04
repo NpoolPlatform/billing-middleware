@@ -37,7 +37,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			addon.FieldDeletedAt:   {Type: field.TypeUint32, Column: addon.FieldDeletedAt},
 			addon.FieldEntID:       {Type: field.TypeUUID, Column: addon.FieldEntID},
 			addon.FieldAppID:       {Type: field.TypeUUID, Column: addon.FieldAppID},
-			addon.FieldPrice:       {Type: field.TypeOther, Column: addon.FieldPrice},
+			addon.FieldUsdPrice:    {Type: field.TypeOther, Column: addon.FieldUsdPrice},
 			addon.FieldCredit:      {Type: field.TypeUint32, Column: addon.FieldCredit},
 			addon.FieldSortOrder:   {Type: field.TypeUint32, Column: addon.FieldSortOrder},
 			addon.FieldEnabled:     {Type: field.TypeBool, Column: addon.FieldEnabled},
@@ -123,7 +123,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			subscription.FieldEntID:       {Type: field.TypeUUID, Column: subscription.FieldEntID},
 			subscription.FieldAppID:       {Type: field.TypeUUID, Column: subscription.FieldAppID},
 			subscription.FieldPackageName: {Type: field.TypeString, Column: subscription.FieldPackageName},
-			subscription.FieldPrice:       {Type: field.TypeOther, Column: subscription.FieldPrice},
+			subscription.FieldUsdPrice:    {Type: field.TypeOther, Column: subscription.FieldUsdPrice},
 			subscription.FieldDescription: {Type: field.TypeString, Column: subscription.FieldDescription},
 			subscription.FieldSortOrder:   {Type: field.TypeUint32, Column: subscription.FieldSortOrder},
 			subscription.FieldPackageType: {Type: field.TypeString, Column: subscription.FieldPackageType},
@@ -275,9 +275,9 @@ func (f *AddonFilter) WhereAppID(p entql.ValueP) {
 	f.Where(p.Field(addon.FieldAppID))
 }
 
-// WherePrice applies the entql other predicate on the price field.
-func (f *AddonFilter) WherePrice(p entql.OtherP) {
-	f.Where(p.Field(addon.FieldPrice))
+// WhereUsdPrice applies the entql other predicate on the usd_price field.
+func (f *AddonFilter) WhereUsdPrice(p entql.OtherP) {
+	f.Where(p.Field(addon.FieldUsdPrice))
 }
 
 // WhereCredit applies the entql uint32 predicate on the credit field.
@@ -605,9 +605,9 @@ func (f *SubscriptionFilter) WherePackageName(p entql.StringP) {
 	f.Where(p.Field(subscription.FieldPackageName))
 }
 
-// WherePrice applies the entql other predicate on the price field.
-func (f *SubscriptionFilter) WherePrice(p entql.OtherP) {
-	f.Where(p.Field(subscription.FieldPrice))
+// WhereUsdPrice applies the entql other predicate on the usd_price field.
+func (f *SubscriptionFilter) WhereUsdPrice(p entql.OtherP) {
+	f.Where(p.Field(subscription.FieldUsdPrice))
 }
 
 // WhereDescription applies the entql string predicate on the description field.

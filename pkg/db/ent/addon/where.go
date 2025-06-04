@@ -115,10 +115,10 @@ func AppID(v uuid.UUID) predicate.Addon {
 	})
 }
 
-// Price applies equality check predicate on the "price" field. It's identical to PriceEQ.
-func Price(v decimal.Decimal) predicate.Addon {
+// UsdPrice applies equality check predicate on the "usd_price" field. It's identical to UsdPriceEQ.
+func UsdPrice(v decimal.Decimal) predicate.Addon {
 	return predicate.Addon(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldPrice), v))
+		s.Where(sql.EQ(s.C(FieldUsdPrice), v))
 	})
 }
 
@@ -484,81 +484,81 @@ func AppIDNotNil() predicate.Addon {
 	})
 }
 
-// PriceEQ applies the EQ predicate on the "price" field.
-func PriceEQ(v decimal.Decimal) predicate.Addon {
+// UsdPriceEQ applies the EQ predicate on the "usd_price" field.
+func UsdPriceEQ(v decimal.Decimal) predicate.Addon {
 	return predicate.Addon(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldPrice), v))
+		s.Where(sql.EQ(s.C(FieldUsdPrice), v))
 	})
 }
 
-// PriceNEQ applies the NEQ predicate on the "price" field.
-func PriceNEQ(v decimal.Decimal) predicate.Addon {
+// UsdPriceNEQ applies the NEQ predicate on the "usd_price" field.
+func UsdPriceNEQ(v decimal.Decimal) predicate.Addon {
 	return predicate.Addon(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldPrice), v))
+		s.Where(sql.NEQ(s.C(FieldUsdPrice), v))
 	})
 }
 
-// PriceIn applies the In predicate on the "price" field.
-func PriceIn(vs ...decimal.Decimal) predicate.Addon {
+// UsdPriceIn applies the In predicate on the "usd_price" field.
+func UsdPriceIn(vs ...decimal.Decimal) predicate.Addon {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.Addon(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldPrice), v...))
+		s.Where(sql.In(s.C(FieldUsdPrice), v...))
 	})
 }
 
-// PriceNotIn applies the NotIn predicate on the "price" field.
-func PriceNotIn(vs ...decimal.Decimal) predicate.Addon {
+// UsdPriceNotIn applies the NotIn predicate on the "usd_price" field.
+func UsdPriceNotIn(vs ...decimal.Decimal) predicate.Addon {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.Addon(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldPrice), v...))
+		s.Where(sql.NotIn(s.C(FieldUsdPrice), v...))
 	})
 }
 
-// PriceGT applies the GT predicate on the "price" field.
-func PriceGT(v decimal.Decimal) predicate.Addon {
+// UsdPriceGT applies the GT predicate on the "usd_price" field.
+func UsdPriceGT(v decimal.Decimal) predicate.Addon {
 	return predicate.Addon(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldPrice), v))
+		s.Where(sql.GT(s.C(FieldUsdPrice), v))
 	})
 }
 
-// PriceGTE applies the GTE predicate on the "price" field.
-func PriceGTE(v decimal.Decimal) predicate.Addon {
+// UsdPriceGTE applies the GTE predicate on the "usd_price" field.
+func UsdPriceGTE(v decimal.Decimal) predicate.Addon {
 	return predicate.Addon(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldPrice), v))
+		s.Where(sql.GTE(s.C(FieldUsdPrice), v))
 	})
 }
 
-// PriceLT applies the LT predicate on the "price" field.
-func PriceLT(v decimal.Decimal) predicate.Addon {
+// UsdPriceLT applies the LT predicate on the "usd_price" field.
+func UsdPriceLT(v decimal.Decimal) predicate.Addon {
 	return predicate.Addon(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldPrice), v))
+		s.Where(sql.LT(s.C(FieldUsdPrice), v))
 	})
 }
 
-// PriceLTE applies the LTE predicate on the "price" field.
-func PriceLTE(v decimal.Decimal) predicate.Addon {
+// UsdPriceLTE applies the LTE predicate on the "usd_price" field.
+func UsdPriceLTE(v decimal.Decimal) predicate.Addon {
 	return predicate.Addon(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldPrice), v))
+		s.Where(sql.LTE(s.C(FieldUsdPrice), v))
 	})
 }
 
-// PriceIsNil applies the IsNil predicate on the "price" field.
-func PriceIsNil() predicate.Addon {
+// UsdPriceIsNil applies the IsNil predicate on the "usd_price" field.
+func UsdPriceIsNil() predicate.Addon {
 	return predicate.Addon(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldPrice)))
+		s.Where(sql.IsNull(s.C(FieldUsdPrice)))
 	})
 }
 
-// PriceNotNil applies the NotNil predicate on the "price" field.
-func PriceNotNil() predicate.Addon {
+// UsdPriceNotNil applies the NotNil predicate on the "usd_price" field.
+func UsdPriceNotNil() predicate.Addon {
 	return predicate.Addon(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldPrice)))
+		s.Where(sql.NotNull(s.C(FieldUsdPrice)))
 	})
 }
 

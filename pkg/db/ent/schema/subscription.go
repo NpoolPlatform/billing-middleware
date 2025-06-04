@@ -37,7 +37,7 @@ func (Subscription) Fields() []ent.Field {
 			Optional().
 			Default(""),
 		field.
-			Other("price", decimal.Decimal{}).
+			Other("usd_price", decimal.Decimal{}).
 			SchemaType(map[string]string{
 				dialect.MySQL: "decimal(37,18)",
 			}).
