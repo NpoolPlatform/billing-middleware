@@ -29,7 +29,7 @@ func (h *createHandler) constructSQL() {
 	}
 	_sql += comma + "app_id"
 	comma = ", "
-	_sql += comma + "price"
+	_sql += comma + "usd_price"
 	_sql += comma + "credit"
 	_sql += comma + "sort_order"
 	if h.Enabled != nil {
