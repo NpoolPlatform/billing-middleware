@@ -67,9 +67,9 @@ func GetAddons(ctx context.Context, conds *npool.Conds, offset, limit int32) (in
 	return _infos.([]*npool.Addon), nil
 }
 
-func GetAddonsCount(ctx context.Context, conds *npool.Conds) (total uint32, err error) {
+func CountAddons(ctx context.Context, conds *npool.Conds) (total uint32, err error) {
 	_, err = withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
-		resp, err := cli.GetAddonsCount(ctx, &npool.GetAddonsCountRequest{
+		resp, err := cli.CountAddons(ctx, &npool.CountAddonsRequest{
 			Conds: conds,
 		})
 		if err != nil {

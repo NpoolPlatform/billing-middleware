@@ -67,9 +67,9 @@ func GetSubscriptions(ctx context.Context, conds *npool.Conds, offset, limit int
 	return _infos.([]*npool.Subscription), nil
 }
 
-func GetSubscriptionsCount(ctx context.Context, conds *npool.Conds) (total uint32, err error) {
+func CountSubscriptions(ctx context.Context, conds *npool.Conds) (total uint32, err error) {
 	_, err = withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
-		resp, err := cli.GetSubscriptionsCount(ctx, &npool.GetSubscriptionsCountRequest{
+		resp, err := cli.CountSubscriptions(ctx, &npool.CountSubscriptionsRequest{
 			Conds: conds,
 		})
 		if err != nil {

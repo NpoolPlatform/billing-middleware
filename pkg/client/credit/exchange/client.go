@@ -67,9 +67,9 @@ func GetExchanges(ctx context.Context, conds *npool.Conds, offset, limit int32) 
 	return _infos.([]*npool.Exchange), nil
 }
 
-func GetExchangesCount(ctx context.Context, conds *npool.Conds) (total uint32, err error) {
+func CountExchanges(ctx context.Context, conds *npool.Conds) (total uint32, err error) {
 	_, err = withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
-		resp, err := cli.GetExchangesCount(ctx, &npool.GetExchangesCountRequest{
+		resp, err := cli.CountExchanges(ctx, &npool.CountExchangesRequest{
 			Conds: conds,
 		})
 		if err != nil {
